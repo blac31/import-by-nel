@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 200" width="800" height="200">
+  <!-- Background -->
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1A0A3C"/>
+      <stop offset="100%" style="stop-color:#2D1B69"/>
+    </linearGradient>
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFE066"/>
+      <stop offset="50%" style="stop-color:#FFD700"/>
+      <stop offset="100%" style="stop-color:#C8A800"/>
+    </linearGradient>
+    <linearGradient id="hexGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFE566"/>
+      <stop offset="100%" style="stop-color:#FFB800"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Main background -->
+  <rect width="800" height="200" rx="20" fill="url(#bgGrad)"/>
+
+  <!-- Decorative corner accents -->
+  <rect x="0" y="0" width="800" height="4" rx="2" fill="url(#goldGrad)"/>
+  <rect x="0" y="196" width="800" height="4" rx="2" fill="url(#goldGrad)"/>
+  <rect x="0" y="0" width="4" height="200" fill="url(#goldGrad)"/>
+  <rect x="796" y="0" width="4" height="200" fill="url(#goldGrad)"/>
+
+  <!-- Decorative dots top left -->
+  <circle cx="30" cy="30" r="3" fill="rgba(255,215,0,0.3)"/>
+  <circle cx="44" cy="30" r="2" fill="rgba(255,215,0,0.2)"/>
+  <circle cx="30" cy="44" r="2" fill="rgba(255,215,0,0.2)"/>
+
+  <!-- Hexagon badge -->
+  <polygon points="100,32 138,32 157,64 138,96 100,96 81,64" fill="url(#hexGrad)"/>
+  <polygon points="100,32 138,32 157,64 138,96 100,96 81,64" fill="none" stroke="#FFF0A0" stroke-width="2"/>
+  <!-- Inner hex -->
+  <polygon points="104,38 134,38 149,64 134,90 104,90 89,64" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="1"/>
+  <text x="119" y="60" font-family="Arial Black,Arial,sans-serif" font-weight="900" font-size="20" fill="#1A0A3C" text-anchor="middle">IBN</text>
+  <text x="119" y="78" font-family="Arial,sans-serif" font-weight="700" font-size="8" fill="#2D1B69" text-anchor="middle" letter-spacing="2">IMPORTS</text>
+
+  <!-- Ship icon below hex -->
+  <text x="119" y="128" font-family="Arial,sans-serif" font-size="22" text-anchor="middle">🚢</text>
+  <text x="119" y="152" font-family="Arial,sans-serif" font-weight="400" font-size="9" fill="rgba(255,215,0,0.5)" text-anchor="middle" letter-spacing="1">KASOA · GHANA</text>
+
+  <!-- Vertical divider -->
+  <rect x="178" y="24" width="2" height="152" fill="rgba(255,215,0,0.25)" rx="1"/>
+
+  <!-- Main brand name -->
+  <text x="206" y="82" font-family="Georgia,Times New Roman,serif" font-weight="700" font-size="58" fill="#FFFFFF" letter-spacing="-1">Import</text>
+  <text x="206" y="136" font-family="Georgia,Times New Roman,serif" font-weight="400" font-size="42" fill="url(#goldGrad)" letter-spacing="2">By Nel</text>
+
+  <!-- Horizontal gold line -->
+  <rect x="206" y="146" width="430" height="2" rx="1" fill="url(#goldGrad)"/>
+
+  <!-- Tagline -->
+  <text x="206" y="168" font-family="Arial,sans-serif" font-weight="300" font-size="12" fill="rgba(255,215,0,0.65)" letter-spacing="4">CHINA  ✦  GHANA  IMPORTATION</text>
+
+  <!-- Right side decorative stars -->
+  <text x="680" y="70" font-family="Arial,sans-serif" font-size="11" fill="rgba(255,215,0,0.4)" text-anchor="middle">✦</text>
+  <text x="700" y="90" font-family="Arial,sans-serif" font-size="7" fill="rgba(255,215,0,0.25)" text-anchor="middle">✦</text>
+  <text x="665" y="88" font-family="Arial,sans-serif" font-size="7" fill="rgba(255,215,0,0.25)" text-anchor="middle">✦</text>
+
+  <!-- Tagline right -->
+  <text x="680" y="115" font-family="Arial,sans-serif" font-weight="700" font-size="10" fill="rgba(255,255,255,0.35)" text-anchor="middle" letter-spacing="1">TESTED</text>
+  <text x="680" y="130" font-family="Arial,sans-serif" font-weight="700" font-size="10" fill="rgba(255,215,0,0.4)" text-anchor="middle" letter-spacing="1">TRUSTED</text>
+  <text x="680" y="145" font-family="Arial,sans-serif" font-weight="700" font-size="10" fill="rgba(255,255,255,0.35)" text-anchor="middle" letter-spacing="1">APPROVED</text>
+  <rect x="648" y="151" width="64" height="1.5" fill="rgba(255,215,0,0.3)" rx="1"/>
+  <text x="680" y="165" font-family="Arial,sans-serif" font-weight="400" font-size="9" fill="rgba(255,215,0,0.3)" text-anchor="middle">🇬🇭 EST. 2024</text>
+</svg>

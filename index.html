@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<meta name="theme-color" content="#2D1B69"/>
+<title>Import By Nel | China to Ghana</title>
+<link rel="manifest" href="manifest.json"/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+:root{
+  --p:#2D1B69;--p2:#3D2880;--p3:#1A0A3C;--plt:#F3F0FF;--pm:#6B52B5;
+  --g:#FFD700;--gd:#B8920A;--gl:#FFFBEA;
+  --w:#fff;--bg:#F7F6FF;--bg2:#EDE9FF;
+  --t:#1A1033;--t2:#4A4268;--mu:#9490B5;
+  --bd:#E0D8FF;--bd2:#C8BCFF;
+  --gr:#16A34A;--re:#DC2626;--wa:#25D366;
+  --r:14px;--rs:8px;
+  --s1:0 2px 12px rgba(45,27,105,.08);
+  --s2:0 6px 28px rgba(45,27,105,.15);
+  --s3:0 16px 60px rgba(45,27,105,.22);
+}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--t);font-size:15px;line-height:1.6;overflow-x:hidden;}
+img{max-width:100%;display:block;}
+a{text-decoration:none;color:inherit;}
+::-webkit-scrollbar{width:4px;}
+::-webkit-scrollbar-thumb{background:var(--pm);border-radius:2px;}
+#ldr{position:fixed;inset:0;background:var(--p3);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;transition:opacity .5s,visibility .5s;}
+#ldr.off{opacity:0;visibility:hidden;}
+.lhex{width:60px;height:60px;background:var(--g);border-radius:14px;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:13px;font-weight:800;color:var(--p3);animation:lp 1.2s ease-in-out infinite;}
+@keyframes lp{0%,100%{transform:scale(1);}50%{transform:scale(1.12);}}
+#ldr p{color:rgba(255,255,255,.4);font-size:14px;}
+.topbar{background:var(--p3);padding:7px 40px;display:flex;justify-content:space-between;align-items:center;font-size:12px;color:rgba(255,255,255,.5);}
+.topbar a{color:rgba(255,255,255,.5);}.topbar a:hover{color:var(--g);}
+.tbl{display:flex;gap:20px;}
+nav{background:var(--w);border-bottom:2px solid var(--bd);padding:0 40px;height:70px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200;box-shadow:var(--s1);}
+.nlogo{display:flex;align-items:center;gap:10px;}
+.nhex{width:42px;height:42px;flex-shrink:0;}
+.nhex svg{width:42px;height:42px;}
+.nname{font-family:'Syne',sans-serif;font-size:18px;font-weight:800;color:var(--p);letter-spacing:-.3px;line-height:1.1;}
+.nsub{font-size:10px;color:var(--mu);letter-spacing:.8px;text-transform:uppercase;}
+.nmid{flex:1;max-width:500px;margin:0 24px;}
+.nsrch{display:flex;background:var(--bg);border:2px solid var(--pm);border-radius:var(--rs);overflow:hidden;}
+.nsrch input{flex:1;padding:9px 14px;background:none;border:none;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--t);outline:none;}
+.nsb{background:var(--p);border:none;padding:9px 18px;color:var(--w);font-size:13px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;white-space:nowrap;}
+.nsb:hover{background:var(--p2);}
+.nr{display:flex;gap:8px;align-items:center;}
+.npb{background:var(--plt);border:1px solid var(--bd2);padding:8px 14px;border-radius:var(--rs);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;color:var(--p);cursor:pointer;}
+.nwa{background:var(--wa);color:var(--w);padding:9px 16px;border-radius:var(--rs);font-size:13px;font-weight:700;display:flex;align-items:center;gap:5px;white-space:nowrap;}
+.nwa:hover{background:#20B858;}
+.hbg{display:none;flex-direction:column;gap:4px;cursor:pointer;}
+.hbg span{width:22px;height:2px;background:var(--p);border-radius:2px;}
+.mnav{display:none;position:fixed;inset:0;background:var(--w);z-index:300;flex-direction:column;padding:20px;overflow-y:auto;}
+.mnav.open{display:flex;}
+.mnh{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;}
+.mnx{background:none;border:none;font-size:22px;cursor:pointer;}
+.mns{display:flex;border:2px solid var(--pm);border-radius:var(--rs);overflow:hidden;margin-bottom:18px;}
+.mns input{flex:1;padding:12px 14px;border:none;font-family:'DM Sans',sans-serif;font-size:14px;outline:none;}
+.mnsb{background:var(--p);border:none;padding:12px 16px;color:var(--w);font-weight:700;cursor:pointer;}
+.mnav a{padding:13px 0;border-bottom:1px solid var(--bd);font-size:15px;font-weight:500;color:var(--t);display:block;}
+.mnwa{background:var(--wa);color:var(--w)!important;padding:15px!important;border-radius:var(--r)!important;text-align:center;margin-top:14px;font-weight:700!important;}
+.catnav{background:var(--w);border-bottom:1px solid var(--bd);padding:0 40px;display:flex;gap:2px;overflow-x:auto;scrollbar-width:none;}
+.catnav::-webkit-scrollbar{display:none;}
+.cb{padding:11px 16px;border:none;background:none;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:700;color:var(--t2);cursor:pointer;white-space:nowrap;border-bottom:3px solid transparent;}
+.cb:hover{color:var(--p);}
+.cb.on{color:var(--p);border-bottom-color:var(--g);}
+.hero{background:var(--p3);position:relative;overflow:hidden;padding:0 40px;}
+.hero::before{content:'';position:absolute;top:-100px;right:-100px;width:460px;height:460px;background:radial-gradient(circle,rgba(100,60,220,.18) 0%,transparent 70%);}
+.hi{position:relative;z-index:1;display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center;padding:56px 0;}
+.htag{display:inline-flex;align-items:center;gap:6px;background:rgba(255,215,0,.12);border:1px solid rgba(255,215,0,.3);color:var(--g);padding:5px 14px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;margin-bottom:18px;}
+.hero h1{font-family:'Syne',sans-serif;font-size:clamp(26px,3.8vw,50px);font-weight:800;color:var(--w);line-height:1.05;margin-bottom:14px;letter-spacing:-.5px;}
+.hero h1 em{color:var(--g);font-style:normal;}
+.hdesc{font-size:15px;color:rgba(255,255,255,.58);line-height:1.7;margin-bottom:14px;}
+.hdbadge{display:inline-flex;align-items:center;gap:7px;background:rgba(255,215,0,.08);border:1px solid rgba(255,215,0,.22);color:rgba(255,215,0,.85);padding:8px 14px;border-radius:var(--rs);font-size:12px;font-weight:600;margin-bottom:22px;}
+.hsrch{background:var(--w);border-radius:var(--rs);overflow:hidden;display:flex;margin-bottom:14px;box-shadow:0 4px 24px rgba(0,0,0,.28);}
+.hsrch input{flex:1;padding:14px 18px;border:none;font-family:'DM Sans',sans-serif;font-size:15px;color:var(--t);outline:none;}
+.hsb{background:var(--p);border:none;padding:14px 24px;color:var(--w);font-size:15px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;}
+.hpb{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.16);color:rgba(255,255,255,.72);padding:10px 16px;border-radius:var(--rs);font-size:13px;font-weight:600;cursor:pointer;width:fit-content;font-family:'DM Sans',sans-serif;}
+.hst-row{display:flex;gap:22px;margin-top:26px;flex-wrap:wrap;}
+.hst{display:flex;align-items:center;gap:8px;}
+.hst-ico{width:30px;height:30px;background:rgba(255,215,0,.1);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:13px;}
+.hst-n{font-size:15px;font-weight:700;color:var(--w);}
+.hst-l{font-size:11px;color:rgba(255,255,255,.45);}
+.himgs{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.hic{border-radius:12px;overflow:hidden;position:relative;}
+.hic img{width:100%;object-fit:cover;display:block;}
+.hib{position:absolute;top:8px;left:8px;background:var(--g);color:var(--p3);font-size:10px;font-weight:800;padding:3px 9px;border-radius:4px;}
+.ppsec{display:none;background:var(--w);border-bottom:2px solid var(--bd);padding:24px 40px;}
+.ppsec.open{display:block;}
+.ppin{max-width:680px;margin:0 auto;}
+.ppsec h3{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;color:var(--p);margin-bottom:14px;}
+.pdrop{border:2px dashed var(--bd2);border-radius:var(--r);padding:36px;text-align:center;cursor:pointer;background:var(--bg);}
+.pdrop:hover{border-color:var(--p);background:var(--plt);}
+.pdrop input{display:none;}
+.pprev{display:none;margin-top:16px;text-align:center;}
+.pprev img{max-height:200px;border-radius:var(--rs);margin:0 auto 14px;border:2px solid var(--bd);}
+.ppnr{display:none;background:var(--plt);border:1px solid var(--bd2);border-radius:var(--r);padding:20px;text-align:center;margin-top:16px;}
+.vsec{position:relative;min-height:360px;overflow:hidden;background:var(--p3);display:flex;align-items:center;justify-content:center;}
+.vsec-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.28;}
+.vsec-ovl{position:absolute;inset:0;background:linear-gradient(135deg,rgba(26,10,60,.92) 0%,rgba(45,27,105,.65) 100%);}
+.vsec-c{position:relative;z-index:1;text-align:center;padding:52px 40px;}
+.vttl{font-family:'Syne',sans-serif;font-size:clamp(22px,3.5vw,44px);font-weight:800;color:var(--w);margin-bottom:12px;letter-spacing:-.3px;}
+.vttl em{color:var(--g);font-style:normal;}
+.vsub{font-size:15px;color:rgba(255,255,255,.6);max-width:540px;margin:0 auto 28px;line-height:1.7;}
+.vsteps{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin-bottom:28px;}
+.vstep{background:rgba(255,255,255,.06);border:1px solid rgba(255,215,0,.18);border-radius:var(--r);padding:16px 18px;min-width:130px;text-align:center;}
+.vstep-ico{font-size:26px;margin-bottom:6px;}
+.vstep-n{font-size:10px;font-weight:700;color:var(--g);text-transform:uppercase;letter-spacing:1px;margin-bottom:3px;}
+.vstep-l{font-size:12px;color:rgba(255,255,255,.75);font-weight:600;}
+.vcta{display:inline-flex;align-items:center;gap:8px;background:var(--wa);color:var(--w);padding:14px 28px;border-radius:var(--rs);font-family:'DM Sans',sans-serif;font-size:15px;font-weight:700;}
+.banners{padding:20px 40px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;}
+.banner{border-radius:var(--r);padding:18px 22px;display:flex;align-items:center;gap:14px;}
+.b1{background:linear-gradient(135deg,var(--p),var(--p2));}
+.b2{background:linear-gradient(135deg,#1A0A3C,#3D1A6E);}
+.b3{background:linear-gradient(135deg,#5B1FA0,var(--p));}
+.bio{font-size:28px;flex-shrink:0;}
+.bt{font-size:14px;font-weight:700;color:var(--w);margin-bottom:2px;}
+.bsub{font-size:11px;color:rgba(255,255,255,.58);}
+.sec{padding:28px 40px;}
+.sech{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;}
+.stt{font-family:'Syne',sans-serif;font-size:20px;font-weight:700;color:var(--p);}
+.stt em{color:var(--gd);font-style:normal;}
+.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(185px,1fr));gap:14px;}
+.pc{background:var(--w);border-radius:var(--r);overflow:hidden;cursor:pointer;border:1px solid var(--bd);transition:all .25s;}
+.pc:hover{box-shadow:var(--s2);transform:translateY(-3px);border-color:var(--pm);}
+.pc-img{height:200px;overflow:hidden;position:relative;background:var(--bg);}
+.pc-img img{width:100%;height:100%;object-fit:cover;transition:transform .4s;}
+.pc:hover .pc-img img{transform:scale(1.07);}
+.pbg{position:absolute;top:8px;left:8px;font-size:10px;font-weight:800;padding:3px 8px;border-radius:4px;}
+.bh{background:#FF3B3B;color:var(--w);}
+.bn{background:var(--p);color:var(--w);}
+.bsl{background:var(--g);color:var(--p3);}
+.pc-body{padding:11px 13px 13px;}
+.pc-name{font-size:13px;font-weight:600;color:var(--t);margin-bottom:4px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;line-height:1.4;}
+.pc-cat{font-size:11px;color:var(--mu);margin-bottom:8px;}
+.pc-ft{display:flex;align-items:center;justify-content:space-between;}
+.pc-av{font-size:11px;color:var(--gr);font-weight:600;}
+.pc-av::before{content:'';width:6px;height:6px;background:var(--gr);border-radius:50%;display:inline-block;margin-right:3px;}
+.obtn{background:var(--p);color:var(--w);border:none;padding:6px 13px;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;}
+.obtn:hover{background:var(--p2);}
+.dov{display:none;position:fixed;inset:0;background:rgba(26,10,60,.8);z-index:500;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(8px);}
+.dov.open{display:flex;}
+.dmod{background:var(--w);border-radius:var(--r);width:100%;max-width:860px;max-height:93vh;overflow-y:auto;box-shadow:var(--s3);animation:pi .25s ease;display:grid;grid-template-columns:1fr 1fr;}
+@keyframes pi{from{opacity:0;transform:scale(.95) translateY(14px);}to{opacity:1;transform:scale(1) translateY(0);}}
+.dim{position:relative;min-height:400px;}
+.dim img{width:100%;height:100%;object-fit:cover;display:block;border-radius:var(--r) 0 0 var(--r);}
+.dcls{position:absolute;top:12px;right:12px;width:34px;height:34px;border-radius:50%;background:rgba(0,0,0,.5);border:none;cursor:pointer;color:var(--w);font-size:16px;display:flex;align-items:center;justify-content:center;z-index:2;}
+.din{padding:28px;overflow-y:auto;}
+.dcat{font-size:11px;font-weight:700;color:var(--pm);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;}
+.dname{font-family:'Syne',sans-serif;font-size:22px;font-weight:700;color:var(--p);line-height:1.2;margin-bottom:10px;}
+.ddesc{font-size:14px;color:var(--t2);line-height:1.7;margin-bottom:18px;}
+.dlbl{font-size:11px;font-weight:700;color:var(--mu);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;}
+.dopts{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;}
+.dopt{padding:6px 14px;border:2px solid var(--bd2);border-radius:var(--rs);font-size:13px;font-weight:600;color:var(--p);cursor:pointer;background:none;font-family:'DM Sans',sans-serif;transition:all .15s;}
+.dopt:hover,.dopt.sel{background:var(--p);color:var(--w);border-color:var(--p);}
+.ddel{background:var(--gl);border:1px solid #E0C840;border-radius:var(--rs);padding:10px 14px;font-size:12px;color:#7A5800;margin-bottom:18px;font-weight:600;line-height:1.6;}
+.dwab{width:100%;padding:14px;background:var(--wa);color:var(--w);border:none;border-radius:var(--rs);font-family:'DM Sans',sans-serif;font-size:15px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:10px;}
+.dwab:hover{background:#20B858;}
+.dnote{font-size:12px;color:var(--mu);text-align:center;}
+.pag{display:flex;align-items:center;justify-content:center;gap:10px;margin-top:28px;}
+.pgb{background:var(--w);border:1px solid var(--bd2);padding:10px 22px;border-radius:var(--rs);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;cursor:pointer;color:var(--p);}
+.pgb:hover,.pgb.on{background:var(--p);color:var(--w);border-color:var(--p);}
+.pgi{font-size:13px;color:var(--mu);}
+.avsec{background:linear-gradient(135deg,var(--p3) 0%,#1E0F4A 100%);padding:32px 40px;}
+.avhd{display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:6px;}
+.avttl{font-family:'Syne',sans-serif;font-size:20px;font-weight:700;color:var(--w);}
+.avbg{background:rgba(255,215,0,.15);border:1px solid rgba(255,215,0,.3);color:var(--g);padding:4px 12px;border-radius:20px;font-size:11px;font-weight:700;}
+.avsub{font-size:14px;color:rgba(255,255,255,.5);margin-bottom:22px;}
+.agrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(185px,1fr));gap:14px;}
+.ac{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:var(--r);overflow:hidden;cursor:pointer;transition:all .25s;}
+.ac:hover{background:rgba(255,255,255,.1);transform:translateY(-3px);border-color:rgba(255,215,0,.4);}
+.ac-img{height:192px;overflow:hidden;position:relative;}
+.ac-img img{width:100%;height:100%;object-fit:cover;}
+.ac-body{padding:12px 13px 14px;}
+.ac-name{font-size:13px;font-weight:600;color:var(--w);margin-bottom:4px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+.ac-spec{font-size:11px;color:rgba(255,255,255,.45);margin-bottom:8px;}
+.ac-price{font-size:16px;font-weight:800;color:var(--g);margin-bottom:8px;}
+.ac-ft{display:flex;align-items:center;justify-content:space-between;}
+.abtn{background:var(--g);color:var(--p3);border:none;padding:7px 14px;border-radius:6px;font-size:12px;font-weight:800;cursor:pointer;font-family:'DM Sans',sans-serif;}
+.abtn-sold{background:rgba(255,255,255,.08);color:rgba(255,255,255,.3);border:none;padding:7px 14px;border-radius:6px;font-size:12px;cursor:not-allowed;}
+.sres{display:none;padding:24px 40px;}
+.sres.show{display:block;}
+.sno{background:var(--w);border:1px solid var(--bd);border-radius:var(--r);padding:44px;text-align:center;display:none;}
+.svcbg{background:var(--w);padding:36px 40px;}
+.svcg{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:20px;}
+.sc{border:1px solid var(--bd);border-radius:var(--r);overflow:hidden;transition:all .25s;}
+.sc:hover{box-shadow:var(--s2);border-color:var(--pm);}
+.sc-img{height:175px;overflow:hidden;}
+.sc-img img{width:100%;height:100%;object-fit:cover;}
+.sc-img-ph{width:100%;height:100%;background:var(--p3);display:flex;align-items:center;justify-content:center;font-size:52px;}
+.sc-b{padding:18px 20px;}
+.sc-b h3{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;color:var(--p);margin-bottom:7px;}
+.sc-b p{font-size:13px;color:var(--t2);line-height:1.6;margin-bottom:12px;}
+.sc-b ul{list-style:none;margin-bottom:12px;}
+.sc-b ul li{font-size:13px;color:var(--t2);padding:2px 0;display:flex;align-items:flex-start;gap:6px;}
+.sc-b ul li::before{content:'✦';color:var(--gd);font-size:9px;flex-shrink:0;margin-top:3px;}
+.sclnk{color:var(--p);font-size:13px;font-weight:700;}
+.howbg{background:var(--plt);padding:36px 40px;}
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-top:22px;}
+.step{background:var(--w);border-radius:var(--r);padding:22px 18px;text-align:center;border:1px solid var(--bd);}
+.step:hover{box-shadow:var(--s1);border-color:var(--g);}
+.stepn{width:42px;height:42px;background:linear-gradient(135deg,var(--p),var(--p2));color:var(--w);border-radius:50%;font-size:17px;font-weight:800;display:flex;align-items:center;justify-content:center;margin:0 auto 13px;}
+.step h3{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:var(--p);margin-bottom:6px;}
+.step p{font-size:12px;color:var(--t2);line-height:1.6;}
+.trkbg{background:var(--p3);padding:40px;}
+.trkin{max-width:680px;margin:0 auto;text-align:center;}
+.trkttl{font-family:'Syne',sans-serif;font-size:26px;font-weight:800;color:var(--w);margin-bottom:6px;}
+.trksub{font-size:14px;color:rgba(255,255,255,.5);margin-bottom:26px;}
+.trkbox{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:var(--r);padding:22px;}
+.trkrow{display:flex;gap:10px;}
+.trkinp{flex:1;padding:12px 15px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:var(--rs);font-family:'DM Sans',sans-serif;font-size:14px;color:var(--w);outline:none;}
+.trkinp::placeholder{color:rgba(255,255,255,.3);}
+.trkinp:focus{border-color:var(--g);}
+.trkbtn{background:var(--g);color:var(--p3);border:none;padding:12px 26px;border-radius:var(--rs);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:800;cursor:pointer;}
+.trkres{display:none;margin-top:18px;text-align:left;}
+.tcells{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0;}
+.tc{background:rgba(255,255,255,.06);border-radius:var(--rs);padding:11px 13px;border:1px solid rgba(255,255,255,.1);}
+.tc-l{font-size:11px;text-transform:uppercase;letter-spacing:.4px;color:rgba(255,255,255,.35);margin-bottom:3px;}
+.tc-v{font-size:14px;font-weight:600;color:var(--w);}
+.tc-v.gld{color:var(--g);}
+.tc-v.grn{color:#4ADE80;}
+.prog{display:flex;position:relative;margin-top:14px;}
+.prog::before{content:'';position:absolute;top:13px;left:13px;right:13px;height:2px;background:rgba(255,255,255,.12);}
+.pstep{flex:1;text-align:center;position:relative;z-index:1;}
+.pdot{width:26px;height:26px;border-radius:50%;border:2px solid rgba(255,255,255,.15);background:rgba(255,255,255,.04);display:flex;align-items:center;justify-content:center;margin:0 auto 5px;font-size:10px;font-weight:600;color:rgba(255,255,255,.3);}
+.pdot.done{background:var(--pm);border-color:var(--pm);color:var(--w);}
+.pdot.act{background:var(--g);border-color:var(--g);color:var(--p3);}
+.plbl{font-size:10px;color:rgba(255,255,255,.35);font-weight:500;}
+.plbl.done,.plbl.act{color:rgba(255,255,255,.8);font-weight:600;}
+.trknf{display:none;color:rgba(255,255,255,.5);font-size:13px;margin-top:12px;text-align:center;}
+.abtbg{background:var(--w);padding:40px;}
+.abtg{display:grid;grid-template-columns:1fr 1fr;gap:52px;align-items:center;}
+.abtimg{border-radius:var(--r);overflow:hidden;height:400px;}
+.abtimg img{width:100%;height:100%;object-fit:cover;}
+.abttag{display:inline-block;background:var(--plt);color:var(--p);padding:4px 12px;border-radius:20px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;margin-bottom:10px;}
+.abtttl{font-family:'Syne',sans-serif;font-size:clamp(20px,2.8vw,34px);font-weight:800;color:var(--p);line-height:1.15;margin-bottom:12px;}
+.aci{display:flex;align-items:flex-start;gap:9px;font-size:14px;color:var(--t2);padding:4px 0;}
+.acid{width:20px;height:20px;background:var(--g);border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--p3);font-size:10px;font-weight:800;flex-shrink:0;margin-top:1px;}
+.abtbs{display:flex;gap:12px;flex-wrap:wrap;margin-top:18px;}
+.abt-b{background:var(--plt);border:1px solid var(--bd2);border-radius:var(--rs);padding:10px 14px;text-align:center;flex:1;min-width:80px;}
+.abt-bn{font-family:'Syne',sans-serif;font-size:22px;font-weight:700;color:var(--p);}
+.abt-bl{font-size:11px;color:var(--mu);text-transform:uppercase;letter-spacing:.4px;}
+.revbg{background:var(--bg);padding:36px 40px;}
+.revg{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:20px;}
+.rc{background:var(--w);border:1px solid var(--bd);border-radius:var(--r);padding:22px;}
+.rstars{color:var(--g);font-size:14px;margin-bottom:10px;letter-spacing:2px;}
+.rtxt{font-size:14px;color:var(--t2);line-height:1.7;margin-bottom:14px;font-style:italic;}
+.rauth{display:flex;align-items:center;gap:10px;}
+.rav{width:36px;height:36px;border-radius:50%;background:var(--p);color:var(--w);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;}
+.rname{font-weight:700;font-size:14px;color:var(--p);}
+.rloc{font-size:12px;color:var(--mu);}
+.ctcbg{background:var(--w);padding:40px;}
+.ctcg{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:start;}
+.cil{display:flex;flex-direction:column;gap:16px;margin-bottom:22px;}
+.ci{display:flex;align-items:flex-start;gap:12px;}
+.ci-ico{width:40px;height:40px;background:var(--plt);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.ci-lbl{font-size:11px;color:var(--mu);text-transform:uppercase;letter-spacing:.4px;margin-bottom:2px;}
+.ci-val{font-size:14px;font-weight:600;color:var(--p);}
+.cform{background:var(--bg);border:1px solid var(--bd);border-radius:var(--r);padding:26px;}
+.cform h3{font-family:'Syne',sans-serif;font-size:17px;font-weight:700;color:var(--p);margin-bottom:16px;}
+.fg{margin-bottom:13px;}
+.fg label{display:block;font-size:11px;color:var(--mu);margin-bottom:4px;text-transform:uppercase;letter-spacing:.4px;font-weight:600;}
+.fg input,.fg textarea{width:100%;padding:11px 13px;border:1px solid var(--bd);border-radius:var(--rs);font-family:'DM Sans',sans-serif;font-size:14px;color:var(--t);background:var(--w);outline:none;}
+.fg input:focus,.fg textarea:focus{border-color:var(--p);}
+.fg textarea{height:78px;resize:vertical;}
+.wab{width:100%;padding:13px;background:var(--wa);color:var(--w);border:none;border-radius:var(--rs);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;}
+.wab:hover{background:#20B858;}
+.mapw{margin-top:18px;border-radius:var(--r);overflow:hidden;border:1px solid var(--bd);}
+footer{background:var(--p3);padding:48px 40px 22px;}
+.fgg{display:grid;grid-template-columns:2fr 1fr 1fr;gap:40px;margin-bottom:32px;}
+.fbrand{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+.fhex{width:38px;height:38px;background:var(--g);border-radius:9px;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:12px;font-weight:700;color:var(--p3);}
+.fname{font-family:'Syne',sans-serif;font-size:17px;font-weight:800;color:var(--w);}
+.fdesc{font-size:13px;color:rgba(255,255,255,.38);line-height:1.7;margin-bottom:16px;}
+.fwa{display:inline-flex;align-items:center;gap:6px;background:var(--wa);color:var(--w);padding:10px 18px;border-radius:var(--rs);font-size:13px;font-weight:700;}
+.fcol h4{font-size:12px;font-weight:700;color:rgba(255,255,255,.28);text-transform:uppercase;letter-spacing:.7px;margin-bottom:12px;}
+.fcol a{display:block;color:rgba(255,255,255,.48);font-size:13px;margin-bottom:8px;}
+.fcol a:hover{color:var(--g);}
+.fbot{border-top:1px solid rgba(255,255,255,.07);padding-top:18px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;font-size:12px;color:rgba(255,255,255,.28);}
+.fbot span:last-child{color:var(--g);font-weight:600;}
+.fltwa{position:fixed;bottom:24px;right:24px;z-index:90;width:56px;height:56px;border-radius:50%;background:var(--wa);color:var(--w);display:flex;align-items:center;justify-content:center;font-size:24px;box-shadow:0 4px 18px rgba(37,211,102,.45);text-decoration:none;transition:transform .3s;}
+.fltwa:hover{transform:scale(1.1);}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--p3);color:var(--w);padding:12px 22px;border-radius:var(--rs);font-size:14px;z-index:999;opacity:0;transition:all .3s;pointer-events:none;font-weight:600;border:1px solid rgba(255,215,0,.3);}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+@media(max-width:900px){
+  .topbar,.nmid{display:none;}
+  nav{padding:0 16px;}
+  .hbg{display:flex;}
+  .hero{padding:0 16px;}
+  .hi{grid-template-columns:1fr;padding:36px 0;}
+  .himgs{display:none;}
+  .banners{grid-template-columns:1fr;padding:16px;}
+  .catnav{padding:0 16px;}
+  .sec,.svcbg,.howbg,.abtbg,.revbg,.ctcbg,.trkbg,.avsec{padding:24px 16px;}
+  .svcg,.steps,.revg{grid-template-columns:1fr;}
+  .abtg,.ctcg,.fgg{grid-template-columns:1fr;}
+  .pgrid,.agrid{grid-template-columns:repeat(2,1fr);gap:10px;}
+  footer{padding:36px 16px 18px;}
+  .sres,.ppsec{padding:16px;}
+  .tcells{grid-template-columns:1fr;}
+  .dmod{grid-template-columns:1fr;max-width:440px;}
+  .dim{min-height:260px;}
+  .dim img{border-radius:var(--r) var(--r) 0 0;}
+  .vsteps{gap:10px;}
+  .vstep{min-width:110px;padding:12px 14px;}
+  .vsec-c{padding:36px 20px;}
+}
+</style></head>
+<body>
+<div id="ldr"><div class="lhex">IBN</div><p>Loading Import By Nel...</p></div>
+<div class="topbar">
+  <div class="tbl"><span>📞 <a href="tel:+233273752465">+233 273 752 465</a></span><span>📍 Kasoa Brigade, Ghana</span></div>
+  <a href="mailto:importbynel@gmail.com">✉️ importbynel@gmail.com</a>
+</div>
+<nav>
+  <div class="nlogo">
+    <div class="nhex"><svg viewBox="0 0 42 42" xmlns="http://www.w3.org/2000/svg"><polygon points="21,3 37,3 45,21 37,39 21,39 13,21" fill="#2D1B69"/><polygon points="21,3 37,3 45,21 37,39 21,39 13,21" fill="none" stroke="#FFD700" stroke-width="2"/><text x="21" y="20" font-family="Arial Black" font-weight="900" font-size="9" fill="#FFD700" text-anchor="middle">IBN</text><text x="21" y="30" font-family="Arial" font-size="5" fill="rgba(255,215,0,.6)" text-anchor="middle">IMPORTS</text></svg></div>
+    <div><div class="nname">Import By Nel</div><div class="nsub">China · Ghana</div></div>
+  </div>
+  <div class="nmid"><div class="nsrch"><input type="text" id="nq" placeholder="Search shoes, bags, dresses, electronics..." onkeydown="if(event.key==='Enter')doSearch(this.value)"/><button class="nsb" onclick="doSearch(document.getElementById('nq').value)">🔍 Search</button></div></div>
+  <div class="nr"><button class="npb" onclick="togglePhoto()">📷 Photo Search</button><a href="https://wa.me/233273752465?text=Hello!%20I%20want%20to%20order." target="_blank" class="nwa">💬 Order Now</a></div>
+  <div class="hbg" onclick="toggleMenu()"><span></span><span></span><span></span></div>
+</nav>
+<div class="mnav" id="mnav">
+  <div class="mnh"><div class="nlogo"><div class="nhex" style="width:36px;height:36px"><svg viewBox="0 0 42 42"><polygon points="21,3 37,3 45,21 37,39 21,39 13,21" fill="#2D1B69"/><polygon points="21,3 37,3 45,21 37,39 21,39 13,21" fill="none" stroke="#FFD700" stroke-width="2"/><text x="21" y="23" font-family="Arial Black" font-weight="900" font-size="11" fill="#FFD700" text-anchor="middle">IBN</text></svg></div><div class="nname" style="margin-left:8px">Import By Nel</div></div><button class="mnx" onclick="toggleMenu()">✕</button></div>
+  <div class="mns"><input type="text" id="mq" placeholder="Search any item..."/><button class="mnsb" onclick="doSearch(document.getElementById('mq').value);toggleMenu()">🔍</button></div>
+  <a href="#home" onclick="toggleMenu()">Home</a><a href="#catalogue" onclick="toggleMenu()">Pre-Order Catalogue</a><a href="#available" onclick="toggleMenu()">Available in Ghana</a><a href="#tracking" onclick="toggleMenu()">Track Order</a><a href="#services" onclick="toggleMenu()">Services</a><a href="#about" onclick="toggleMenu()">About</a><a href="#reviews" onclick="toggleMenu()">Reviews</a><a href="#contact" onclick="toggleMenu()">Contact</a>
+  <a href="https://wa.me/233273752465" target="_blank" class="mnwa">💬 Order on WhatsApp</a>
+</div>
+<div class="catnav">
+  <button class="cb on" onclick="filterCat('',this)">🏠 All</button>
+  <button class="cb" onclick="filterCat('Footwear',this)">👟 Footwear</button>
+  <button class="cb" onclick="filterCat('Bags',this)">👜 Bags</button>
+  <button class="cb" onclick="filterCat('Clothing',this)">👗 Clothing</button>
+  <button class="cb" onclick="filterCat('Beauty',this)">💄 Beauty</button>
+  <button class="cb" onclick="filterCat('Electronics',this)">📱 Electronics</button>
+  <button class="cb" onclick="filterCat('Home',this)">🏡 Home</button>
+  <button class="cb" onclick="filterCat('Kids',this)">🧒 Kids</button>
+  <button class="cb" onclick="filterCat('Accessories',this)">💍 Accessories</button>
+  <button class="cb" onclick="filterCat('Sports',this)">⚽ Sports</button>
+</div>
+<div class="ppsec" id="ppsec">
+  <div class="ppin">
+    <h3>📷 Search By Photo</h3>
+    <div class="pdrop" onclick="document.getElementById('pfile').click()" ondragover="event.preventDefault()" ondrop="onPDrop(event)">
+      <div style="font-size:36px;margin-bottom:10px">📷</div>
+      <p style="font-size:15px;color:var(--t2);margin-bottom:4px"><strong>Upload any photo</strong> of the item you want</p>
+      <p style="font-size:13px;color:var(--mu)">Saw it on Instagram, TikTok or anywhere? Upload it — we search trusted China shops for you!</p>
+      <input type="file" id="pfile" accept="image/*" onchange="onPFile(event)"/>
+    </div>
+    <div class="pprev" id="pprev"><img id="ppimg" alt="Your photo"/><button onclick="doPhotoSearch()" style="background:var(--p);color:var(--w);border:none;padding:12px 28px;border-radius:var(--rs);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;cursor:pointer;margin-top:8px">🔍 Find This Item</button></div>
+    <div class="ppnr" id="ppnr">
+      <p style="font-weight:700;color:var(--p);margin-bottom:6px">📸 Photo ready!</p>
+      <p style="font-size:13px;color:var(--t2);margin-bottom:10px">Add a description to help us find the exact item:</p>
+      <input type="text" id="pp-desc" placeholder="e.g. Women size L, red color..." style="width:100%;padding:10px 13px;border:1px solid var(--bd2);border-radius:var(--rs);font-family:'DM Sans',sans-serif;font-size:14px;margin-bottom:12px;outline:none"/>
+      <button onclick="sendPhotoWA()" style="background:var(--wa);color:var(--w);border:none;padding:12px 24px;border-radius:var(--rs);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;cursor:pointer">💬 Send to WhatsApp — We Find It!</button>
+    </div>
+  </div>
+</div>
+<section id="home">
+  <div class="hero">
+    <div class="hi">
+      <div>
+        <div class="htag">🇨🇳 China → 🇬🇭 Ghana</div>
+        <h1>Shop Any Item<br/>From China.<br/><em>We Deliver It.</em></h1>
+        <p class="hdesc">Browse our catalogue, upload a photo, or describe what you want — we source it from trusted China shops and deliver to you in Ghana.</p>
+        <div class="hdbadge">🚢 Orders arrive in 35–40 working days (Mon–Fri) including customs</div>
+        <div class="hsrch"><input type="text" id="hq" placeholder="e.g. Birkenstock, red dress, earbuds..."/><button class="hsb" onclick="doSearch(document.getElementById('hq').value)">Search</button></div>
+        <button class="hpb" onclick="togglePhoto()">📷 Can't describe it? Upload a photo instead</button>
+        <div class="hst-row">
+          <div class="hst"><div class="hst-ico">📦</div><div><div class="hst-n">500+</div><div class="hst-l">Orders Delivered</div></div></div>
+          <div class="hst"><div class="hst-ico">✅</div><div><div class="hst-n">100%</div><div class="hst-l">Quality Checked</div></div></div>
+          <div class="hst"><div class="hst-ico">💬</div><div><div class="hst-n">24/7</div><div class="hst-l">Support</div></div></div>
+        </div>
+      </div>
+      <div class="himgs">
+        <div class="hic" style="grid-column:span 2"><img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?w=700&q=80" alt="Fashion" style="height:170px;width:100%;border-radius:12px"/><div class="hib">🔥 New Arrivals</div></div>
+        <div class="hic"><img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&q=80" alt="Shoes" style="height:130px;width:100%;border-radius:12px"/><div class="hib">👟</div></div>
+        <div class="hic"><img src="https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=400&q=80" alt="Bags" style="height:130px;width:100%;border-radius:12px"/><div class="hib">👜</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="sres" id="sres">
+  <div class="sech"><div class="stt">Results for <em id="sq-txt"></em></div><button onclick="clearSearch()" style="background:none;border:1px solid var(--bd2);padding:6px 14px;border-radius:var(--rs);font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;color:var(--t2)">✕ Clear</button></div>
+  <div class="pgrid" id="srgrid"></div>
+  <div class="sno" id="sno"><div style="font-size:52px;margin-bottom:12px;opacity:.35">🔍</div><h3 style="font-family:'Syne',sans-serif;font-size:17px;color:var(--p);margin-bottom:8px">Not in our catalogue yet</h3><p style="font-size:14px;color:var(--t2);margin-bottom:16px">We can source ANY item from trusted China shops!</p><a href="#" id="sno-wa" target="_blank" style="display:inline-flex;align-items:center;gap:6px;background:var(--wa);color:var(--w);padding:12px 24px;border-radius:var(--rs);font-size:14px;font-weight:700">💬 Request on WhatsApp</a></div>
+</div>
+<div class="banners">
+  <div class="banner b1"><div class="bio">🚢</div><div><div class="bt">Monthly Pre-Orders</div><div class="bsub">Order before monthly deadline</div></div></div>
+  <div class="banner b2"><div class="bio">📷</div><div><div class="bt">Photo Search</div><div class="bsub">Upload any photo — we find it</div></div></div>
+  <div class="banner b3"><div class="bio">📦</div><div><div class="bt">Live Tracking</div><div class="bsub">Track your shipment real time</div></div></div>
+</div>
+<section class="vsec">
+  <img class="vsec-bg" src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=1600&q=80" alt="Container ship port"/>
+  <div class="vsec-ovl"></div>
+  <div class="vsec-c">
+    <div class="vttl">Your Items Travel <em>From China</em><br/>Straight To Your Door 🇬🇭</div>
+    <div class="vsub">Every month we ship containers packed with quality products from verified China suppliers. Sourced, inspected, shipped and delivered right to you.</div>
+    <div class="vsteps">
+      <div class="vstep"><div class="vstep-ico">🏭</div><div class="vstep-n">Step 1</div><div class="vstep-l">Sourced in China</div></div>
+      <div class="vstep"><div class="vstep-ico">✅</div><div class="vstep-n">Step 2</div><div class="vstep-l">Quality Checked</div></div>
+      <div class="vstep"><div class="vstep-ico">🚢</div><div class="vstep-n">Step 3</div><div class="vstep-l">Shipped by Sea</div></div>
+      <div class="vstep"><div class="vstep-ico">🛃</div><div class="vstep-n">Step 4</div><div class="vstep-l">Customs Cleared</div></div>
+      <div class="vstep"><div class="vstep-ico">🎁</div><div class="vstep-n">Step 5</div><div class="vstep-l">Delivered to You</div></div>
+    </div>
+    <a href="https://wa.me/233273752465?text=Hello!%20I%20want%20to%20start%20an%20order." target="_blank" class="vcta">💬 Start Your Order on WhatsApp</a>
+  </div>
+</section>
+<section class="sec" id="catalogue">
+  <div class="sech"><div class="stt">📦 Pre-Order <em>Catalogue</em></div><span style="font-size:13px;color:var(--mu)" id="pcount"></span></div>
+  <div class="pgrid" id="pgrid"></div>
+  <div class="pag" id="pag"></div>
+</section>
+<section class="avsec" id="available">
+  <div class="avhd"><div class="avttl">🇬🇭 Available in Ghana</div><span class="avbg">✅ In Stock — No Pre-Order</span></div>
+  <div class="avsub">These items are already here in Ghana — order now and receive quickly!</div>
+  <div class="agrid" id="agrid"></div>
+</section>
+<section class="howbg">
+  <div class="sech"><div class="stt">How It <em>Works</em></div></div>
+  <div class="steps">
+    <div class="step"><div class="stepn">1</div><h3>Search or Upload</h3><p>Search by name or upload any photo from Instagram, TikTok or anywhere!</p></div>
+    <div class="step"><div class="stepn">2</div><h3>Tap to View Detail</h3><p>Tap any item to see full detail view, pick colour and size, then order.</p></div>
+    <div class="step"><div class="stepn">3</div><h3>Confirm Price</h3><p>Nel confirms the exact price on WhatsApp. Pay and we source from China.</p></div>
+    <div class="step"><div class="stepn">4</div><h3>Track & Receive</h3><p>Get your tracking number — follow live. Arrives in 35–40 working days!</p></div>
+  </div>
+</section>
+<section class="svcbg" id="services">
+  <div class="sech"><div class="stt">Our <em>Services</em></div></div>
+  <div class="svcg">
+    <div class="sc"><div class="sc-img"><img src="https://images.unsplash.com/photo-1578575437130-527eed3abbec?w=600&q=80" alt="Shipping containers" onerror="this.parentElement.innerHTML='<div class=sc-img-ph>🏭</div>'"/></div><div class="sc-b"><h3>Import From China</h3><p>Full importation management from China to Ghana.</p><ul><li>Verified supplier sourcing</li><li>Factory and wholesale orders</li><li>Freight consolidation</li><li>Customs clearance support</li></ul><a href="https://wa.me/233273752465" target="_blank" class="sclnk">Start Importing →</a></div></div>
+    <div class="sc"><div class="sc-img"><img src="https://images.unsplash.com/photo-1566576912321-d58ddd7a6088?w=600&q=80" alt="Sourcing" onerror="this.parentElement.innerHTML='<div class=sc-img-ph>🔍</div>'"/></div><div class="sc-b"><h3>Product Sourcing</h3><p>Upload any photo — we find it from trusted China shops.</p><ul><li>Photo-based item search</li><li>Price negotiation</li><li>Quality verification</li><li>Supplier background checks</li></ul><a href="https://wa.me/233273752465" target="_blank" class="sclnk">Learn More →</a></div></div>
+    <div class="sc"><div class="sc-img"><img src="https://images.unsplash.com/photo-1542744095-291d1f67b221?w=600&q=80" alt="Business" onerror="this.parentElement.innerHTML='<div class=sc-img-ph>💼</div>'"/></div><div class="sc-b"><h3>Business Support</h3><p>Start your importation business with full guidance.</p><ul><li>Product recommendations</li><li>Budget planning</li><li>Profit margin guidance</li><li>Reseller packages</li></ul><a href="https://wa.me/233273752465" target="_blank" class="sclnk">Get Started →</a></div></div>
+  </div>
+</section>
+<section class="trkbg" id="tracking">
+  <div class="trkin">
+    <div class="trkttl">Track Your Order</div>
+    <div class="trksub">Enter your tracking number to see exactly where your shipment is right now</div>
+    <div class="trkbox">
+      <div class="trkrow"><input type="text" class="trkinp" id="tnum" placeholder="Enter tracking number e.g. NEL-2026-001" onkeydown="if(event.key==='Enter')doTrack()"/><button class="trkbtn" onclick="doTrack()">Track</button></div>
+      <div class="trkres" id="tres"></div>
+      <div class="trknf" id="tnf">❌ Not found. <a href="https://wa.me/233273752465" target="_blank" style="color:var(--g);font-weight:700">Contact us on WhatsApp</a>.</div>
+    </div>
+  </div>
+</section>
+<section class="abtbg" id="about">
+  <div class="abtg">
+    <div class="abtimg"><img src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=800&q=80" alt="About" onerror="this.parentElement.style.background='var(--p3)'"/></div>
+    <div>
+      <div class="abttag">About Us</div>
+      <div class="abtttl">Who Is Import By Nel?</div>
+      <p style="font-size:14px;color:var(--t2);line-height:1.7;margin-bottom:16px">Import By Nel is a trusted China-to-Ghana importation service based in Kasoa Brigade. <strong style="color:var(--p)">Tested. Trusted. &amp; Approved.</strong></p>
+      <div class="aci"><div class="acid">✓</div>Monthly pre-orders — arrive in 35–40 working days (Mon–Fri)</div>
+      <div class="aci"><div class="acid">✓</div>Direct sourcing from verified trusted China shops only</div>
+      <div class="aci"><div class="acid">✓</div>Photo search — find any item you see anywhere online</div>
+      <div class="aci"><div class="acid">✓</div>Real-time tracking for every single order</div>
+      <div class="aci"><div class="acid">✓</div>Open Monday – Sunday, 7:00am – 11:00pm</div>
+      <div class="abtbs">
+        <div class="abt-b"><div class="abt-bn">500+</div><div class="abt-bl">Orders</div></div>
+        <div class="abt-b"><div class="abt-bn">100%</div><div class="abt-bl">Quality</div></div>
+        <div class="abt-b"><div class="abt-bn">24/7</div><div class="abt-bl">Support</div></div>
+        <div class="abt-b"><div class="abt-bn">2+</div><div class="abt-bl">Yrs Active</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="revbg" id="reviews">
+  <div class="sech"><div class="stt">⭐ Customer <em>Reviews</em></div></div>
+  <div class="revg">
+    <div class="rc"><div class="rstars">★★★★★</div><p class="rtxt">"Sent a photo of shoes from Instagram — they found it in 2 hours! Arrived exactly as shown. Very impressed!"</p><div class="rauth"><div class="rav">AB</div><div><div class="rname">Abena Boateng</div><div class="rloc">📍 Kasoa</div></div></div></div>
+    <div class="rc"><div class="rstars">★★★★★</div><p class="rtxt">"Ordered clothes for my boutique. Quality was amazing and the tracking helped me know exactly when to expect my items!"</p><div class="rauth"><div class="rav">KA</div><div><div class="rname">Kofi Asante</div><div class="rloc">📍 Accra</div></div></div></div>
+    <div class="rc"><div class="rstars">★★★★★</div><p class="rtxt">"Nel is very professional and honest. Gave me the exact price before I paid and items arrived right on time!"</p><div class="rauth"><div class="rav">EM</div><div><div class="rname">Esi Mensah</div><div class="rloc">📍 Winneba</div></div></div></div>
+  </div>
+</section>
+<section class="ctcbg" id="contact">
+  <div class="sech"><div class="stt">📞 Contact <em>Us</em></div></div>
+  <div class="ctcg">
+    <div>
+      <div class="cil">
+        <div class="ci"><div class="ci-ico">📍</div><div><div class="ci-lbl">Location</div><div class="ci-val">Kasoa Brigade, Central Region, Ghana</div></div></div>
+        <div class="ci"><div class="ci-ico">💬</div><div><div class="ci-lbl">WhatsApp</div><div class="ci-val">+233 273 752 465</div></div></div>
+        <div class="ci"><div class="ci-ico">🕒</div><div><div class="ci-lbl">Working Hours</div><div class="ci-val">Monday – Sunday, 7:00am – 11:00pm</div></div></div>
+        <div class="ci"><div class="ci-ico">🚢</div><div><div class="ci-lbl">Delivery</div><div class="ci-val">35–40 working days (Mon–Fri) including customs</div></div></div>
+      </div>
+      <a href="https://wa.me/233273752465?text=Hello!%20I%20want%20to%20order." target="_blank" class="nwa" style="display:inline-flex;padding:12px 24px;font-size:14px">💬 Start Ordering on WhatsApp</a>
+      <div class="mapw"><iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d63522.5!2d-0.4167!3d5.5167!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2sKasoa!5e0!3m2!1sen!2sgh!4v1" width="100%" height="200" style="border:0;display:block" allowfullscreen="" loading="lazy"></iframe></div>
+    </div>
+    <div class="cform">
+      <h3>Send a Message</h3>
+      <div class="fg"><label>Your Name</label><input type="text" id="cn" placeholder="Full name"/></div>
+      <div class="fg"><label>WhatsApp Number</label><input type="tel" id="cp" placeholder="+233 ..."/></div>
+      <div class="fg"><label>What do you need?</label><textarea id="cm" placeholder="Tell us what item you want or any question..."></textarea></div>
+      <button class="wab" onclick="sendContact()">💬 Send via WhatsApp</button>
+    </div>
+  </div>
+</section>
+<footer>
+  <div class="fgg">
+    <div><div class="fbrand"><div class="fhex">IBN</div><div class="fname">Import By Nel</div></div><div class="fdesc">Your trusted China-to-Ghana importation partner. Orders arrive in 35–40 working days. Mon–Sun 7am–11pm. Tested. Trusted. &amp; Approved.</div><a href="https://wa.me/233273752465" target="_blank" class="fwa">💬 +233 273 752 465</a></div>
+    <div class="fcol"><h4>Pages</h4><a href="#home">Home</a><a href="#catalogue">Catalogue</a><a href="#available">Available in Ghana</a><a href="#tracking">Track Order</a><a href="#services">Services</a><a href="#about">About</a><a href="#reviews">Reviews</a><a href="#contact">Contact</a></div>
+    <div class="fcol"><h4>Services</h4><a href="#services">Import From China</a><a href="#services">Product Sourcing</a><a href="#services">Business Support</a><a href="#services">Bulk Orders</a><a href="admin.html" style="color:rgba(255,215,0,.15);font-size:11px;margin-top:8px">⚙ Admin</a></div>
+  </div>
+  <div class="fbot"><span>© 2026 Import By Nel. All Rights Reserved. Kasoa Brigade, Ghana.</span><span>Tested. Trusted. &amp; Approved. 🇬🇭</span></div>
+</footer>
+<a href="https://wa.me/233273752465?text=Hello!%20I%20want%20to%20order." target="_blank" class="fltwa">💬</a>
+<div class="dov" id="dov" onclick="bgclk(event)"><div class="dmod" id="dmod"><div class="dim" id="dim"></div><div class="din" id="din"></div></div></div>
+<div class="toast" id="toast"></div>
+<script type="module">
+import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import{getFirestore,collection,onSnapshot,query,orderBy}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+const app=initializeApp({apiKey:"AIzaSyAExcjS0SaEoKZvHXmj5ryZ8u_5DwEk1lk",authDomain:"nelle-s-shipping-track.firebaseapp.com",projectId:"nelle-s-shipping-track",storageBucket:"nelle-s-shipping-track.firebasestorage.app",messagingSenderId:"464513009072",appId:"1:464513009072:web:1866f20aaeada20f2fc275"});
+const db=getFirestore(app);
+onSnapshot(collection(db,'ibn_available'),s=>{window.AVAIL=s.docs.map(d=>({id:d.id,...d.data()}));typeof renderAvail==='function'&&renderAvail();});
+onSnapshot(collection(db,'ibn_tracking'),s=>{window.FTRK={};s.docs.forEach(d=>{const t=d.data();if(t.num)window.FTRK[t.num.toUpperCase()]=t;});});
+onSnapshot(query(collection(db,'ibn_catalogue'),orderBy('ts','desc')),s=>{window.CCAT=s.docs.map(d=>({fid:d.id,...d.data()}));typeof rebuildAll==='function'&&rebuildAll();});
+</script>
+<script>
+const WA='233273752465',PER=30;
+let pg=1,cat='',curItem=null,pdata=null,sc='',ss='';
+window.AVAIL=[];window.FTRK={};window.CCAT=[];
+
+const BASE=[
+  {id:1,n:"Women's Birkenstock Arizona Two-Strap Sandal",c:'Footwear',d:'Classic two-strap cork footbed sandal.',img:'https://images.unsplash.com/photo-1562183241-b937e95585b6?w=500&q=80',b:'hot',cols:['Black','Brown','White','Beige'],szs:['36','37','38','39','40','41']},
+  {id:2,n:"Men's Birkenstock Boston Closed-Toe Clog",c:'Footwear',d:'Closed-toe clog with cork footbed.',img:'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=500&q=80',b:'hot',cols:['Black','Dark Brown','Mocha'],szs:['40','41','42','43','44','45','46']},
+  {id:3,n:"Children's Birkenstock Sandals",c:'Kids',d:'Adjustable sandals for growing children.',img:'https://images.unsplash.com/photo-1604671801908-9f2e91f5e8fb?w=500&q=80',b:'new',cols:['Pink','Blue','Yellow','Red'],szs:['28','29','30','31','32','33','34','35']},
+  {id:4,n:"Birkenstock Platform Mule Sandal",c:'Footwear',d:'Elevated platform Birkenstock mule.',img:'https://images.unsplash.com/photo-1603487742131-4160ec999306?w=500&q=80',b:null,cols:['Black','White','Cream'],szs:['36','37','38','39','40','41']},
+  {id:5,n:"Birkenstock Gizeh Thong Toe-Post Sandal",c:'Footwear',d:'Iconic toe-post thong sandal.',img:'https://images.unsplash.com/photo-1551107696-a4b0c5a0d9a2?w=500&q=80',b:'sale',cols:['Brown','Black','White'],szs:['36','37','38','39','40','41','42']},
+  {id:6,n:"Birkenstock Mayari Strappy Toe-Post Sandal",c:'Footwear',d:'Woven strappy toe-post with ankle strap.',img:'https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=500&q=80',b:null,cols:['Black','Silver','White'],szs:['36','37','38','39','40','41']},
+  {id:7,n:"Men's Birkenstock Zurich Slide",c:'Footwear',d:'Minimal single-strap slide for men.',img:'https://images.unsplash.com/photo-1465453869711-7e174808ace9?w=500&q=80',b:null,cols:['Black','Oiled Brown','Navy'],szs:['40','41','42','43','44','45','46']},
+  {id:8,n:"Birkenstock Super-Birki Professional Clog",c:'Footwear',d:'Lightweight professional clog.',img:'https://images.unsplash.com/photo-1585386959984-a4155224a1ad?w=500&q=80',b:'new',cols:['Black','White','Grey'],szs:['36','37','38','39','40','41','42','43']},
+  {id:9,n:"Birkenstock Yao Sneaker Cork Insole",c:'Footwear',d:'Sneaker style with cork comfort.',img:'https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=500&q=80',b:'new',cols:['White','Black','Grey Blue'],szs:['36','37','38','39','40','41','42']},
+  {id:10,n:"Birkenstock Papillio Wedge-Heel Sandal",c:'Footwear',d:'Wedge-heeled Birkenstock.',img:'https://images.unsplash.com/photo-1535530992830-e25d07cfa780?w=500&q=80',b:null,cols:['Black','Floral','Beige'],szs:['36','37','38','39','40','41']},
+  {id:11,n:"Women's Birkenstock Florida Soft Footbed",c:'Footwear',d:'Florida sandal with plush soft footbed.',img:'https://images.unsplash.com/photo-1487222477894-8943e31ef7b2?w=500&q=80',b:'sale',cols:['Black','Tobacco','Habana Brown'],szs:['36','37','38','39','40','41']},
+  {id:12,n:"Women's Block-Heel Ankle Strap Sandals",c:'Footwear',d:'Block-heel sandals with ankle buckle.',img:'https://images.unsplash.com/photo-1518049362265-d5b2a6467637?w=500&q=80',b:'hot',cols:['Black','Nude','White','Red'],szs:['36','37','38','39','40','41']},
+  {id:13,n:"Women's Chunky Platform Sneakers",c:'Footwear',d:'Thick-sole platform trainers.',img:'https://images.unsplash.com/photo-1608231387042-66d1773070a5?w=500&q=80',b:'new',cols:['White','Black/White','Pink'],szs:['36','37','38','39','40','41']},
+  {id:14,n:"Women's Pointed-Toe Stiletto Heels",c:'Footwear',d:'Classic stiletto heels.',img:'https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=500&q=80',b:null,cols:['Black','Nude','Red','Silver'],szs:['36','37','38','39','40','41']},
+  {id:15,n:"Women's Soft Flat Ballet Pumps",c:'Footwear',d:'Comfortable flat ballet pumps.',img:'https://images.unsplash.com/photo-1487222477894-8943e31ef7b2?w=500&q=80',b:'sale',cols:['Black','Nude','White','Pink'],szs:['36','37','38','39','40','41']},
+  {id:16,n:"Men's Leather-Look Slip-On Loafer",c:'Footwear',d:'Smart slip-on loafers.',img:'https://images.unsplash.com/photo-1614252235316-8c857d38b5f4?w=500&q=80',b:null,cols:['Black','Brown'],szs:['40','41','42','43','44','45']},
+  {id:17,n:"Men's Lightweight Running Trainers",c:'Footwear',d:'Breathable lightweight running shoes.',img:'https://images.unsplash.com/photo-1491553895911-0055eca6402d?w=500&q=80',b:'hot',cols:['Black/White','Blue/White','Red/White'],szs:['40','41','42','43','44','45','46']},
+  {id:18,n:"Men's Dior-Style Luxury Slides",c:'Footwear',d:'Premium Dior-inspired luxury slides.',img:'https://images.unsplash.com/photo-1465453869711-7e174808ace9?w=500&q=80',b:'hot',cols:['Black','White','Brown'],szs:['40','41','42','43','44','45','46']},
+  {id:19,n:"Men's Classic Oxford Dress Shoes",c:'Footwear',d:'Classic Oxford shoes for formal wear.',img:'https://images.unsplash.com/photo-1533867617858-e7b97e060509?w=500&q=80',b:null,cols:['Black','Brown','Tan'],szs:['40','41','42','43','44','45']},
+  {id:20,n:"Women's Wedge Espadrille Sandals",c:'Footwear',d:'Classic rope-wedge espadrille sandals.',img:'https://images.unsplash.com/photo-1562183241-b937e95585b6?w=500&q=80',b:null,cols:['Beige','Black','Navy'],szs:['36','37','38','39','40','41']},
+  {id:21,n:'Large Canvas Tote Bag with Pendant',c:'Bags',d:'Spacious tote with decorative pendant.',img:'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=500&q=80',b:'hot',cols:['Black','Brown','Beige','Pink'],szs:['One Size']},
+  {id:22,n:'Quilted Chain-Strap Shoulder Bag',c:'Bags',d:'Elegant quilted bag with gold chain.',img:'https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=500&q=80',b:'new',cols:['Black','Beige','Pink','Red'],szs:['One Size']},
+  {id:23,n:'Small Crossbody Mini Shoulder Bag',c:'Bags',d:'Compact crossbody with adjustable strap.',img:'https://images.unsplash.com/photo-1594938298603-c8148c4b4869?w=500&q=80',b:null,cols:['Black','Brown','White','Red'],szs:['One Size']},
+  {id:24,n:'Luxury Handbag with Gold Hardware',c:'Bags',d:'Premium structured bag with gold hardware.',img:'https://images.unsplash.com/photo-1590874103328-eac38a683ce7?w=500&q=80',b:'hot',cols:['Black','Beige','Brown','Red'],szs:['One Size']},
+  {id:25,n:'Drawstring Bucket Style Bag',c:'Bags',d:'Trendy drawstring bucket bag.',img:'https://images.unsplash.com/photo-1566150905458-1bf1fc113f0d?w=500&q=80',b:null,cols:['Black','Brown','Tan'],szs:['One Size']},
+  {id:26,n:'Large Plush Fluffy Shoulder Bag',c:'Bags',d:'Oversized teddy-style shoulder bag.',img:'https://images.unsplash.com/photo-1575032617751-6ddec2089882?w=500&q=80',b:'new',cols:['Pink','Grey','Black','Cream'],szs:['One Size']},
+  {id:27,n:"Men's Professional Laptop Briefcase",c:'Bags',d:'Sleek briefcase with laptop compartment.',img:'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=500&q=80',b:null,cols:['Black','Dark Brown','Navy'],szs:['One Size']},
+  {id:28,n:'Multi-Compartment Travel Backpack',c:'Bags',d:'Large backpack for school or travel.',img:'https://images.unsplash.com/photo-1622560480605-d83c853bc5c3?w=500&q=80',b:null,cols:['Black','Grey','Blue','Pink'],szs:['One Size']},
+  {id:29,n:'Woven Straw Summer Beach Bag',c:'Bags',d:'Lightweight woven beach tote.',img:'https://images.unsplash.com/photo-1594938298603-c8148c4b4869?w=500&q=80',b:'sale',cols:['Natural','Black/Natural'],szs:['One Size']},
+  {id:30,n:'Mini Bum Bag Fanny Pack',c:'Bags',d:'Trendy mini bum bag.',img:'https://images.unsplash.com/photo-1594938298603-c8148c4b4869?w=500&q=80',b:'new',cols:['Black','Brown','Pink'],szs:['One Size']},
+  {id:31,n:'Floral Print Midi Wrap Dress',c:'Clothing',d:'Beautiful floral midi wrap dress.',img:'https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?w=500&q=80',b:'hot',cols:['Red Floral','Blue Floral','Yellow','Pink'],szs:['S','M','L','XL','XXL']},
+  {id:32,n:'Satin Silk Short Pyjama Set',c:'Clothing',d:'Ultra-soft satin pyjama short set.',img:'https://images.unsplash.com/photo-1631046215893-c30d6f1e4d67?w=500&q=80',b:'new',cols:['Pink','Blue','White','Purple','Black'],szs:['S','M','L','XL','XXL']},
+  {id:33,n:'Satin Silk Long Pyjama Set',c:'Clothing',d:'Elegant long-sleeve satin pyjama set.',img:'https://images.unsplash.com/photo-1618354691373-d851c5c3a990?w=500&q=80',b:null,cols:['Pink','Blue','White','Purple','Black'],szs:['S','M','L','XL','XXL']},
+  {id:34,n:"Women's Ribbed Bodycon Mini Dress",c:'Clothing',d:'Figure-hugging ribbed bodycon dress.',img:'https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?w=500&q=80',b:'hot',cols:['Black','Red','White','Olive','Blue'],szs:['S','M','L','XL']},
+  {id:35,n:"Women's Oversized Structured Blazer",c:'Clothing',d:'Sharp oversized blazer jacket.',img:'https://images.unsplash.com/photo-1551232864-3f0890e580d9?w=500&q=80',b:'new',cols:['Black','White','Beige','Pink'],szs:['S','M','L','XL']},
+  {id:36,n:"Men's Classic Cotton Polo Shirt",c:'Clothing',d:'Classic cotton polo shirt.',img:'https://images.unsplash.com/photo-1620012253295-c15cc3e65df4?w=500&q=80',b:null,cols:['White','Black','Navy','Red'],szs:['S','M','L','XL','XXL']},
+  {id:37,n:'High-Waist Skinny Stretch Jeans',c:'Clothing',d:'High-waist skinny stretch jeans.',img:'https://images.unsplash.com/photo-1542272604-787c3835535d?w=500&q=80',b:null,cols:['Light Blue','Dark Blue','Black'],szs:['26','27','28','29','30','31','32','33','34']},
+  {id:38,n:'Wide-Leg Palazzo Trousers',c:'Clothing',d:'Flowy wide-leg palazzo pants.',img:'https://images.unsplash.com/photo-1594938298603-c8148c4b4869?w=500&q=80',b:'sale',cols:['Black','White','Beige','Green'],szs:['S','M','L','XL','XXL']},
+  {id:39,n:'Matching Co-Ord Two-Piece Set',c:'Clothing',d:'Trendy matching top and skirt set.',img:'https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?w=500&q=80',b:'new',cols:['Black','White','Pink','Green'],szs:['S','M','L','XL']},
+  {id:40,n:'Satin Evening Slip Dress',c:'Clothing',d:'Elegant satin slip dress for events.',img:'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=500&q=80',b:'hot',cols:['Black','Champagne','Pink','Red'],szs:['S','M','L','XL']},
+  {id:41,n:'Nourishing Lip Balm Set (6 Pieces)',c:'Beauty',d:'6 moisturising lip balms in assorted flavours.',img:'https://images.unsplash.com/photo-1586495777744-4e6232bf2803?w=500&q=80',b:null,cols:['Assorted'],szs:['One Size']},
+  {id:42,n:'Professional Hair Care Toolkit (27pcs)',c:'Beauty',d:'Complete 27-piece professional hair kit.',img:'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=500&q=80',b:'hot',cols:['Black/Gold'],szs:['One Size']},
+  {id:43,n:'Vitamin C Brightening Face Serum',c:'Beauty',d:'Brightening serum with Vitamin C.',img:'https://images.unsplash.com/photo-1556228578-0d85b1a4d571?w=500&q=80',b:'new',cols:['One Variant'],szs:['30ml','50ml']},
+  {id:44,n:'Luxury Perfume Gift Set',c:'Beauty',d:'Long-lasting fragrance gift set.',img:'https://images.unsplash.com/photo-1541643600914-78b084683702?w=500&q=80',b:null,cols:['Assorted Scents'],szs:['50ml','100ml']},
+  {id:45,n:'Rechargeable Electric Face Massager',c:'Beauty',d:'Facial massage and skin lifting device.',img:'https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=500&q=80',b:'new',cols:['Pink','White','Rose Gold'],szs:['One Size']},
+  {id:46,n:'Cordless Automatic Hair Curling Wand',c:'Beauty',d:'Rechargeable automatic hair curler.',img:'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=500&q=80',b:'hot',cols:['Pink','White','Black'],szs:['One Size']},
+  {id:47,n:'Jade Roller & Gua Sha Facial Set',c:'Beauty',d:'Natural jade roller and gua sha set.',img:'https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=500&q=80',b:'sale',cols:['Green Jade','Pink Rose Quartz'],szs:['One Size']},
+  {id:48,n:'Complete Gel Nail Art Kit with UV Lamp',c:'Beauty',d:'Full nail art set with UV lamp.',img:'https://images.unsplash.com/photo-1604654894610-df63bc536371?w=500&q=80',b:null,cols:['Assorted'],szs:['One Size']},
+  {id:49,n:'Active Noise Cancelling Wireless Earbuds',c:'Electronics',d:'TWS earbuds with ANC and long battery.',img:'https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=500&q=80',b:'hot',cols:['Black','White'],szs:['One Size']},
+  {id:50,n:'Smart Fitness Watch with Heart Rate Monitor',c:'Electronics',d:'Smartwatch with steps and heart rate.',img:'https://images.unsplash.com/photo-1434494878577-86c23bcb06b9?w=500&q=80',b:'new',cols:['Black','Silver','Rose Gold'],szs:['One Size']},
+  {id:51,n:'Portable Waterproof Bluetooth Speaker',c:'Electronics',d:'Compact waterproof Bluetooth speaker.',img:'https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?w=500&q=80',b:null,cols:['Black','Red','Blue'],szs:['One Size']},
+  {id:52,n:'20000mAh Fast-Charge Power Bank',c:'Electronics',d:'High capacity power bank.',img:'https://images.unsplash.com/photo-1609091839311-d5365f9ff1c5?w=500&q=80',b:'hot',cols:['Black','White','Silver'],szs:['One Size']},
+  {id:53,n:'LED Ring Light with Stand',c:'Electronics',d:'Professional ring light for content creation.',img:'https://images.unsplash.com/photo-1625314897518-bb4fe6e95229?w=500&q=80',b:'new',cols:['White'],szs:['10 inch','14 inch','18 inch']},
+  {id:54,n:'Wireless Phone Charging Pad',c:'Electronics',d:'Fast Qi wireless charging for all devices.',img:'https://images.unsplash.com/photo-1609091839311-d5365f9ff1c5?w=500&q=80',b:null,cols:['Black','White'],szs:['One Size']},
+  {id:55,n:'Double-Wall Insulated Tumbler Bottle',c:'Home',d:'Keeps drinks hot or cold for hours.',img:'https://images.unsplash.com/photo-1602143407151-7111542de6e8?w=500&q=80',b:'sale',cols:['Pink','Blue','Green','Black','White'],szs:['500ml','750ml','1L']},
+  {id:56,n:'Ceramic Coffee Mug Set (4 Pieces)',c:'Home',d:'Beautiful ceramic mugs for coffee or tea.',img:'https://images.unsplash.com/photo-1514228742587-6b1558fcca3d?w=500&q=80',b:null,cols:['White','Black','Pastel Mix'],szs:['One Size']},
+  {id:57,n:'LED Fairy String Lights Decorative',c:'Home',d:'Decorative LED fairy lights.',img:'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=500&q=80',b:'hot',cols:['Warm White','Multicolor','Rose Gold'],szs:['3m','5m','10m']},
+  {id:58,n:'Ultrasonic Aromatherapy Diffuser LED',c:'Home',d:'Ultrasonic oil diffuser with colour LED.',img:'https://images.unsplash.com/photo-1555465910-31dec7475f58?w=500&q=80',b:'new',cols:['White','Wood Grain','Black'],szs:['One Size']},
+  {id:59,n:'Ceramic Non-Stick Frying Pan with Lid',c:'Home',d:'Healthy ceramic non-stick frying pan.',img:'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=500&q=80',b:null,cols:['Red','Black','Teal'],szs:['24cm','28cm','30cm']},
+  {id:60,n:'Soft Fluffy Sofa Throw Blanket',c:'Home',d:'Super-soft fluffy throw for sofa or bed.',img:'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=500&q=80',b:null,cols:['Grey','Beige','Pink','Navy'],szs:['130x150cm','150x200cm']},
+  {id:61,n:"Children's School Backpack",c:'Kids',d:'Durable kids school bag.',img:'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=500&q=80',b:'hot',cols:['Red','Blue','Pink','Green'],szs:['One Size']},
+  {id:62,n:"Children's Birkenstock Sandals Colour",c:'Kids',d:'Fun colourful Birkenstock sandals for kids.',img:'https://images.unsplash.com/photo-1604671801908-9f2e91f5e8fb?w=500&q=80',b:'new',cols:['Pink','Blue','Yellow','Red'],szs:['28','29','30','31','32','33','34','35']},
+  {id:63,n:"Kids' Colourful Water Bottle",c:'Kids',d:'Fun leak-proof water bottle.',img:'https://images.unsplash.com/photo-1602143407151-7111542de6e8?w=500&q=80',b:null,cols:['Pink','Blue','Yellow'],szs:['350ml','500ml']},
+  {id:64,n:'Educational Building Block Toy Set',c:'Kids',d:'Creative educational building blocks.',img:'https://images.unsplash.com/photo-1566479179817-c0d95f74b5f1?w=500&q=80',b:'new',cols:['Multicolor'],szs:['50 pieces','100 pieces']},
+  {id:65,n:"Children's Waterproof Rain Boots",c:'Kids',d:'Colourful waterproof rain boots.',img:'https://images.unsplash.com/photo-1566479179817-c0d95f74b5f1?w=500&q=80',b:null,cols:['Pink Stars','Blue Dino','Yellow Duck'],szs:['26','27','28','29','30','31','32']},
+  {id:66,n:'UV400 Fashion Sunglasses',c:'Accessories',d:'Trendy UV-protected sunglasses.',img:'https://images.unsplash.com/photo-1511499767150-a48a237f0083?w=500&q=80',b:'new',cols:['Black','Brown','Pink','Blue Mirror'],szs:['One Size']},
+  {id:67,n:'Dainty Layered Gold Chain Necklace',c:'Accessories',d:'Delicate layered gold-tone necklace.',img:'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=500&q=80',b:'hot',cols:['Gold','Silver','Rose Gold'],szs:['One Size']},
+  {id:68,n:'Freshwater Pearl Drop Earrings',c:'Accessories',d:'Elegant pearl drop earrings.',img:'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=500&q=80',b:null,cols:['White Pearl','Black Pearl'],szs:['One Size']},
+  {id:69,n:'Colourful Handcrafted Waist Bead Set',c:'Accessories',d:'Traditional handcrafted waist beads.',img:'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=500&q=80',b:'new',cols:['Multicolor','Red/Gold','Blue/Silver'],szs:['One Size']},
+  {id:70,n:'Non-Slip Thick Yoga & Exercise Mat',c:'Sports',d:'Premium non-slip exercise mat.',img:'https://images.unsplash.com/photo-1601925260368-ae2f83cf8b7f?w=500&q=80',b:'new',cols:['Purple','Blue','Pink','Black'],szs:['Standard','Extra Thick']},
+  {id:71,n:'Resistance Exercise Bands Set (5 Levels)',c:'Sports',d:'5 resistance bands for home workouts.',img:'https://images.unsplash.com/photo-1517344800994-e8ef8d82f9cc?w=500&q=80',b:null,cols:['Multicolor Set'],szs:['One Size']},
+  {id:72,n:"Women's High-Waist Sports Leggings",c:'Sports',d:'High-waist workout leggings with pocket.',img:'https://images.unsplash.com/photo-1538805060514-97d9cc17730c?w=500&q=80',b:'hot',cols:['Black','Navy','Grey','Wine Red'],szs:['XS','S','M','L','XL','XXL']},
+  {id:73,n:'Large Motivational Sports Water Bottle',c:'Sports',d:'Large sports bottle with time markers.',img:'https://images.unsplash.com/photo-1601925260368-ae2f83cf8b7f?w=500&q=80',b:'sale',cols:['Black','Grey','Blue','Pink'],szs:['1L','1.5L','2L']},
+  {id:74,n:'Speed Jump Rope Adjustable',c:'Sports',d:'Lightweight speed skipping rope.',img:'https://images.unsplash.com/photo-1517344800994-e8ef8d82f9cc?w=500&q=80',b:null,cols:['Black','Red','Blue'],szs:['One Size']},
+  {id:75,n:"Men's Linen Button-Down Shirt",c:'Clothing',d:'Breathable linen shirt for warm weather.',img:'https://images.unsplash.com/photo-1620012253295-c15cc3e65df4?w=500&q=80',b:'new',cols:['White','Beige','Light Blue','Olive'],szs:['S','M','L','XL','XXL']},
+  {id:76,n:'Cargo Multi-Pocket Trousers',c:'Clothing',d:'Trendy cargo pants with multiple pockets.',img:'https://images.unsplash.com/photo-1594938298603-c8148c4b4869?w=500&q=80',b:null,cols:['Khaki','Black','Grey','Olive'],szs:['S','M','L','XL','XXL']},
+  {id:77,n:"Men's Jogger Tracksuit Set",c:'Clothing',d:'Matching jogger sweatsuit set.',img:'https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=500&q=80',b:null,cols:['Black','Grey','Navy','Olive'],szs:['S','M','L','XL','XXL']},
+  {id:78,n:'Ruffle Off-Shoulder Summer Dress',c:'Clothing',d:'Romantic ruffle off-shoulder dress.',img:'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=500&q=80',b:'sale',cols:['White','Pink','Floral','Blue'],szs:['S','M','L','XL']},
+  {id:79,n:'Satin Evening Slip Maxi Dress',c:'Clothing',d:'Elegant satin maxi dress for events.',img:'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=500&q=80',b:'hot',cols:['Black','Champagne','Red','Emerald'],szs:['S','M','L','XL']},
+  {id:80,n:'Soft Fleece Pullover Hoodie',c:'Clothing',d:'Cosy fleece pullover hoodie.',img:'https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=500&q=80',b:null,cols:['Grey','Black','White','Pink'],szs:['S','M','L','XL','XXL']},
+];
+const EXTRAS=[
+  ['Eyebrow Pencil Set (5 Shades)','Beauty','https://images.unsplash.com/photo-1512496015851-a90fb38ba796?w=500&q=80'],
+  ['Collagen Sheet Face Masks (10 Pack)','Beauty','https://images.unsplash.com/photo-1556228578-0d85b1a4d571?w=500&q=80'],
+  ['Men Cologne Body Spray Gift Set','Beauty','https://images.unsplash.com/photo-1541643600914-78b084683702?w=500&q=80'],
+  ['Nail Polish Set (12 Colours)','Beauty','https://images.unsplash.com/photo-1604654894610-df63bc536371?w=500&q=80'],
+  ['Hair Growth Castor Oil Serum','Beauty','https://images.unsplash.com/photo-1556228578-0d85b1a4d571?w=500&q=80'],
+  ['Body Shimmer Glow Lotion','Beauty','https://images.unsplash.com/photo-1556228578-0d85b1a4d571?w=500&q=80'],
+  ['Wireless Karaoke Microphone Speaker','Electronics','https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?w=500&q=80'],
+  ['Mechanical Gaming Keyboard RGB','Electronics','https://images.unsplash.com/photo-1598986646512-9330bcc4c0dc?w=500&q=80'],
+  ['USB-C 7-in-1 Multi-Port Hub','Electronics','https://images.unsplash.com/photo-1609091839311-d5365f9ff1c5?w=500&q=80'],
+  ['Over-Ear Wireless Headphones','Electronics','https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=500&q=80'],
+  ['Smart LED Desk Lamp USB Rechargeable','Electronics','https://images.unsplash.com/photo-1625314897518-bb4fe6e95229?w=500&q=80'],
+  ['4K Action Camera Waterproof','Electronics','https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?w=500&q=80'],
+  ['Kitchen Knife Set (5 Pieces)','Home','https://images.unsplash.com/photo-1593618998160-e34014e67546?w=500&q=80'],
+  ['Decorative Cushion Cover Set (4pcs)','Home','https://images.unsplash.com/photo-1555465910-31dec7475f58?w=500&q=80'],
+  ['LED Smart Colour Strip Lights 5m','Home','https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=500&q=80'],
+  ['Moon Lamp LED Night Light','Home','https://images.unsplash.com/photo-1555465910-31dec7475f58?w=500&q=80'],
+  ['Scented Soy Wax Candle Set','Home','https://images.unsplash.com/photo-1555465910-31dec7475f58?w=500&q=80'],
+  ['Stainless Steel Lunch Box Set','Home','https://images.unsplash.com/photo-1602143407151-7111542de6e8?w=500&q=80'],
+  ['Pantry Storage Container Set','Home','https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=500&q=80'],
+  ['Silk Pillowcase Anti-Frizz','Home','https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=500&q=80'],
+  ['Baby Carrier Soft Wrap Sling','Kids','https://images.unsplash.com/photo-1566479179817-c0d95f74b5f1?w=500&q=80'],
+  ['Baby Bibs Set with Snaps (6pcs)','Kids','https://images.unsplash.com/photo-1566479179817-c0d95f74b5f1?w=500&q=80'],
+  ['Kids Colouring Art Set','Kids','https://images.unsplash.com/photo-1566479179817-c0d95f74b5f1?w=500&q=80'],
+  ['Kids Snack Lunch Box','Kids','https://images.unsplash.com/photo-1566479179817-c0d95f74b5f1?w=500&q=80'],
+  ['Children Light-Up LED Trainers','Kids','https://images.unsplash.com/photo-1566479179817-c0d95f74b5f1?w=500&q=80'],
+  ['Gold Layered Ring Set','Accessories','https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=500&q=80'],
+  ['Hair Claw Clip Set (6 Pieces)','Accessories','https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=500&q=80'],
+  ['Silk Satin Hair Bonnet Sleeping Cap','Accessories','https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=500&q=80'],
+  ['Slim Leather Wallet Card Holder','Accessories','https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=500&q=80'],
+  ['Minimalist Watch Leather Strap','Accessories','https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=500&q=80'],
+  ['Ab Roller Core Training Wheel','Sports','https://images.unsplash.com/photo-1601925260368-ae2f83cf8b7f?w=500&q=80'],
+  ['Foam Roller Muscle Massage','Sports','https://images.unsplash.com/photo-1517344800994-e8ef8d82f9cc?w=500&q=80'],
+  ['Gym Duffel Sports Bag','Sports','https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=500&q=80'],
+  ['Athletic Sports Bra Set (3 Pack)','Sports','https://images.unsplash.com/photo-1538805060514-97d9cc17730c?w=500&q=80'],
+  ['Adjustable Ankle Weights Pair','Sports','https://images.unsplash.com/photo-1517344800994-e8ef8d82f9cc?w=500&q=80'],
+  ['Puffer Vest Gilet Jacket','Clothing','https://images.unsplash.com/photo-1551232864-3f0890e580d9?w=500&q=80'],
+  ['Knit Ribbed Cardigan','Clothing','https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=500&q=80'],
+  ['Oversized Graphic Print T-Shirt','Clothing','https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=500&q=80'],
+  ['Formal Long Evening Gown','Clothing','https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=500&q=80'],
+  ['Tailored Smart Trousers Women','Clothing','https://images.unsplash.com/photo-1594938298603-c8148c4b4869?w=500&q=80'],
+  ["Men's Smart Chino Trousers",'Clothing','https://images.unsplash.com/photo-1594938298603-c8148c4b4869?w=500&q=80'],
+  ['Women Platform Knee-High Boots','Footwear','https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=500&q=80'],
+  ["Men's Pool Slides Casual Flip Flop",'Footwear','https://images.unsplash.com/photo-1465453869711-7e174808ace9?w=500&q=80'],
+  ['Transparent Clear Heel Sandal','Footwear','https://images.unsplash.com/photo-1487222477894-8943e31ef7b2?w=500&q=80'],
+  ['Beaded Friendship Bracelet Set','Accessories','https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=500&q=80'],
+  ['Silk Hair Scarf Head Wrap','Accessories','https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=500&q=80'],
+  ['Crystal Rhinestone Bobby Pins Set','Accessories','https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=500&q=80'],
+  ['Rattan Wicker Structured Handbag','Bags','https://images.unsplash.com/photo-1590874103328-eac38a683ce7?w=500&q=80'],
+  ['Clear Jelly Transparent Tote Bag','Bags','https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=500&q=80'],
+  ['Travel Weekender Overnight Bag','Bags','https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=500&q=80'],
+  ['Wristlet Phone Wallet Bag','Bags','https://images.unsplash.com/photo-1594938298603-c8148c4b4869?w=500&q=80'],
+  ['Retractable Luggage Suitcase','Bags','https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=500&q=80'],
+  ['Reusable Eco Shopping Bag Set','Home','https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=500&q=80'],
+  ['Compression Travel Packing Cubes','Home','https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=500&q=80'],
+  ['Foldable Compact Umbrella','Home','https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=500&q=80'],
+  ['Marble Print Serving Tray Board','Home','https://images.unsplash.com/photo-1514228742587-6b1558fcca3d?w=500&q=80'],
+  ['Nonstick Baking Tray Set','Home','https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=500&q=80'],
+  ['Yoga Balance Wobble Board','Sports','https://images.unsplash.com/photo-1517344800994-e8ef8d82f9cc?w=500&q=80'],
+  ['Swimming Goggles with Case','Sports','https://images.unsplash.com/photo-1517344800994-e8ef8d82f9cc?w=500&q=80'],
+  ['Men Training Compression Shorts','Sports','https://images.unsplash.com/photo-1538805060514-97d9cc17730c?w=500&q=80'],
+  ['Beard Oil Growth Serum Men','Beauty','https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=500&q=80'],
+  ['Hair Edge Control Brush Set','Beauty','https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=500&q=80'],
+  ['Deep Conditioning Hair Mask','Beauty','https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=500&q=80'],
+  ['Lash Lift & Brow Lamination Kit','Beauty','https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=500&q=80'],
+  ['Bluetooth Mini USB Fan Rechargeable','Electronics','https://images.unsplash.com/photo-1609091839311-d5365f9ff1c5?w=500&q=80'],
+  ['Smart Night Light Motion Sensor','Electronics','https://images.unsplash.com/photo-1625314897518-bb4fe6e95229?w=500&q=80'],
+  ['Selfie Remote Bluetooth Shutter','Electronics','https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?w=500&q=80'],
+  ['Adjustable Phone Tripod Stand','Electronics','https://images.unsplash.com/photo-1625314897518-bb4fe6e95229?w=500&q=80'],
+  ['Mini Portable Projector','Electronics','https://images.unsplash.com/photo-1625314897518-bb4fe6e95229?w=500&q=80'],
+  ["Women's Wrap Shirt Blouse",'Clothing','https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?w=500&q=80'],
+  ['Smocked Puff Sleeve Dress','Clothing','https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?w=500&q=80'],
+  ['Matching Family Pyjama Set','Clothing','https://images.unsplash.com/photo-1631046215893-c30d6f1e4d67?w=500&q=80'],
+  ["Men's Muscle Fit Gym Tank Top",'Clothing','https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=500&q=80'],
+  ['Printed Kimono Beach Cover-Up','Clothing','https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=500&q=80'],
+  ['Cropped Denim Jacket','Clothing','https://images.unsplash.com/photo-1551232864-3f0890e580d9?w=500&q=80'],
+  ["Women's Chelsea Ankle Boots",'Footwear','https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=500&q=80'],
+  ["Men's Slip-On Canvas Shoes",'Footwear','https://images.unsplash.com/photo-1491553895911-0055eca6402d?w=500&q=80'],
+  ["Women's Heel Mule Backless Shoe",'Footwear','https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=500&q=80'],
+  ['Vintage Brass Picture Frame Set','Home','https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=500&q=80'],
+  ['Colourful Stackable Storage Boxes','Home','https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=500&q=80'],
+  ['Outdoor Picnic Waterproof Mat','Home','https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=500&q=80'],
+  ['Vintage Round Frame Sunglasses','Accessories','https://images.unsplash.com/photo-1511499767150-a48a237f0083?w=500&q=80'],
+  ['Gold Hoop Earrings Set (3 Pairs)','Accessories','https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=500&q=80'],
+  ['Chunky Chain Statement Necklace','Accessories','https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=500&q=80'],
+  ['Reading Glasses Stylish Frame','Accessories','https://images.unsplash.com/photo-1511499767150-a48a237f0083?w=500&q=80'],
+  ['Yoga Foam Block Set (2 Pieces)','Sports','https://images.unsplash.com/photo-1601925260368-ae2f83cf8b7f?w=500&q=80'],
+  ['Adjustable Dumbbells Set','Sports','https://images.unsplash.com/photo-1517344800994-e8ef8d82f9cc?w=500&q=80'],
+  ['Sports Running Belt Waist Pack','Sports','https://images.unsplash.com/photo-1601925260368-ae2f83cf8b7f?w=500&q=80'],
+  ['Silicone Baby Teething Toy Set','Kids','https://images.unsplash.com/photo-1566479179817-c0d95f74b5f1?w=500&q=80'],
+  ['Kids Waterproof Sunhat','Kids','https://images.unsplash.com/photo-1566479179817-c0d95f74b5f1?w=500&q=80'],
+  ['Baby Socks Newborn Pack (6 Pairs)','Kids','https://images.unsplash.com/photo-1566479179817-c0d95f74b5f1?w=500&q=80'],
+  ['Kids Learning Tablet Toy','Kids','https://images.unsplash.com/photo-1566479179817-c0d95f74b5f1?w=500&q=80'],
+  ['Baby Play Mat Soft Foam','Kids','https://images.unsplash.com/photo-1566479179817-c0d95f74b5f1?w=500&q=80'],
+  ['Eyeglasses Blue Light Blocking','Accessories','https://images.unsplash.com/photo-1511499767150-a48a237f0083?w=500&q=80'],
+  ['Acrylic Makeup Organiser Tower','Home','https://images.unsplash.com/photo-1512496015851-a90fb38ba796?w=500&q=80'],
+  ['Bathroom Organiser Shelf Rack','Home','https://images.unsplash.com/photo-1555465910-31dec7475f58?w=500&q=80'],
+  ['Wall Mounted Coat Hooks Set','Home','https://images.unsplash.com/photo-1555465910-31dec7475f58?w=500&q=80'],
+  ['Wireless Earphone Headband Kids','Electronics','https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=500&q=80'],
+  ["Women's Sports Crop Top Set",'Sports','https://images.unsplash.com/photo-1538805060514-97d9cc17730c?w=500&q=80'],
+  ['Body Lotion Scrub Gift Set','Beauty','https://images.unsplash.com/photo-1556228578-0d85b1a4d571?w=500&q=80'],
+  ['Full Coverage Foundation Set','Beauty','https://images.unsplash.com/photo-1512496015851-a90fb38ba796?w=500&q=80'],
+  ['Contour Highlight Palette','Beauty','https://images.unsplash.com/photo-1512496015851-a90fb38ba796?w=500&q=80'],
+  ['Electric Callus Foot File Remover','Beauty','https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=500&q=80'],
+  ['Crystal Deodorant Natural Stone','Beauty','https://images.unsplash.com/photo-1556228578-0d85b1a4d571?w=500&q=80'],
+  ["Men's Cap Sports Hat",'Accessories','https://images.unsplash.com/photo-1511499767150-a48a237f0083?w=500&q=80'],
+  ["Men's Casual Leather Belt",'Accessories','https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=500&q=80'],
+  ['Oversized Knitted Tote Bag','Bags','https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=500&q=80'],
+  ['Quilted Diamond-Pattern Mini Bag','Bags','https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=500&q=80'],
+];
+const blist=['hot','new','sale',null,null,null];
+const ALL_BASE=[...BASE];
+EXTRAS.forEach((e,i)=>ALL_BASE.push({id:200+i,n:e[0],c:e[1],d:`Quality ${e[0]} sourced from trusted China shops.`,img:e[2],b:blist[(200+i)%6],cols:['As Shown','Black','White'],szs:['One Size','S','M','L']}));
+while(ALL_BASE.length<300){const x=ALL_BASE.length;const ref=BASE[x%BASE.length];ALL_BASE.push({...ref,id:2000+x,n:ref.n+' (Style '+(Math.floor(x/BASE.length)+2)+')'});}
+window.ALL_P=[...ALL_BASE];
+
+function rebuildAll(){
+  const custom=(window.CCAT||[]).map((c,i)=>({id:'fb_'+i,n:c.name||c.n||'Item',c:c.cat||c.c||'Other',d:c.desc||c.d||'',img:c.img||'',b:c.badge||c.b||null,cols:c.colors||c.cols||['As Shown'],szs:c.sizes||c.szs||['One Size']}));
+  window.ALL_P=[...custom,...ALL_BASE];
+  renderProds();
+}
+window.rebuildAll=rebuildAll;
+window.renderAvail=renderAvail;
+
+function getList(){const l=window.ALL_P||ALL_BASE;return cat?l.filter(p=>p.c===cat):l;}
+function renderProds(){
+  const l=getList();
+  const tot=l.length,pages=Math.ceil(tot/PER),start=(pg-1)*PER,page=l.slice(start,start+PER);
+  document.getElementById('pcount').textContent=`${start+1}–${Math.min(start+PER,tot)} of ${tot} items`;
+  document.getElementById('pgrid').innerHTML=page.map((p,i)=>`
+    <div class="pc" onclick="openDetail('${p.id}')">
+      <div class="pc-img">
+        <img src="${p.img}" alt="${p.n}" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1483985988355-763728e1935b?w=400&q=80'"/>
+        ${p.b?`<div class="pbg ${p.b==='hot'?'bh':p.b==='new'?'bn':'bsl'}">${p.b==='hot'?'🔥 HOT':p.b==='new'?'✨ NEW':'💰 SALE'}</div>`:''}
+      </div>
+      <div class="pc-body">
+        <div class="pc-name">${p.n}</div>
+        <div class="pc-cat">${p.c} · Pre-Order</div>
+        <div class="pc-ft"><span class="pc-av">Pre-Order</span><button class="obtn" onclick="event.stopPropagation();openDetail('${p.id}')">View</button></div>
+      </div>
+    </div>`).join('');
+  const pa=document.getElementById('pag');
+  if(pages<=1){pa.innerHTML='';return;}
+  let h='';
+  if(pg>1)h+=`<button class="pgb" onclick="goPage(${pg-1})">← Previous</button>`;
+  h+=`<span class="pgi">Page ${pg} of ${pages}</span>`;
+  if(pg<pages)h+=`<button class="pgb" onclick="goPage(${pg+1})">Next Page →</button>`;
+  pa.innerHTML=h;
+}
+function goPage(p){pg=p;renderProds();document.getElementById('catalogue').scrollIntoView({behavior:'smooth'});}
+function filterCat(c,btn){cat=c;pg=1;clearSearch();document.querySelectorAll('.cb').forEach(b=>b.classList.remove('on'));btn.classList.add('on');rebuildAll();}
+
+function renderAvail(){
+  const items=window.AVAIL||[],g=document.getElementById('agrid');
+  if(!items.length){g.innerHTML='<p style="color:rgba(255,255,255,.4);grid-column:1/-1;padding:20px;text-align:center">No available items right now. Check back soon!</p>';return;}
+  g.innerHTML=items.map(a=>`
+    <div class="ac" style="${a.sold?'opacity:.6;cursor:not-allowed;':''}" onclick="${a.sold?'':'openAvail(''+a.id+'')'}">
+      <div class="ac-img">
+        <img src="${a.img||'https://images.unsplash.com/photo-1483985988355-763728e1935b?w=400&q=80'}" alt="${a.name||''}" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1483985988355-763728e1935b?w=400&q=80'"/>
+        <div style="position:absolute;top:8px;left:8px;background:${a.sold?'#DC2626':'#16A34A'};color:#fff;font-size:11px;font-weight:800;padding:3px 9px;border-radius:4px">${a.sold?'SOLD OUT':'IN GHANA ✅'}</div>
+      </div>
+      <div class="ac-body">
+        <div class="ac-name">${a.name||''}</div>
+        <div class="ac-spec">${a.spec||''}</div>
+        <div class="ac-price">${a.price||''}</div>
+        <div class="ac-ft"><span style="font-size:11px;font-weight:600;color:${a.sold?'#FF6B6B':'#4ADE80'}">${a.sold?'Sold Out':'In Stock'}</span>${a.sold?'<button class="abtn-sold">Sold Out</button>':`<button class="abtn" onclick="event.stopPropagation();openAvail('${a.id}')">Buy Now</button>`}</div>
+      </div>
+    </div>`).join('');
+}
+
+function openDetail(id){
+  const l=window.ALL_P||ALL_BASE;
+  const p=l.find(x=>String(x.id)===String(id));
+  if(!p)return;
+  curItem=p;sc='';ss='';
+  document.getElementById('dim').innerHTML=`
+    <button class="dcls" onclick="closeDetail()">✕</button>
+    <img src="${p.img}" alt="${p.n}" style="min-height:400px" onerror="this.src='https://images.unsplash.com/photo-1483985988355-763728e1935b?w=400&q=80'"/>
+    ${p.b?`<div class="pbg ${p.b==='hot'?'bh':p.b==='new'?'bn':'bsl'}" style="position:absolute;top:14px;left:14px">${p.b==='hot'?'🔥 HOT':p.b==='new'?'✨ NEW':'💰 SALE'}</div>`:''}`;
+  document.getElementById('din').innerHTML=`
+    <div class="dcat">${p.c} · Pre-Order from China</div>
+    <div class="dname">${p.n}</div>
+    <div class="ddesc">${p.d||'Quality item sourced directly from trusted China shops.'}</div>
+    <div class="dlbl">Select Colour</div>
+    <div class="dopts" id="colopts">${(p.cols||['As Shown']).map(c=>`<button class="dopt" onclick="selOpt(this,'col','${c}')">${c}</button>`).join('')}</div>
+    <div class="dlbl">Select Size</div>
+    <div class="dopts" id="szopts">${(p.szs||['One Size']).map(s=>`<button class="dopt" onclick="selOpt(this,'sz','${s}')">${s}</button>`).join('')}</div>
+    <div class="ddel">🚢 Pre-order item — arrives in <strong>35–40 working days (Mon–Fri)</strong> including customs clearance in Ghana</div>
+    <button class="dwab" onclick="sendDetailWA()">💬 Order This on WhatsApp</button>
+    <div class="dnote">Nel will confirm the exact price on WhatsApp</div>`;
+  document.getElementById('dov').classList.add('open');
+}
+function selOpt(btn,t,v){const g=t==='col'?'colopts':'szopts';document.querySelectorAll('#'+g+' .dopt').forEach(b=>b.classList.remove('sel'));btn.classList.add('sel');t==='col'?sc=v:ss=v;}
+function sendDetailWA(){
+  if(!curItem)return;
+  const m=`Hello Import By Nel! 👋
+
+📦 *Item:* ${curItem.n}
+🎨 *Colour:* ${sc||'To confirm'}
+📏 *Size:* ${ss||'To confirm'}
+🔗 *Photo:* ${curItem.img}
+
+⏰ I understand it takes 35–40 working days (Mon–Fri) to arrive.
+
+Please send me the price!`;
+  window.open(`https://wa.me/${WA}?text=${encodeURIComponent(m)}`,'_blank');
+  closeDetail();
+}
+function closeDetail(){document.getElementById('dov').classList.remove('open');}
+function bgclk(e){if(e.target===document.getElementById('dov'))closeDetail();}
+
+function openAvail(id){
+  const a=(window.AVAIL||[]).find(x=>x.id===id);
+  if(!a||a.sold)return;
+  const m=`Hello Import By Nel! 👋
+
+🛍️ *Item:* ${a.name||''}
+💰 *Price:* ${a.price||''}
+📋 *Details:* ${a.spec||'N/A'}
+🔗 *Photo:* ${a.img||''}
+
+This item is available in Ghana. Please confirm. Thank you!`;
+  window.open(`https://wa.me/${WA}?text=${encodeURIComponent(m)}`,'_blank');
+}
+
+function doSearch(q){
+  if(!q||!q.trim()){clearSearch();return;}
+  q=q.trim();
+  document.getElementById('sq-txt').textContent='"'+q+'"';
+  const l=window.ALL_P||ALL_BASE;
+  const r=l.filter(p=>(p.n||'').toLowerCase().includes(q.toLowerCase())||(p.c||'').toLowerCase().includes(q.toLowerCase())||(p.d||'').toLowerCase().includes(q.toLowerCase()));
+  const sec=document.getElementById('sres');
+  sec.classList.add('show');
+  sec.scrollIntoView({behavior:'smooth',block:'start'});
+  document.getElementById('sno').style.display=r.length?'none':'block';
+  if(!r.length){
+    document.getElementById('srgrid').innerHTML='';
+    document.getElementById('sno-wa').href=`https://wa.me/${WA}?text=${encodeURIComponent('Hello Import By Nel! 👋
+
+I am searching for: "'+q+'"
+
+Can you source this from China? Please send me the price!')}`;
+  } else {
+    document.getElementById('srgrid').innerHTML=r.slice(0,30).map(p=>`
+      <div class="pc" onclick="openDetail('${p.id}')">
+        <div class="pc-img"><img src="${p.img}" alt="${p.n}" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1483985988355-763728e1935b?w=400&q=80'"/>${p.b?`<div class="pbg ${p.b==='hot'?'bh':p.b==='new'?'bn':'bsl'}">${p.b==='hot'?'🔥 HOT':p.b==='new'?'✨ NEW':'💰 SALE'}</div>`:''}</div>
+        <div class="pc-body"><div class="pc-name">${p.n}</div><div class="pc-cat">${p.c}</div><div class="pc-ft"><span class="pc-av">Pre-Order</span><button class="obtn" onclick="event.stopPropagation();openDetail('${p.id}')">View</button></div></div>
+      </div>`).join('');
+  }
+  document.getElementById('nq').value=q;
+}
+function clearSearch(){document.getElementById('sres').classList.remove('show');document.getElementById('nq').value='';document.getElementById('hq').value='';}
+
+function togglePhoto(){const p=document.getElementById('ppsec');p.classList.toggle('open');if(p.classList.contains('open'))p.scrollIntoView({behavior:'smooth'});}
+function onPDrop(e){e.preventDefault();const f=e.dataTransfer.files[0];if(f&&f.type.startsWith('image/'))loadP(f);}
+function onPFile(e){const f=e.target.files[0];if(f)loadP(f);}
+function loadP(f){const r=new FileReader();r.onload=ev=>{pdata=ev.target.result;document.getElementById('ppimg').src=pdata;document.getElementById('pprev').style.display='block';};r.readAsDataURL(f);}
+function doPhotoSearch(){if(!pdata){toast('Please upload a photo first');return;}document.getElementById('ppnr').style.display='block';document.getElementById('pprev').scrollIntoView({behavior:'smooth'});}
+function sendPhotoWA(){const d=document.getElementById('pp-desc').value.trim();const m=`Hello Import By Nel! 👋
+
+I have a photo of an item I want from China.
+
+${d?'Description: '+d+'
+
+':''}Please help me find this and send the price!`;window.open(`https://wa.me/${WA}?text=${encodeURIComponent(m)}`,'_blank');toast('Opening WhatsApp! Please attach your photo 📸');}
+
+function doTrack(){
+  const n=document.getElementById('tnum').value.trim().toUpperCase();
+  const tr=document.getElementById('tres'),nf=document.getElementById('tnf');
+  if(!n){toast('Please enter your tracking number');return;}
+  const demo={'NEL-2026-001':{num:'NEL-2026-001',item:'Mixed Clothing & Accessories',qty:'45 pieces',cont:'MSKU7234891',status:'In Transit',etd:'15 Mar 2026',eta:'10 Apr 2026',from:'Guangzhou, China',to:'Tema Port, Ghana',step:2},'NEL-2026-002':{num:'NEL-2026-002',item:'Footwear & Bags Collection',qty:'60 pieces',cont:'TCKU3456782',status:'Arrived at Port',etd:'20 Mar 2026',eta:'14 Apr 2026',from:'Guangzhou, China',to:'Tema Port, Ghana',step:3}};
+  const d=(window.FTRK||{})[n]||demo[n];
+  if(!d){tr.style.display='none';nf.style.display='block';return;}
+  nf.style.display='none';
+  const steps=['Order Placed','Processing','In Transit','At Port','Delivered'];
+  const si=Math.max(0,['Order Placed','Processing','In Transit','Arrived at Port','Delivered'].indexOf(d.status));
+  tr.innerHTML=`<div style="font-size:15px;font-weight:700;color:var(--w);margin-bottom:12px">📦 ${d.item}</div>
+    <div class="tcells">
+      <div class="tc"><div class="tc-l">Tracking #</div><div class="tc-v gld">${n}</div></div>
+      <div class="tc"><div class="tc-l">Status</div><div class="tc-v grn">${d.status}</div></div>
+      <div class="tc"><div class="tc-l">Quantity</div><div class="tc-v">${d.qty||'—'}</div></div>
+      <div class="tc"><div class="tc-l">Container</div><div class="tc-v">${d.cont||'—'}</div></div>
+      <div class="tc"><div class="tc-l">Departed</div><div class="tc-v">${d.etd||'—'}</div></div>
+      <div class="tc"><div class="tc-l">Arriving</div><div class="tc-v">${d.eta||'—'}</div></div>
+      <div class="tc"><div class="tc-l">Origin</div><div class="tc-v">${d.from||'China'}</div></div>
+      <div class="tc"><div class="tc-l">Destination</div><div class="tc-v">${d.to||'Ghana'}</div></div>
+    </div>
+    <div class="prog">${steps.map((s,i)=>`<div class="pstep"><div class="pdot ${i<si?'done':i===si?'act':''}">${i<si?'✓':'·'}</div><div class="plbl ${i<si?'done':i===si?'act':''}">${s}</div></div>`).join('')}</div>`;
+  tr.style.display='block';
+}
+function sendContact(){const n=document.getElementById('cn').value.trim(),p=document.getElementById('cp').value.trim(),m=document.getElementById('cm').value.trim();if(!m){toast('Please tell us what you need');return;}window.open(`https://wa.me/${WA}?text=${encodeURIComponent('Hello Import By Nel!👋
+
+'+(n?'Name: '+n+'\n':'')+(p?'Phone: '+p+'\n':'')+'Message: '+m)}`,'_blank');}
+function toggleMenu(){document.getElementById('mnav').classList.toggle('open');}
+let tt;function toast(m){const e=document.getElementById('toast');e.textContent=m;e.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>e.classList.remove('show'),3000);}
+rebuildAll();
+window.addEventListener('load',()=>setTimeout(()=>{const l=document.getElementById('ldr');l.classList.add('off');setTimeout(()=>l.style.display='none',500);},800));
+</script>
+</body>
+</html>

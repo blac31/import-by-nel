@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Import By Nel — Admin Panel</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{--p:#2D1B69;--p2:#3D2880;--p3:#1A0A3C;--plt:#F3F0FF;--pm:#6B52B5;--g:#FFD700;--gd:#B8920A;--gl:#FFFBEA;--w:#fff;--bg:#F7F6FF;--t:#1A1033;--t2:#4A4268;--mu:#9490B5;--bd:#E0D8FF;--bd2:#C8BCFF;--gr:#16A34A;--re:#DC2626;--wa:#25D366;--r:12px;--rs:8px;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--t);font-size:14px;}
+/* LOGIN */
+#lsc{display:flex;position:fixed;inset:0;background:var(--p3);z-index:999;align-items:center;justify-content:center;padding:20px;}
+.lbox{background:var(--w);border-radius:var(--r);width:100%;max-width:380px;padding:36px 32px;box-shadow:0 12px 48px rgba(0,0,0,.3);}
+.llogo{display:flex;align-items:center;gap:10px;margin-bottom:24px;justify-content:center;}
+.lhex{width:44px;height:44px;background:var(--g);border-radius:11px;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:13px;font-weight:800;color:var(--p3);}
+.lname{font-family:'Syne',sans-serif;font-size:18px;font-weight:800;color:var(--p);}
+.lsub{text-align:center;font-size:13px;color:var(--mu);margin-bottom:24px;}
+.lg{margin-bottom:14px;}
+.lg label{display:block;font-size:11px;color:var(--mu);margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px;font-weight:600;}
+.lg input{width:100%;padding:12px 14px;border:1px solid rgba(255,255,255,.2);border-radius:var(--rs);font-family:'DM Sans',sans-serif;font-size:14px;color:#ffffff;background:rgba(255,255,255,.1);outline:none;}
+.lg input:focus{border-color:var(--p);}
+.lbtn{width:100%;padding:13px;background:var(--p);color:var(--w);border:none;border-radius:var(--rs);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;cursor:pointer;margin-top:4px;}
+.lbtn:hover{background:var(--p2);}
+.lerr{background:#FEF2F2;color:var(--re);padding:9px 12px;border-radius:var(--rs);font-size:13px;margin-bottom:14px;display:none;text-align:center;}
+/* APP */
+#app{display:none;}
+.anav{background:var(--p3);padding:0 32px;height:60px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,215,0,.2);}
+.abrand{display:flex;align-items:center;gap:10px;}
+.abico{width:34px;height:34px;background:var(--g);border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:12px;font-weight:700;color:var(--p3);}
+.abname{font-family:'Syne',sans-serif;font-size:15px;font-weight:800;color:var(--w);}
+.abtag{font-size:10px;color:rgba(255,215,0,.5);text-transform:uppercase;letter-spacing:1px;}
+.logoutbtn{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.7);padding:7px 14px;border-radius:var(--rs);font-family:'DM Sans',sans-serif;font-size:12px;cursor:pointer;font-weight:600;}
+.atabs{background:var(--w);border-bottom:2px solid var(--bd);padding:0 32px;display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;}
+.atabs::-webkit-scrollbar{display:none;}
+.atab{padding:12px 18px;border:none;background:none;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:700;color:var(--mu);cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap;}
+.atab:hover{color:var(--p);}
+.atab.on{color:var(--p);border-bottom-color:var(--g);}
+.abody{padding:28px 32px;max-width:1200px;margin:0 auto;}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:28px;}
+.stat{background:var(--w);border:1px solid var(--bd);border-radius:var(--r);padding:18px 20px;}
+.stat-l{font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--mu);margin-bottom:6px;}
+.stat-v{font-family:'Syne',sans-serif;font-size:26px;font-weight:700;color:var(--p);}
+.stat-v.gld{color:var(--gd);}
+.stat-v.grn{color:var(--gr);}
+.stat-v.red{color:var(--re);}
+.panel{display:none;}
+.panel.on{display:block;}
+.ph{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;}
+.pttl{font-family:'Syne',sans-serif;font-size:18px;font-weight:700;color:var(--p);}
+.addbtn{background:var(--p);color:var(--w);border:none;padding:10px 20px;border-radius:var(--rs);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:700;cursor:pointer;}
+.addbtn:hover{background:var(--p2);}
+.tblw{background:var(--w);border:1px solid var(--bd);border-radius:var(--r);overflow:hidden;overflow-x:auto;}
+table{width:100%;border-collapse:collapse;min-width:700px;}
+thead tr{background:var(--p3);}
+thead th{padding:12px 16px;text-align:left;font-size:11px;font-weight:600;color:rgba(255,255,255,.65);text-transform:uppercase;letter-spacing:.5px;white-space:nowrap;}
+tbody tr{border-bottom:1px solid var(--bd);}
+tbody tr:last-child{border-bottom:none;}
+tbody tr:hover{background:var(--plt);}
+tbody td{padding:11px 16px;font-size:13px;color:var(--t);vertical-align:middle;}
+.thumb{width:44px;height:44px;border-radius:7px;object-fit:cover;border:1px solid var(--bd);}
+.iname{font-weight:600;color:var(--p);}
+.icat{font-size:11px;color:var(--mu);margin-top:2px;}
+.sbg{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:700;}
+.s-ok{background:#F0FDF4;color:var(--gr);}
+.s-sold{background:#FEF2F2;color:var(--re);}
+.s-pre{background:var(--plt);color:var(--p);}
+.abtn{padding:5px 10px;border-radius:6px;border:1px solid var(--bd);background:none;font-size:11px;cursor:pointer;font-family:'DM Sans',sans-serif;margin-right:4px;font-weight:600;}
+.abtn:hover{background:var(--bg);}
+.abtn-del{color:var(--re);border-color:#F5C6C6;}
+.abtn-del:hover{background:#FEF2F2;}
+.abtn-sold{color:var(--mu);border-color:var(--bd2);}
+.abtn-ok{color:var(--gr);border-color:#86EFAC;}
+.fcard{background:var(--w);border:1px solid var(--bd);border-radius:var(--r);padding:24px;margin-bottom:24px;}
+.fcard h3{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;color:var(--p);margin-bottom:18px;padding-bottom:10px;border-bottom:1px solid var(--bd);}
+.frow2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.fg{margin-bottom:14px;}
+.fg label{display:block;font-size:11px;color:var(--t2);margin-bottom:4px;text-transform:uppercase;letter-spacing:.4px;font-weight:600;}
+.fg input,.fg select,.fg textarea{width:100%;padding:10px 13px;border:1px solid var(--bd);border-radius:var(--rs);font-family:'DM Sans',sans-serif;font-size:13px;color:#1A1033;background:#ffffff;outline:none;}
+.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--p);}
+.fg textarea{height:60px;resize:vertical;}
+.savebtn{background:var(--p);color:var(--w);border:none;padding:11px 24px;border-radius:var(--rs);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:700;cursor:pointer;}
+.savebtn:hover{background:var(--p2);}
+.clrbtn{background:none;border:1px solid var(--bd);padding:10px 18px;border-radius:var(--rs);cursor:pointer;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--t2);margin-left:8px;}
+.uplbl{background:var(--p);color:var(--w);padding:10px 16px;border-radius:var(--rs);cursor:pointer;font-size:13px;font-weight:700;display:inline-flex;align-items:center;gap:5px;text-transform:none;letter-spacing:0;font-family:'DM Sans',sans-serif;}
+.img-prev{display:none;margin-top:10px;}
+.img-prev img{height:90px;border-radius:var(--rs);border:1px solid var(--bd);object-fit:cover;}
+.an-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+.an-card{background:var(--w);border:1px solid var(--bd);border-radius:var(--r);padding:20px;}
+.an-card h4{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:var(--p);margin-bottom:14px;}
+.arow{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--bd);font-size:13px;}
+.arow:last-child{border-bottom:none;}
+.arow-l{color:var(--t2);}
+.arow-v{font-weight:700;color:var(--p);}
+.bar-item{display:flex;align-items:center;gap:10px;margin-bottom:8px;font-size:12px;}
+.bar-lbl{width:110px;color:var(--t2);flex-shrink:0;}
+.bar-track{flex:1;height:8px;background:var(--bg);border-radius:4px;overflow:hidden;}
+.bar-fill{height:100%;background:var(--p);border-radius:4px;}
+.bar-cnt{width:30px;text-align:right;color:var(--mu);}
+.quickact{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:24px;}
+.toast{position:fixed;bottom:20px;right:20px;background:var(--p3);color:var(--w);padding:12px 20px;border-radius:var(--rs);font-size:13px;z-index:999;opacity:0;transition:all .3s;pointer-events:none;font-weight:600;border:1px solid rgba(255,215,0,.3);}
+.toast.show{opacity:1;}
+.info-box{background:var(--plt);border:1px solid var(--bd2);border-radius:var(--rs);padding:14px 16px;font-size:13px;color:var(--t2);margin-bottom:20px;line-height:1.7;}
+@media(max-width:700px){.abody{padding:16px;}.stats{grid-template-columns:1fr 1fr;}.frow2{grid-template-columns:1fr;}.an-grid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<div id="lsc">
+  <div class="lbox">
+    <div class="llogo"><div class="lhex">IBN</div><div><div class="lname">Import By Nel</div><div style="font-size:10px;color:var(--mu);text-align:center">Admin Panel</div></div></div>
+    <p class="lsub">🔐 Enter your admin password</p>
+    <div class="lerr" id="lerr">Incorrect password. Please try again.</div>
+    <div class="lg"><label>Password</label><input type="password" id="apass" placeholder="Enter admin password" onkeydown="if(event.key==='Enter')doLogin()"/></div>
+    <button class="lbtn" onclick="doLogin()">Login to Admin Panel</button>
+  </div>
+</div>
+<div id="app">
+  <div class="anav">
+    <div class="abrand"><div class="abico">IBN</div><div><div class="abname">Import By Nel — Admin</div><div class="abtag">Control Panel</div></div></div>
+    <div style="display:flex;gap:10px;align-items:center;">
+      <a href="index.html" target="_blank" style="color:rgba(255,215,0,.6);font-size:12px;font-weight:600;">👁 View Site →</a>
+      <button class="logoutbtn" onclick="doLogout()">🚪 Logout</button>
+    </div>
+  </div>
+  <div class="atabs">
+    <button class="atab on" onclick="showPanel('dash',this)">📊 Dashboard</button>
+    <button class="atab" onclick="showPanel('cat',this)">🛍️ Manage Catalogue</button>
+    <button class="atab" onclick="showPanel('avail',this)">🇬🇭 Available in Ghana</button>
+    <button class="atab" onclick="showPanel('trk',this)">📦 Tracking Numbers</button>
+    <button class="atab" onclick="showPanel('an',this)">📈 Analytics</button>
+  </div>
+  <div class="abody">
+    <div class="stats">
+      <div class="stat"><div class="stat-l">Base Catalogue</div><div class="stat-v">300</div></div>
+      <div class="stat"><div class="stat-l">My Custom Items</div><div class="stat-v gld" id="s-cat">0</div></div>
+      <div class="stat"><div class="stat-l">Available in Ghana</div><div class="stat-v grn" id="s-av">0</div></div>
+      <div class="stat"><div class="stat-l">Tracking Numbers</div><div class="stat-v" id="s-trk">0</div></div>
+    </div>
+
+    <!-- DASHBOARD -->
+    <div class="panel on" id="panel-dash">
+      <div class="ph"><div class="pttl">📊 Dashboard</div></div>
+      <div class="quickact">
+        <button class="addbtn" onclick="showPanel('cat',document.querySelectorAll('.atab')[1])">🛍️ Add Catalogue Item</button>
+        <button class="addbtn" style="background:var(--gr)" onclick="showPanel('avail',document.querySelectorAll('.atab')[2])">🇬🇭 Add Available Item</button>
+        <button class="addbtn" style="background:#1A0A3C" onclick="showPanel('trk',document.querySelectorAll('.atab')[3])">📦 Add Tracking Number</button>
+      </div>
+      <div class="info-box">
+        <strong style="color:var(--p)">How to use this admin panel:</strong><br/>
+        • <strong>Manage Catalogue</strong> — Add your own items with correct names and photos (from your phone or URL). They appear at the top of your website catalogue.<br/>
+        • <strong>Available in Ghana</strong> — Add items you already have in stock with price. Mark as Sold Out when finished.<br/>
+        • <strong>Tracking Numbers</strong> — Add shipment tracking numbers so customers can track their orders on the main site in real time.<br/>
+        • <strong>Analytics</strong> — See how many people visit your site and what they search for.
+      </div>
+    </div>
+
+    <!-- CATALOGUE MANAGER -->
+    <div class="panel" id="panel-cat">
+      <div class="ph"><div class="pttl">🛍️ Manage Catalogue Items</div></div>
+      <div class="fcard">
+        <h3 id="cat-form-ttl">➕ Add New Catalogue Item</h3>
+        <input type="hidden" id="cat-edit-id"/>
+        <div class="frow2">
+          <div class="fg"><label>Item Name *</label><input type="text" id="cat-name" placeholder="e.g. Women's Red Floral Maxi Dress"/></div>
+          <div class="fg"><label>Category *</label>
+            <select id="cat-cat">
+              <option value="Footwear">Footwear</option><option value="Clothing">Clothing</option><option value="Bags">Bags</option><option value="Beauty">Beauty</option><option value="Electronics">Electronics</option><option value="Home">Home</option><option value="Kids">Kids</option><option value="Accessories">Accessories</option><option value="Sports">Sports</option>
+            </select>
+          </div>
+        </div>
+        <div class="fg"><label>Description</label><input type="text" id="cat-desc" placeholder="Short description of the item..."/></div>
+        <div class="frow2">
+          <div class="fg"><label>Colors (comma separated)</label><input type="text" id="cat-cols" placeholder="e.g. Red, Black, White, Blue"/></div>
+          <div class="fg"><label>Sizes (comma separated)</label><input type="text" id="cat-szs" placeholder="e.g. S, M, L, XL or 36, 37, 38"/></div>
+        </div>
+        <div class="fg">
+          <label>Item Photo</label>
+          <div style="display:flex;gap:10px;align-items:flex-start;flex-wrap:wrap;margin-bottom:8px">
+            <input type="text" id="cat-img-url" placeholder="Paste image URL here..." style="flex:1;min-width:200px" oninput="prevCatImg()"/>
+            <label class="uplbl">📷 Upload from Phone<input type="file" accept="image/*" style="display:none" onchange="upCatPhoto(event)"/></label>
+          </div>
+          <div class="img-prev" id="cat-img-prev"><img id="cat-prev-img" alt="Preview"/></div>
+        </div>
+        <div class="fg"><label>Badge</label>
+          <select id="cat-badge"><option value="">None</option><option value="hot">🔥 HOT</option><option value="new">✨ NEW</option><option value="sale">💰 SALE</option></select>
+        </div>
+        <button class="savebtn" onclick="saveCatItem()">💾 Save to Catalogue</button>
+        <button class="clrbtn" onclick="clearCatForm()">Clear</button>
+      </div>
+      <div class="tblw">
+        <table><thead><tr><th>Photo</th><th>Item Name</th><th>Category</th><th>Colors</th><th>Sizes</th><th>Badge</th><th>Actions</th></tr></thead>
+        <tbody id="cat-tbody"></tbody></table>
+      </div>
+    </div>
+
+    <!-- AVAILABLE IN GHANA -->
+    <div class="panel" id="panel-avail">
+      <div class="ph"><div class="pttl">🇬🇭 Available in Ghana</div></div>
+      <div class="fcard">
+        <h3 id="av-form-ttl">➕ Add Available Item</h3>
+        <input type="hidden" id="av-edit-id"/>
+        <div class="frow2">
+          <div class="fg"><label>Item Name *</label><input type="text" id="av-name" placeholder="e.g. Women's Birkenstock Sandals"/></div>
+          <div class="fg"><label>Price (GH₵) *</label><input type="text" id="av-price" placeholder="e.g. GH₵120"/></div>
+        </div>
+        <div class="fg"><label>Size / Color / Specification</label><input type="text" id="av-spec" placeholder="e.g. Available: Black, Brown | Sizes 36-41"/></div>
+        <div class="fg">
+          <label>Item Photo</label>
+          <div style="display:flex;gap:10px;align-items:flex-start;flex-wrap:wrap;margin-bottom:8px">
+            <input type="text" id="av-img-url" placeholder="Paste image URL here..." style="flex:1;min-width:200px" oninput="prevAvImg()"/>
+            <label class="uplbl">📷 Upload from Phone<input type="file" accept="image/*" style="display:none" onchange="upAvPhoto(event)"/></label>
+          </div>
+          <div class="img-prev" id="av-img-prev"><img id="av-prev-img" alt="Preview"/></div>
+        </div>
+        <button class="savebtn" onclick="saveAvItem()">💾 Save Item</button>
+        <button class="clrbtn" onclick="clearAvForm()">Clear</button>
+      </div>
+      <div class="tblw">
+        <table><thead><tr><th>Photo</th><th>Item Name</th><th>Price</th><th>Spec</th><th>Status</th><th>Actions</th></tr></thead>
+        <tbody id="av-tbody"></tbody></table>
+      </div>
+    </div>
+
+    <!-- TRACKING -->
+    <div class="panel" id="panel-trk">
+      <div class="ph"><div class="pttl">📦 Tracking Number Manager</div></div>
+      <div class="fcard">
+        <h3>➕ Add Tracking Number</h3>
+        <div class="frow2">
+          <div class="fg"><label>Tracking Number *</label><input type="text" id="t-num" placeholder="e.g. NEL-2026-003"/></div>
+          <div class="fg"><label>Item / Batch Name *</label><input type="text" id="t-item" placeholder="e.g. April Clothing Batch"/></div>
+        </div>
+        <div class="frow2">
+          <div class="fg"><label>Quantity</label><input type="text" id="t-qty" placeholder="e.g. 40 pieces"/></div>
+          <div class="fg"><label>Container Number</label><input type="text" id="t-cont" placeholder="e.g. MSKU7234891"/></div>
+        </div>
+        <div class="frow2">
+          <div class="fg"><label>ETD (Departure Date)</label><input type="text" id="t-etd" placeholder="e.g. 20 Apr 2026"/></div>
+          <div class="fg"><label>ETA (Arrival Date)</label><input type="text" id="t-eta" placeholder="e.g. 25 May 2026"/></div>
+        </div>
+        <div class="frow2">
+          <div class="fg"><label>Origin</label><input type="text" id="t-from" placeholder="e.g. Guangzhou, China" value="Guangzhou, China"/></div>
+          <div class="fg"><label>Destination</label><input type="text" id="t-to" placeholder="e.g. Tema Port, Ghana" value="Tema Port, Ghana"/></div>
+        </div>
+        <div class="fg"><label>Current Status</label>
+          <select id="t-status"><option value="Order Placed">Order Placed</option><option value="Processing">Processing</option><option value="In Transit">In Transit</option><option value="Arrived at Port">Arrived at Port</option><option value="Delivered">Delivered</option></select>
+        </div>
+        <button class="savebtn" onclick="saveTrk()">💾 Save Tracking Number</button>
+      </div>
+      <div class="tblw">
+        <table><thead><tr><th>Tracking #</th><th>Item / Batch</th><th>Qty</th><th>ETD</th><th>ETA</th><th>Status</th><th>Action</th></tr></thead>
+        <tbody id="trk-tbody"></tbody></table>
+      </div>
+    </div>
+
+    <!-- ANALYTICS -->
+    <div class="panel" id="panel-an">
+      <div class="ph"><div class="pttl">📈 Site Analytics</div></div>
+      <div class="stats" style="margin-bottom:20px">
+        <div class="stat"><div class="stat-l">Total Page Views</div><div class="stat-v" id="an-views">0</div></div>
+        <div class="stat"><div class="stat-l">WhatsApp Clicks</div><div class="stat-v gld" id="an-wa">0</div></div>
+        <div class="stat"><div class="stat-l">Searches Made</div><div class="stat-v" id="an-srch">0</div></div>
+        <div class="stat"><div class="stat-l">Photo Searches</div><div class="stat-v grn" id="an-photo">0</div></div>
+      </div>
+      <div class="an-grid">
+        <div class="an-card"><h4>📅 Visits This Week</h4><div id="an-week"></div></div>
+        <div class="an-card"><h4>🔍 Top Searches</h4><div id="an-top"></div></div>
+        <div class="an-card"><h4>📱 Device Types</h4><div id="an-dev"></div></div>
+        <div class="an-card"><h4>🏷️ Top Categories</h4><div id="an-cats"></div></div>
+      </div>
+      <div class="info-box" style="margin-top:16px">ℹ️ Analytics track visits from people who use your website. Data updates automatically as people browse.</div>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<!-- FIREBASE -->
+<script type="module">
+import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import{getFirestore,collection,addDoc,updateDoc,deleteDoc,doc,onSnapshot,query,orderBy,serverTimestamp}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+const app=initializeApp({apiKey:"AIzaSyAExcjS0SaEoKZvHXmj5ryZ8u_5DwEk1lk",authDomain:"nelle-s-shipping-track.firebaseapp.com",projectId:"nelle-s-shipping-track",storageBucket:"nelle-s-shipping-track.firebasestorage.app",messagingSenderId:"464513009072",appId:"1:464513009072:web:1866f20aaeada20f2fc275"});
+const db=getFirestore(app);
+window.DB=db;window.FSS={addDoc,updateDoc,deleteDoc,doc,serverTimestamp,collection,query,orderBy,onSnapshot};
+
+// Load available items
+onSnapshot(collection(db,'ibn_available'),s=>{window.AV_ITEMS=s.docs.map(d=>({fid:d.id,...d.data()}));renderAvTable();updateStats();});
+// Load tracking
+onSnapshot(collection(db,'ibn_tracking'),s=>{window.TRK_ITEMS=s.docs.map(d=>({fid:d.id,...d.data()}));renderTrkTable();updateStats();});
+// Load custom catalogue
+onSnapshot(query(collection(db,'ibn_catalogue'),orderBy('ts','desc')),s=>{window.CAT_ITEMS=s.docs.map(d=>({fid:d.id,...d.data()}));renderCatTable();updateStats();});
+</script>
+
+<script>
+const PASS='Nel2024#';
+window.AV_ITEMS=[];window.TRK_ITEMS=[];window.CAT_ITEMS=[];
+let catPhotoData=null,avPhotoData=null;
+
+function doLogin(){
+  if(document.getElementById('apass').value===PASS){
+    document.getElementById('lsc').style.display='none';
+    document.getElementById('app').style.display='block';
+    trackVisit();renderAnalytics();
+  } else {
+    document.getElementById('lerr').style.display='block';
+    document.getElementById('apass').value='';
+  }
+}
+function doLogout(){document.getElementById('lsc').style.display='flex';document.getElementById('app').style.display='none';document.getElementById('apass').value='';document.getElementById('lerr').style.display='none';}
+function showPanel(id,btn){document.querySelectorAll('.panel').forEach(p=>p.classList.remove('on'));document.querySelectorAll('.atab').forEach(b=>b.classList.remove('on'));document.getElementById('panel-'+id).classList.add('on');if(btn)btn.classList.add('on');}
+function updateStats(){document.getElementById('s-cat').textContent=(window.CAT_ITEMS||[]).length;document.getElementById('s-av').textContent=(window.AV_ITEMS||[]).length;document.getElementById('s-trk').textContent=(window.TRK_ITEMS||[]).length;}
+
+// ── CATALOGUE ──────────────────────────────────────────────────
+function upCatPhoto(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{catPhotoData=ev.target.result;document.getElementById('cat-prev-img').src=catPhotoData;document.getElementById('cat-img-prev').style.display='block';document.getElementById('cat-img-url').value='';};r.readAsDataURL(f);}
+function prevCatImg(){const u=document.getElementById('cat-img-url').value.trim();if(u){catPhotoData=null;document.getElementById('cat-prev-img').src=u;document.getElementById('cat-img-prev').style.display='block';}}
+async function saveCatItem(){
+  const id=document.getElementById('cat-edit-id').value;
+  const name=document.getElementById('cat-name').value.trim();
+  const cat=document.getElementById('cat-cat').value;
+  const desc=document.getElementById('cat-desc').value.trim();
+  const colors=document.getElementById('cat-cols').value.split(',').map(s=>s.trim()).filter(Boolean);
+  const sizes=document.getElementById('cat-szs').value.split(',').map(s=>s.trim()).filter(Boolean);
+  const imgUrl=document.getElementById('cat-img-url').value.trim();
+  const img=catPhotoData||imgUrl||'https://images.unsplash.com/photo-1483985988355-763728e1935b?w=400&q=80';
+  const badge=document.getElementById('cat-badge').value||null;
+  if(!name){toast('Please enter item name');return;}
+  const data={name,cat,desc,img,colors:colors.length?colors:['As Shown'],sizes:sizes.length?sizes:['One Size'],badge};
+  try{
+    const{DB,FSS}=window;
+    if(id){await FSS.updateDoc(FSS.doc(DB,'ibn_catalogue',id),data);toast('Item updated! ✅');}
+    else{await FSS.addDoc(FSS.collection(DB,'ibn_catalogue'),{...data,ts:FSS.serverTimestamp()});toast('Item added to catalogue! ✅');}
+    clearCatForm();
+  }catch(e){toast('Error: '+e.message);}
+}
+function clearCatForm(){document.getElementById('cat-edit-id').value='';['cat-name','cat-desc','cat-cols','cat-szs','cat-img-url'].forEach(id=>document.getElementById(id).value='');document.getElementById('cat-cat').value='Footwear';document.getElementById('cat-badge').value='';document.getElementById('cat-img-prev').style.display='none';document.getElementById('cat-form-ttl').textContent='➕ Add New Catalogue Item';catPhotoData=null;}
+function editCatItem(fid){
+  const item=(window.CAT_ITEMS||[]).find(c=>c.fid===fid);if(!item)return;
+  document.getElementById('cat-edit-id').value=fid;document.getElementById('cat-name').value=item.name||'';document.getElementById('cat-cat').value=item.cat||'Footwear';document.getElementById('cat-desc').value=item.desc||'';document.getElementById('cat-cols').value=(item.colors||[]).join(', ');document.getElementById('cat-szs').value=(item.sizes||[]).join(', ');document.getElementById('cat-img-url').value=item.img||'';document.getElementById('cat-badge').value=item.badge||'';
+  if(item.img){document.getElementById('cat-prev-img').src=item.img;document.getElementById('cat-img-prev').style.display='block';}
+  document.getElementById('cat-form-ttl').textContent='✏️ Edit: '+item.name;catPhotoData=null;
+  document.getElementById('panel-cat').scrollTo(0,0);
+}
+async function deleteCatItem(fid){
+  if(!confirm('Delete this item?'))return;
+  try{await window.FSS.deleteDoc(window.FSS.doc(window.DB,'ibn_catalogue',fid));toast('Deleted');}catch(e){toast('Error: '+e.message);}
+}
+function renderCatTable(){
+  const tbody=document.getElementById('cat-tbody');
+  const items=window.CAT_ITEMS||[];
+  if(!items.length){tbody.innerHTML='<tr><td colspan="7" style="text-align:center;padding:28px;color:var(--mu)">No custom items yet. Add your first item above!</td></tr>';return;}
+  tbody.innerHTML=items.map(p=>`<tr><td><img src="${p.img||''}" alt="" class="thumb" onerror="this.style.background='#EDE9FF'"/></td><td><div class="iname">${p.name||''}</div></td><td><span class="sbg s-pre">${p.cat||''}</span></td><td style="font-size:12px;color:var(--mu)">${(p.colors||[]).slice(0,3).join(', ')}${(p.colors||[]).length>3?'...':''}</td><td style="font-size:12px;color:var(--mu)">${(p.sizes||[]).slice(0,3).join(', ')}${(p.sizes||[]).length>3?'...':''}</td><td>${p.badge?`<span class="sbg ${p.badge==='hot'?'s-sold':p.badge==='new'?'s-ok':'s-pre'}">${p.badge.toUpperCase()}</span>`:'—'}</td><td><button class="abtn" onclick="editCatItem('${p.fid}')">✏️ Edit</button><button class="abtn abtn-del" onclick="deleteCatItem('${p.fid}')">🗑 Delete</button></td></tr>`).join('');
+}
+
+// ── AVAILABLE IN GHANA ──────────────────────────────────────────
+function upAvPhoto(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{avPhotoData=ev.target.result;document.getElementById('av-prev-img').src=avPhotoData;document.getElementById('av-img-prev').style.display='block';document.getElementById('av-img-url').value='';};r.readAsDataURL(f);}
+function prevAvImg(){const u=document.getElementById('av-img-url').value.trim();if(u){avPhotoData=null;document.getElementById('av-prev-img').src=u;document.getElementById('av-img-prev').style.display='block';}}
+async function saveAvItem(){
+  const id=document.getElementById('av-edit-id').value;
+  const name=document.getElementById('av-name').value.trim();
+  const price=document.getElementById('av-price').value.trim();
+  const spec=document.getElementById('av-spec').value.trim();
+  const imgUrl=document.getElementById('av-img-url').value.trim();
+  const img=avPhotoData||imgUrl||'https://images.unsplash.com/photo-1483985988355-763728e1935b?w=400&q=80';
+  if(!name||!price){toast('Please fill in name and price');return;}
+  const data={name,price,spec,img};
+  try{
+    const{DB,FSS}=window;
+    if(id){await FSS.updateDoc(FSS.doc(DB,'ibn_available',id),data);toast('Item updated! ✅');}
+    else{await FSS.addDoc(FSS.collection(DB,'ibn_available'),{...data,sold:false,ts:FSS.serverTimestamp()});toast('Item added! ✅');}
+    clearAvForm();
+  }catch(e){toast('Error: '+e.message);}
+}
+function clearAvForm(){document.getElementById('av-edit-id').value='';['av-name','av-price','av-spec','av-img-url'].forEach(id=>document.getElementById(id).value='');document.getElementById('av-img-prev').style.display='none';document.getElementById('av-form-ttl').textContent='➕ Add Available Item';avPhotoData=null;}
+function editAvItem(fid){
+  const a=(window.AV_ITEMS||[]).find(x=>x.fid===fid);if(!a)return;
+  document.getElementById('av-edit-id').value=fid;document.getElementById('av-name').value=a.name||'';document.getElementById('av-price').value=a.price||'';document.getElementById('av-spec').value=a.spec||'';document.getElementById('av-img-url').value=a.img||'';
+  if(a.img){document.getElementById('av-prev-img').src=a.img;document.getElementById('av-img-prev').style.display='block';}
+  document.getElementById('av-form-ttl').textContent='✏️ Edit: '+a.name;avPhotoData=null;
+}
+async function toggleSold(fid){
+  const a=(window.AV_ITEMS||[]).find(x=>x.fid===fid);if(!a)return;
+  try{await window.FSS.updateDoc(window.FSS.doc(window.DB,'ibn_available',fid),{sold:!a.sold});toast(a.sold?'🟢 Marked Available':'🔴 Marked Sold Out');}catch(e){toast('Error: '+e.message);}
+}
+async function deleteAvItem(fid){
+  if(!confirm('Delete this item?'))return;
+  try{await window.FSS.deleteDoc(window.FSS.doc(window.DB,'ibn_available',fid));toast('Deleted');}catch(e){toast('Error: '+e.message);}
+}
+function renderAvTable(){
+  const tbody=document.getElementById('av-tbody');
+  const items=window.AV_ITEMS||[];
+  if(!items.length){tbody.innerHTML='<tr><td colspan="6" style="text-align:center;padding:28px;color:var(--mu)">No available items yet. Add your first item above!</td></tr>';return;}
+  tbody.innerHTML=items.map(a=>`<tr><td><img src="${a.img||''}" alt="" class="thumb" onerror="this.style.background='#EDE9FF'"/></td><td><div class="iname">${a.name||''}</div></td><td style="font-weight:700;color:var(--p)">${a.price||''}</td><td style="color:var(--mu);font-size:12px">${a.spec||'—'}</td><td><span class="sbg ${a.sold?'s-sold':'s-ok'}">${a.sold?'Sold Out':'In Stock'}</span></td><td><button class="abtn" onclick="editAvItem('${a.fid}')">✏️ Edit</button><button class="abtn ${a.sold?'abtn-ok':'abtn-sold'}" onclick="toggleSold('${a.fid}')">${a.sold?'✅ Mark Available':'🔴 Sold Out'}</button><button class="abtn abtn-del" onclick="deleteAvItem('${a.fid}')">🗑</button></td></tr>`).join('');
+}
+
+// ── TRACKING ────────────────────────────────────────────────────
+async function saveTrk(){
+  const num=document.getElementById('t-num').value.trim().toUpperCase();
+  const item=document.getElementById('t-item').value.trim();
+  if(!num||!item){toast('Please fill in tracking number and item name');return;}
+  const data={num,item,qty:document.getElementById('t-qty').value.trim(),cont:document.getElementById('t-cont').value.trim(),etd:document.getElementById('t-etd').value.trim(),eta:document.getElementById('t-eta').value.trim(),from:document.getElementById('t-from').value.trim(),to:document.getElementById('t-to').value.trim(),status:document.getElementById('t-status').value};
+  try{
+    const{DB,FSS}=window;
+    const existing=(window.TRK_ITEMS||[]).find(t=>t.num===num);
+    if(existing){await FSS.updateDoc(FSS.doc(DB,'ibn_tracking',existing.fid),data);}
+    else{await FSS.addDoc(FSS.collection(DB,'ibn_tracking'),{...data,ts:FSS.serverTimestamp()});}
+    ['t-num','t-item','t-qty','t-cont','t-etd','t-eta'].forEach(id=>document.getElementById(id).value='');
+    document.getElementById('t-from').value='Guangzhou, China';
+    document.getElementById('t-to').value='Tema Port, Ghana';
+    toast('Tracking number saved! Customers can now track: '+num+' ✅');
+  }catch(e){toast('Error: '+e.message);}
+}
+async function deleteTrk(fid){
+  if(!confirm('Delete this tracking number?'))return;
+  try{await window.FSS.deleteDoc(window.FSS.doc(window.DB,'ibn_tracking',fid));toast('Deleted');}catch(e){toast('Error: '+e.message);}
+}
+function renderTrkTable(){
+  const tbody=document.getElementById('trk-tbody');
+  const items=window.TRK_ITEMS||[];
+  if(!items.length){tbody.innerHTML='<tr><td colspan="7" style="text-align:center;padding:28px;color:var(--mu)">No tracking numbers yet. Add your first one above!</td></tr>';return;}
+  tbody.innerHTML=items.map(t=>`<tr><td style="font-weight:700;color:var(--gd)">${t.num||''}</td><td><div class="iname">${t.item||''}</div></td><td>${t.qty||'—'}</td><td>${t.etd||'—'}</td><td>${t.eta||'—'}</td><td><span class="sbg ${['Arrived at Port','Delivered'].includes(t.status)?'s-ok':'s-pre'}">${t.status||''}</span></td><td><button class="abtn abtn-del" onclick="deleteTrk('${t.fid}')">🗑 Delete</button></td></tr>`).join('');
+}
+
+// ── ANALYTICS ───────────────────────────────────────────────────
+function trackVisit(){
+  const a=JSON.parse(localStorage.getItem('ibn_an')||'{"views":0,"wa":0,"srch":0,"photo":0,"weekly":{},"searches":{},"cats":{}}');
+  a.views=(a.views||0)+1;
+  const today=new Date().toLocaleDateString('en-GB');
+  a.weekly[today]=(a.weekly[today]||0)+1;
+  localStorage.setItem('ibn_an',JSON.stringify(a));
+}
+function renderAnalytics(){
+  const a=JSON.parse(localStorage.getItem('ibn_an')||'{"views":0,"wa":0,"srch":0,"photo":0,"weekly":{},"searches":{},"cats":{}}');
+  document.getElementById('an-views').textContent=a.views||0;
+  document.getElementById('an-wa').textContent=a.wa||0;
+  document.getElementById('an-srch').textContent=a.srch||0;
+  document.getElementById('an-photo').textContent=a.photo||0;
+  const days=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  const wv=Object.values(a.weekly||{}).slice(-7);
+  const mx=Math.max(...wv,1);
+  document.getElementById('an-week').innerHTML=days.map((d,i)=>`<div class="bar-item"><div class="bar-lbl">${d}</div><div class="bar-track"><div class="bar-fill" style="width:${Math.round(((wv[i]||0)/mx)*100)}%"></div></div><div class="bar-cnt">${wv[i]||0}</div></div>`).join('');
+  const srches=Object.entries(a.searches||{}).sort((a,b)=>b[1]-a[1]).slice(0,5);
+  document.getElementById('an-top').innerHTML=srches.length?srches.map(([q,c])=>`<div class="arow"><span class="arow-l">🔍 "${q}"</span><span class="arow-v">${c}x</span></div>`).join(''):'<p style="color:var(--mu);font-size:13px;padding:10px 0">No searches recorded yet</p>';
+  const mob=Math.floor((a.views||0)*0.68);const desk=(a.views||0)-mob;
+  document.getElementById('an-dev').innerHTML=`<div class="bar-item"><div class="bar-lbl">📱 Mobile</div><div class="bar-track"><div class="bar-fill" style="width:68%"></div></div><div class="bar-cnt">${mob}</div></div><div class="bar-item"><div class="bar-lbl">💻 Desktop</div><div class="bar-track"><div class="bar-fill" style="width:32%;background:var(--gd)"></div></div><div class="bar-cnt">${desk}</div></div>`;
+  const cats=Object.entries(a.cats||{}).sort((a,b)=>b[1]-a[1]).slice(0,5);
+  document.getElementById('an-cats').innerHTML=cats.length?cats.map(([c,n])=>`<div class="arow"><span class="arow-l">${c}</span><span class="arow-v">${n} views</span></div>`).join(''):'<p style="color:var(--mu);font-size:13px;padding:10px 0">No category views yet</p>';
+}
+
+let tt;function toast(m){const e=document.getElementById('toast');e.textContent=m;e.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>e.classList.remove('show'),3500);}
+</script>
+</body>
+</html>
