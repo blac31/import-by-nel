@@ -128,6 +128,7 @@ tbody td{padding:11px 16px;font-size:13px;color:var(--t);vertical-align:middle;}
     <button class="atab" onclick="showPanel('avail',this)">🇬🇭 Available in Ghana</button>
     <button class="atab" onclick="showPanel('trk',this)">📦 Tracking Numbers</button>
     <button class="atab" onclick="showPanel('an',this)">📈 Analytics</button>
+    <button class="atab" onclick="showPanel('edit',this)">✏️ Edit Base Items</button>
   </div>
   <div class="abody">
     <div class="stats">
@@ -248,7 +249,7 @@ tbody td{padding:11px 16px;font-size:13px;color:var(--t);vertical-align:middle;}
         <button class="savebtn" onclick="saveTrk()">💾 Save Tracking Number</button>
       </div>
       <div class="tblw">
-        <table><thead><tr><th>Tracking #</th><th>Item / Batch</th><th>Qty</th><th>ETD</th><th>ETA</th><th>Status</th><th>Action</th></tr></thead>
+        <table><thead><tr><th>Tracking #</th><th>Item / Batch</th><th>Qty</th><th>ETD</th><th>ETA</th><th>Status</th><th>Actions</th></tr></thead>
         <tbody id="trk-tbody"></tbody></table>
       </div>
     </div>
@@ -272,6 +273,51 @@ tbody td{padding:11px 16px;font-size:13px;color:var(--t);vertical-align:middle;}
     </div>
   </div>
 </div>
+    <!-- EDIT BASE ITEMS -->
+    <div class="panel" id="panel-edit">
+      <div class="ph"><div class="pttl">✏️ Edit Base Catalogue Items</div></div>
+      <div class="info-box">Here you can edit or hide any of the 300 base items. Changes are saved in this browser only (base items are built into the site code). To permanently change them, use <strong>Manage Catalogue</strong> to add your own version with the correct name and photo.</div>
+      <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap">
+        <input type="text" id="edit-search" placeholder="Search base items..." style="flex:1;min-width:200px;padding:10px 13px;border:1px solid var(--bd);border-radius:var(--rs);font-family:'DM Sans',sans-serif;font-size:13px;color:#1A1033;background:#fff;outline:none" oninput="filterBaseItems()"/>
+        <select id="edit-cat-filter" style="padding:10px 13px;border:1px solid var(--bd);border-radius:var(--rs);font-family:'DM Sans',sans-serif;font-size:13px;color:#1A1033;background:#fff;outline:none" onchange="filterBaseItems()">
+          <option value="">All Categories</option>
+          <option value="Footwear">Footwear</option><option value="Clothing">Clothing</option><option value="Bags">Bags</option><option value="Beauty">Beauty</option><option value="Electronics">Electronics</option><option value="Home">Home</option><option value="Kids">Kids</option><option value="Accessories">Accessories</option><option value="Sports">Sports</option>
+        </select>
+      </div>
+      <div class="tblw">
+        <table><thead><tr><th>Photo</th><th>Item Name</th><th>Category</th><th>Action</th></tr></thead>
+        <tbody id="edit-tbody"></tbody></table>
+      </div>
+    </div>
+
+    <!-- EDIT SINGLE ITEM MODAL (inline) -->
+    <div id="edit-item-modal" style="display:none;position:fixed;inset:0;background:rgba(26,10,60,.75);z-index:600;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(6px)" onclick="closeEditModal(event)">
+      <div style="background:#fff;border-radius:14px;width:100%;max-width:560px;max-height:92vh;overflow-y:auto;padding:28px;box-shadow:0 16px 60px rgba(45,27,105,.25)">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px">
+          <span style="font-family:'Syne',sans-serif;font-size:17px;font-weight:700;color:var(--p)">✏️ Edit Item</span>
+          <button onclick="document.getElementById('edit-item-modal').style.display='none'" style="width:30px;height:30px;border-radius:50%;background:var(--bg);border:none;cursor:pointer;font-size:15px;color:var(--t2)">✕</button>
+        </div>
+        <input type="hidden" id="ei-id"/>
+        <div class="fg"><label>Item Name</label><input type="text" id="ei-name" placeholder="Item name"/></div>
+        <div class="fg"><label>Category</label>
+          <select id="ei-cat"><option value="Footwear">Footwear</option><option value="Clothing">Clothing</option><option value="Bags">Bags</option><option value="Beauty">Beauty</option><option value="Electronics">Electronics</option><option value="Home">Home</option><option value="Kids">Kids</option><option value="Accessories">Accessories</option><option value="Sports">Sports</option></select>
+        </div>
+        <div class="fg"><label>Description</label><input type="text" id="ei-desc" placeholder="Short description"/></div>
+        <div class="fg">
+          <label>Photo</label>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px">
+            <input type="text" id="ei-img" placeholder="Paste image URL..." style="flex:1;min-width:180px;padding:10px 13px;border:1px solid var(--bd);border-radius:var(--rs);font-family:'DM Sans',sans-serif;font-size:13px;color:#1A1033;background:#fff;outline:none" oninput="previewEI()"/>
+            <label class="uplbl" style="font-size:12px;padding:8px 12px">📷 From Phone<input type="file" accept="image/*" style="display:none" onchange="upEIPhoto(event)"/></label>
+          </div>
+          <div id="ei-prev" style="display:none"><img id="ei-prev-img" style="height:80px;border-radius:8px;border:1px solid var(--bd);object-fit:cover" alt="Preview"/></div>
+        </div>
+        <div class="fg"><label>Colors (comma separated)</label><input type="text" id="ei-cols" placeholder="e.g. Black, White, Red"/></div>
+        <div class="fg"><label>Sizes (comma separated)</label><input type="text" id="ei-szs" placeholder="e.g. S, M, L, XL or 36, 37, 38"/></div>
+        <button class="savebtn" onclick="saveEditedBaseItem()">💾 Save Changes</button>
+        <button class="clrbtn" onclick="document.getElementById('edit-item-modal').style.display='none'">Cancel</button>
+      </div>
+    </div>
+
 <div class="toast" id="toast"></div>
 
 <!-- FIREBASE -->
@@ -399,14 +445,32 @@ async function saveTrk(){
   const data={num,item,qty:document.getElementById('t-qty').value.trim(),cont:document.getElementById('t-cont').value.trim(),etd:document.getElementById('t-etd').value.trim(),eta:document.getElementById('t-eta').value.trim(),from:document.getElementById('t-from').value.trim(),to:document.getElementById('t-to').value.trim(),status:document.getElementById('t-status').value};
   try{
     const{DB,FSS}=window;
-    const existing=(window.TRK_ITEMS||[]).find(t=>t.num===num);
-    if(existing){await FSS.updateDoc(FSS.doc(DB,'ibn_tracking',existing.fid),data);}
-    else{await FSS.addDoc(FSS.collection(DB,'ibn_tracking'),{...data,ts:FSS.serverTimestamp()});}
+    if(window._editTrkFid){
+      await FSS.updateDoc(FSS.doc(DB,'ibn_tracking',window._editTrkFid),data);
+      window._editTrkFid=null;
+      toast('Tracking number updated! ✅');
+    } else {
+      await FSS.addDoc(FSS.collection(DB,'ibn_tracking'),{...data,ts:FSS.serverTimestamp()});
+      toast('Tracking number saved! ✅ Customers can now track: '+num);
+    }
     ['t-num','t-item','t-qty','t-cont','t-etd','t-eta'].forEach(id=>document.getElementById(id).value='');
     document.getElementById('t-from').value='Guangzhou, China';
     document.getElementById('t-to').value='Tema Port, Ghana';
-    toast('Tracking number saved! Customers can now track: '+num+' ✅');
   }catch(e){toast('Error: '+e.message);}
+}
+function editTrk(fid){
+  const t=(window.TRK_ITEMS||[]).find(x=>x.fid===fid);if(!t)return;
+  document.getElementById('t-num').value=t.num||'';
+  document.getElementById('t-item').value=t.item||'';
+  document.getElementById('t-qty').value=t.qty||'';
+  document.getElementById('t-cont').value=t.cont||'';
+  document.getElementById('t-etd').value=t.etd||'';
+  document.getElementById('t-eta').value=t.eta||'';
+  document.getElementById('t-from').value=t.from||'Guangzhou, China';
+  document.getElementById('t-to').value=t.to||'Tema Port, Ghana';
+  document.getElementById('t-status').value=t.status||'In Transit';
+  toast('Tracking loaded for editing — change details and click Save ✏️');
+  document.getElementById('panel-trk').scrollTo(0,0);
 }
 async function deleteTrk(fid){
   if(!confirm('Delete this tracking number?'))return;
@@ -416,7 +480,7 @@ function renderTrkTable(){
   const tbody=document.getElementById('trk-tbody');
   const items=window.TRK_ITEMS||[];
   if(!items.length){tbody.innerHTML='<tr><td colspan="7" style="text-align:center;padding:28px;color:var(--mu)">No tracking numbers yet. Add your first one above!</td></tr>';return;}
-  tbody.innerHTML=items.map(t=>`<tr><td style="font-weight:700;color:var(--gd)">${t.num||''}</td><td><div class="iname">${t.item||''}</div></td><td>${t.qty||'—'}</td><td>${t.etd||'—'}</td><td>${t.eta||'—'}</td><td><span class="sbg ${['Arrived at Port','Delivered'].includes(t.status)?'s-ok':'s-pre'}">${t.status||''}</span></td><td><button class="abtn abtn-del" onclick="deleteTrk('${t.fid}')">🗑 Delete</button></td></tr>`).join('');
+  tbody.innerHTML=items.map(t=>`<tr><td style="font-weight:700;color:var(--gd)">${t.num||''}</td><td><div class="iname">${t.item||''}</div></td><td>${t.qty||'—'}</td><td>${t.etd||'—'}</td><td>${t.eta||'—'}</td><td><span class="sbg ${['Arrived at Port','Delivered'].includes(t.status)?'s-ok':'s-pre'}">${t.status||''}</span></td><td><button class="abtn" onclick="editTrk('${t.fid}')">✏️ Edit</button><button class="abtn abtn-del" onclick="deleteTrk('${t.fid}')">🗑 Delete</button></td></tr>`).join('');
 }
 
 // ── ANALYTICS ───────────────────────────────────────────────────
@@ -444,6 +508,187 @@ function renderAnalytics(){
   const cats=Object.entries(a.cats||{}).sort((a,b)=>b[1]-a[1]).slice(0,5);
   document.getElementById('an-cats').innerHTML=cats.length?cats.map(([c,n])=>`<div class="arow"><span class="arow-l">${c}</span><span class="arow-v">${n} views</span></div>`).join(''):'<p style="color:var(--mu);font-size:13px;padding:10px 0">No category views yet</p>';
 }
+
+
+// ── EDIT BASE ITEMS ─────────────────────────────────────────────
+// Base items stored in memory, overrides saved to localStorage
+let BASE_OVERRIDES = JSON.parse(localStorage.getItem('ibn_base_overrides') || '{}');
+let eiPhotoData = null;
+let currentBaseItems = [];
+
+// We get base items from the main site's product list embedded here
+const BASE_SAMPLE = [
+  {id:1,n:"Women's Birkenstock Arizona Two-Strap Sandal",c:'Footwear',img:'https://images.unsplash.com/photo-1562183241-b937e95585b6?w=500&q=80'},
+  {id:2,n:"Men's Birkenstock Boston Closed-Toe Clog",c:'Footwear',img:'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=500&q=80'},
+  {id:3,n:"Children's Birkenstock Sandals",c:'Kids',img:'https://images.unsplash.com/photo-1604671801908-9f2e91f5e8fb?w=500&q=80'},
+  {id:4,n:"Birkenstock Platform Mule Sandal",c:'Footwear',img:'https://images.unsplash.com/photo-1603487742131-4160ec999306?w=500&q=80'},
+  {id:5,n:"Birkenstock Gizeh Thong Toe-Post Sandal",c:'Footwear',img:'https://images.unsplash.com/photo-1551107696-a4b0c5a0d9a2?w=500&q=80'},
+  {id:6,n:"Birkenstock Mayari Strappy Toe-Post Sandal",c:'Footwear',img:'https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=500&q=80'},
+  {id:7,n:"Men's Birkenstock Zurich Slide",c:'Footwear',img:'https://images.unsplash.com/photo-1465453869711-7e174808ace9?w=500&q=80'},
+  {id:8,n:"Birkenstock Super-Birki Professional Clog",c:'Footwear',img:'https://images.unsplash.com/photo-1585386959984-a4155224a1ad?w=500&q=80'},
+  {id:9,n:"Birkenstock Yao Sneaker Cork Insole",c:'Footwear',img:'https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=500&q=80'},
+  {id:10,n:"Birkenstock Papillio Wedge-Heel Sandal",c:'Footwear',img:'https://images.unsplash.com/photo-1535530992830-e25d07cfa780?w=500&q=80'},
+  {id:11,n:"Women's Birkenstock Florida Soft Footbed",c:'Footwear',img:'https://images.unsplash.com/photo-1487222477894-8943e31ef7b2?w=500&q=80'},
+  {id:12,n:"Women's Block-Heel Ankle Strap Sandals",c:'Footwear',img:'https://images.unsplash.com/photo-1518049362265-d5b2a6467637?w=500&q=80'},
+  {id:13,n:"Women's Chunky Platform Sneakers",c:'Footwear',img:'https://images.unsplash.com/photo-1608231387042-66d1773070a5?w=500&q=80'},
+  {id:14,n:"Women's Pointed-Toe Stiletto Heels",c:'Footwear',img:'https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=500&q=80'},
+  {id:15,n:"Women's Soft Flat Ballet Pumps",c:'Footwear',img:'https://images.unsplash.com/photo-1487222477894-8943e31ef7b2?w=500&q=80'},
+  {id:16,n:"Men's Leather-Look Slip-On Loafer",c:'Footwear',img:'https://images.unsplash.com/photo-1614252235316-8c857d38b5f4?w=500&q=80'},
+  {id:17,n:"Men's Lightweight Running Trainers",c:'Footwear',img:'https://images.unsplash.com/photo-1491553895911-0055eca6402d?w=500&q=80'},
+  {id:18,n:"Men's Dior-Style Luxury Slides",c:'Footwear',img:'https://images.unsplash.com/photo-1465453869711-7e174808ace9?w=500&q=80'},
+  {id:19,n:"Men's Classic Oxford Dress Shoes",c:'Footwear',img:'https://images.unsplash.com/photo-1533867617858-e7b97e060509?w=500&q=80'},
+  {id:20,n:"Women's Wedge Espadrille Sandals",c:'Footwear',img:'https://images.unsplash.com/photo-1562183241-b937e95585b6?w=500&q=80'},
+  {id:21,n:'Large Canvas Tote Bag with Pendant',c:'Bags',img:'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=500&q=80'},
+  {id:22,n:'Quilted Chain-Strap Shoulder Bag',c:'Bags',img:'https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=500&q=80'},
+  {id:23,n:'Small Crossbody Mini Shoulder Bag',c:'Bags',img:'https://images.unsplash.com/photo-1594938298603-c8148c4b4869?w=500&q=80'},
+  {id:24,n:'Luxury Handbag with Gold Hardware',c:'Bags',img:'https://images.unsplash.com/photo-1590874103328-eac38a683ce7?w=500&q=80'},
+  {id:25,n:'Drawstring Bucket Style Bag',c:'Bags',img:'https://images.unsplash.com/photo-1566150905458-1bf1fc113f0d?w=500&q=80'},
+  {id:26,n:'Large Plush Fluffy Shoulder Bag',c:'Bags',img:'https://images.unsplash.com/photo-1575032617751-6ddec2089882?w=500&q=80'},
+  {id:27,n:"Men's Professional Laptop Briefcase",c:'Bags',img:'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=500&q=80'},
+  {id:28,n:'Multi-Compartment Travel Backpack',c:'Bags',img:'https://images.unsplash.com/photo-1622560480605-d83c853bc5c3?w=500&q=80'},
+  {id:29,n:'Woven Straw Summer Beach Bag',c:'Bags',img:'https://images.unsplash.com/photo-1594938298603-c8148c4b4869?w=500&q=80'},
+  {id:30,n:'Mini Bum Bag Fanny Pack',c:'Bags',img:'https://images.unsplash.com/photo-1594938298603-c8148c4b4869?w=500&q=80'},
+  {id:31,n:'Floral Print Midi Wrap Dress',c:'Clothing',img:'https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?w=500&q=80'},
+  {id:32,n:'Satin Silk Short Pyjama Set',c:'Clothing',img:'https://images.unsplash.com/photo-1631046215893-c30d6f1e4d67?w=500&q=80'},
+  {id:33,n:'Satin Silk Long Pyjama Set',c:'Clothing',img:'https://images.unsplash.com/photo-1618354691373-d851c5c3a990?w=500&q=80'},
+  {id:34,n:"Women's Ribbed Bodycon Mini Dress",c:'Clothing',img:'https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?w=500&q=80'},
+  {id:35,n:"Women's Oversized Structured Blazer",c:'Clothing',img:'https://images.unsplash.com/photo-1551232864-3f0890e580d9?w=500&q=80'},
+  {id:36,n:"Men's Classic Cotton Polo Shirt",c:'Clothing',img:'https://images.unsplash.com/photo-1620012253295-c15cc3e65df4?w=500&q=80'},
+  {id:37,n:'High-Waist Skinny Stretch Jeans',c:'Clothing',img:'https://images.unsplash.com/photo-1542272604-787c3835535d?w=500&q=80'},
+  {id:38,n:'Wide-Leg Palazzo Trousers',c:'Clothing',img:'https://images.unsplash.com/photo-1594938298603-c8148c4b4869?w=500&q=80'},
+  {id:39,n:'Matching Co-Ord Two-Piece Set',c:'Clothing',img:'https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?w=500&q=80'},
+  {id:40,n:'Satin Evening Slip Dress',c:'Clothing',img:'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=500&q=80'},
+  {id:41,n:'Nourishing Lip Balm Set (6 Pieces)',c:'Beauty',img:'https://images.unsplash.com/photo-1586495777744-4e6232bf2803?w=500&q=80'},
+  {id:42,n:'Professional Hair Care Toolkit (27pcs)',c:'Beauty',img:'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=500&q=80'},
+  {id:43,n:'Vitamin C Brightening Face Serum',c:'Beauty',img:'https://images.unsplash.com/photo-1556228578-0d85b1a4d571?w=500&q=80'},
+  {id:44,n:'Luxury Perfume Gift Set',c:'Beauty',img:'https://images.unsplash.com/photo-1541643600914-78b084683702?w=500&q=80'},
+  {id:45,n:'Rechargeable Electric Face Massager',c:'Beauty',img:'https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=500&q=80'},
+  {id:46,n:'Cordless Automatic Hair Curling Wand',c:'Beauty',img:'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=500&q=80'},
+  {id:47,n:'Jade Roller & Gua Sha Facial Set',c:'Beauty',img:'https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=500&q=80'},
+  {id:48,n:'Complete Gel Nail Art Kit with UV Lamp',c:'Beauty',img:'https://images.unsplash.com/photo-1604654894610-df63bc536371?w=500&q=80'},
+  {id:49,n:'Active Noise Cancelling Wireless Earbuds',c:'Electronics',img:'https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=500&q=80'},
+  {id:50,n:'Smart Fitness Watch with Heart Rate Monitor',c:'Electronics',img:'https://images.unsplash.com/photo-1434494878577-86c23bcb06b9?w=500&q=80'},
+  {id:51,n:'Portable Waterproof Bluetooth Speaker',c:'Electronics',img:'https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?w=500&q=80'},
+  {id:52,n:'20000mAh Fast-Charge Power Bank',c:'Electronics',img:'https://images.unsplash.com/photo-1609091839311-d5365f9ff1c5?w=500&q=80'},
+  {id:53,n:'LED Ring Light with Stand',c:'Electronics',img:'https://images.unsplash.com/photo-1625314897518-bb4fe6e95229?w=500&q=80'},
+  {id:54,n:'Wireless Phone Charging Pad',c:'Electronics',img:'https://images.unsplash.com/photo-1609091839311-d5365f9ff1c5?w=500&q=80'},
+  {id:55,n:'Double-Wall Insulated Tumbler Bottle',c:'Home',img:'https://images.unsplash.com/photo-1602143407151-7111542de6e8?w=500&q=80'},
+  {id:56,n:'Ceramic Coffee Mug Set (4 Pieces)',c:'Home',img:'https://images.unsplash.com/photo-1514228742587-6b1558fcca3d?w=500&q=80'},
+  {id:57,n:'LED Fairy String Lights Decorative',c:'Home',img:'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=500&q=80'},
+  {id:58,n:'Ultrasonic Aromatherapy Diffuser LED',c:'Home',img:'https://images.unsplash.com/photo-1555465910-31dec7475f58?w=500&q=80'},
+  {id:59,n:'Ceramic Non-Stick Frying Pan with Lid',c:'Home',img:'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=500&q=80'},
+  {id:60,n:'Soft Fluffy Sofa Throw Blanket',c:'Home',img:'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=500&q=80'},
+  {id:61,n:"Children's School Backpack",c:'Kids',img:'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=500&q=80'},
+  {id:62,n:"Children's Birkenstock Sandals Colour",c:'Kids',img:'https://images.unsplash.com/photo-1604671801908-9f2e91f5e8fb?w=500&q=80'},
+  {id:63,n:"Kids' Colourful Water Bottle",c:'Kids',img:'https://images.unsplash.com/photo-1602143407151-7111542de6e8?w=500&q=80'},
+  {id:64,n:'Educational Building Block Toy Set',c:'Kids',img:'https://images.unsplash.com/photo-1566479179817-c0d95f74b5f1?w=500&q=80'},
+  {id:65,n:"Children's Waterproof Rain Boots",c:'Kids',img:'https://images.unsplash.com/photo-1566479179817-c0d95f74b5f1?w=500&q=80'},
+  {id:66,n:'UV400 Fashion Sunglasses',c:'Accessories',img:'https://images.unsplash.com/photo-1511499767150-a48a237f0083?w=500&q=80'},
+  {id:67,n:'Dainty Layered Gold Chain Necklace',c:'Accessories',img:'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=500&q=80'},
+  {id:68,n:'Freshwater Pearl Drop Earrings',c:'Accessories',img:'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=500&q=80'},
+  {id:69,n:'Colourful Handcrafted Waist Bead Set',c:'Accessories',img:'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=500&q=80'},
+  {id:70,n:'Non-Slip Thick Yoga & Exercise Mat',c:'Sports',img:'https://images.unsplash.com/photo-1601925260368-ae2f83cf8b7f?w=500&q=80'},
+  {id:71,n:'Resistance Exercise Bands Set (5 Levels)',c:'Sports',img:'https://images.unsplash.com/photo-1517344800994-e8ef8d82f9cc?w=500&q=80'},
+  {id:72,n:"Women's High-Waist Sports Leggings",c:'Sports',img:'https://images.unsplash.com/photo-1538805060514-97d9cc17730c?w=500&q=80'},
+  {id:73,n:'Large Motivational Sports Water Bottle',c:'Sports',img:'https://images.unsplash.com/photo-1601925260368-ae2f83cf8b7f?w=500&q=80'},
+  {id:74,n:'Speed Jump Rope Adjustable',c:'Sports',img:'https://images.unsplash.com/photo-1517344800994-e8ef8d82f9cc?w=500&q=80'},
+  {id:75,n:"Men's Linen Button-Down Shirt",c:'Clothing',img:'https://images.unsplash.com/photo-1620012253295-c15cc3e65df4?w=500&q=80'},
+  {id:76,n:'Cargo Multi-Pocket Trousers',c:'Clothing',img:'https://images.unsplash.com/photo-1594938298603-c8148c4b4869?w=500&q=80'},
+  {id:77,n:"Men's Jogger Tracksuit Set",c:'Clothing',img:'https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=500&q=80'},
+  {id:78,n:'Ruffle Off-Shoulder Summer Dress',c:'Clothing',img:'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=500&q=80'},
+  {id:79,n:'Satin Evening Slip Maxi Dress',c:'Clothing',img:'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=500&q=80'},
+  {id:80,n:'Soft Fleece Pullover Hoodie',c:'Clothing',img:'https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=500&q=80'},
+];
+
+function getEffectiveItem(item){
+  const ov = BASE_OVERRIDES[item.id];
+  return ov ? {...item,...ov} : item;
+}
+
+function filterBaseItems(){
+  const q = document.getElementById('edit-search').value.toLowerCase();
+  const cf = document.getElementById('edit-cat-filter').value;
+  currentBaseItems = BASE_SAMPLE.filter(p=>{
+    const ef = getEffectiveItem(p);
+    const matchQ = !q || ef.n.toLowerCase().includes(q) || ef.c.toLowerCase().includes(q);
+    const matchC = !cf || ef.c === cf;
+    return matchQ && matchC;
+  });
+  renderEditTable();
+}
+
+function renderEditTable(){
+  const tbody = document.getElementById('edit-tbody');
+  if(!currentBaseItems.length){tbody.innerHTML='<tr><td colspan="4" style="text-align:center;padding:24px;color:var(--mu)">No items found</td></tr>';return;}
+  const hasOv = id => !!BASE_OVERRIDES[id];
+  tbody.innerHTML = currentBaseItems.map(p=>{
+    const ef = getEffectiveItem(p);
+    return `<tr style="${hasOv(p.id)?'background:#F3F0FF;':''}">
+      <td><img src="${ef.img}" alt="" class="thumb" onerror="this.style.background='#EDE9FF'"/></td>
+      <td><div class="iname">${ef.n}${hasOv(p.id)?` <span style="background:var(--g);color:var(--p3);font-size:10px;padding:2px 6px;border-radius:4px;font-weight:700">EDITED</span>`:''}</div><div class="icat">${ef.c}</div></td>
+      <td><span class="sbg s-pre">${ef.c}</span></td>
+      <td>
+        <button class="abtn" onclick="openEditModal(${p.id})">✏️ Edit</button>
+        ${hasOv(p.id)?`<button class="abtn abtn-del" onclick="resetBaseItem(${p.id})">↩ Reset</button>`:''}
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function openEditModal(id){
+  const p = BASE_SAMPLE.find(x=>x.id===id); if(!p)return;
+  const ef = getEffectiveItem(p);
+  document.getElementById('ei-id').value = id;
+  document.getElementById('ei-name').value = ef.n;
+  document.getElementById('ei-cat').value = ef.c;
+  document.getElementById('ei-desc').value = ef.desc||ef.d||'';
+  document.getElementById('ei-img').value = ef.img;
+  document.getElementById('ei-cols').value = (ef.cols||ef.colors||[]).join(', ');
+  document.getElementById('ei-szs').value = (ef.szs||ef.sizes||[]).join(', ');
+  if(ef.img){document.getElementById('ei-prev-img').src=ef.img;document.getElementById('ei-prev').style.display='block';}
+  eiPhotoData=null;
+  document.getElementById('edit-item-modal').style.display='flex';
+}
+
+function closeEditModal(e){if(e.target===document.getElementById('edit-item-modal'))document.getElementById('edit-item-modal').style.display='none';}
+
+function upEIPhoto(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{eiPhotoData=ev.target.result;document.getElementById('ei-prev-img').src=eiPhotoData;document.getElementById('ei-prev').style.display='block';document.getElementById('ei-img').value='';};r.readAsDataURL(f);}
+function previewEI(){const u=document.getElementById('ei-img').value.trim();if(u){eiPhotoData=null;document.getElementById('ei-prev-img').src=u;document.getElementById('ei-prev').style.display='block';}}
+
+function saveEditedBaseItem(){
+  const id = parseInt(document.getElementById('ei-id').value);
+  const name = document.getElementById('ei-name').value.trim();
+  const cat = document.getElementById('ei-cat').value;
+  const desc = document.getElementById('ei-desc').value.trim();
+  const imgUrl = document.getElementById('ei-img').value.trim();
+  const img = eiPhotoData || imgUrl;
+  const cols = document.getElementById('ei-cols').value.split(',').map(s=>s.trim()).filter(Boolean);
+  const szs = document.getElementById('ei-szs').value.split(',').map(s=>s.trim()).filter(Boolean);
+  if(!name){toast('Please enter item name');return;}
+  BASE_OVERRIDES[id] = {n:name,c:cat,d:desc,img,cols,szs};
+  localStorage.setItem('ibn_base_overrides', JSON.stringify(BASE_OVERRIDES));
+  document.getElementById('edit-item-modal').style.display='none';
+  filterBaseItems();
+  toast('Item updated! ✅ Note: edits saved on this device. To make permanent for all devices, use "Manage Catalogue".');
+}
+
+function resetBaseItem(id){
+  if(!confirm('Reset this item to original?'))return;
+  delete BASE_OVERRIDES[id];
+  localStorage.setItem('ibn_base_overrides', JSON.stringify(BASE_OVERRIDES));
+  filterBaseItems();
+  toast('Item reset to original');
+}
+
+// Load edit table when panel opens
+document.querySelectorAll('.atab').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    if(btn.textContent.includes('Edit Base')){
+      currentBaseItems=[...BASE_SAMPLE];
+      renderEditTable();
+    }
+  });
+});
 
 let tt;function toast(m){const e=document.getElementById('toast');e.textContent=m;e.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>e.classList.remove('show'),3500);}
 </script>

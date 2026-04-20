@@ -506,222 +506,27 @@ footer{background:var(--p3);padding:48px 40px 22px;}
 <div class="dov" id="dov" onclick="bgclk(event)"><div class="dmod" id="dmod"><div class="dim" id="dim"></div><div class="din" id="din"></div></div></div>
 <div class="toast" id="toast"></div>
 <script type="module">
-try{
-const{initializeApp}=await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js");
-const{getFirestore,collection,onSnapshot,query,orderBy}=await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
+import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import{getFirestore,collection,onSnapshot,query,orderBy}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 const app=initializeApp({apiKey:"AIzaSyAExcjS0SaEoKZvHXmj5ryZ8u_5DwEk1lk",authDomain:"nelle-s-shipping-track.firebaseapp.com",projectId:"nelle-s-shipping-track",storageBucket:"nelle-s-shipping-track.firebasestorage.app",messagingSenderId:"464513009072",appId:"1:464513009072:web:1866f20aaeada20f2fc275"});
 const db=getFirestore(app);
 onSnapshot(collection(db,'ibn_available'),s=>{window.AVAIL=s.docs.map(d=>({id:d.id,...d.data()}));typeof renderAvail==='function'&&renderAvail();});
 onSnapshot(collection(db,'ibn_tracking'),s=>{window.FTRK={};s.docs.forEach(d=>{const t=d.data();if(t.num)window.FTRK[t.num.toUpperCase()]=t;});});
 onSnapshot(query(collection(db,'ibn_catalogue'),orderBy('ts','desc')),s=>{window.CCAT=s.docs.map(d=>({fid:d.id,...d.data()}));typeof rebuildAll==='function'&&rebuildAll();});
-}catch(e){console.log('Firebase offline, using defaults');}
 </script>
 <script>
 const WA='233273752465',PER=30;
 let pg=1,cat='',curItem=null,pdata=null,sc='',ss='';
 window.AVAIL=[];window.FTRK={};window.CCAT=[];
 
-const BASE=[
-  {id:1,n:"Women's Birkenstock Arizona Two-Strap Sandal",c:'Footwear',d:'Classic two-strap cork footbed sandal.',img:'https://images.unsplash.com/photo-1562183241-b937e95585b6?w=500&q=80',b:'hot',cols:['Black','Brown','White','Beige'],szs:['36','37','38','39','40','41']},
-  {id:2,n:"Men's Birkenstock Boston Closed-Toe Clog",c:'Footwear',d:'Closed-toe clog with cork footbed.',img:'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=500&q=80',b:'hot',cols:['Black','Dark Brown','Mocha'],szs:['40','41','42','43','44','45','46']},
-  {id:3,n:"Children's Birkenstock Sandals",c:'Kids',d:'Adjustable sandals for growing children.',img:'https://images.unsplash.com/photo-1604671801908-9f2e91f5e8fb?w=500&q=80',b:'new',cols:['Pink','Blue','Yellow','Red'],szs:['28','29','30','31','32','33','34','35']},
-  {id:4,n:"Birkenstock Platform Mule Sandal",c:'Footwear',d:'Elevated platform Birkenstock mule.',img:'https://images.unsplash.com/photo-1603487742131-4160ec999306?w=500&q=80',b:null,cols:['Black','White','Cream'],szs:['36','37','38','39','40','41']},
-  {id:5,n:"Birkenstock Gizeh Thong Toe-Post Sandal",c:'Footwear',d:'Iconic toe-post thong sandal.',img:'https://images.unsplash.com/photo-1551107696-a4b0c5a0d9a2?w=500&q=80',b:'sale',cols:['Brown','Black','White'],szs:['36','37','38','39','40','41','42']},
-  {id:6,n:"Birkenstock Mayari Strappy Toe-Post Sandal",c:'Footwear',d:'Woven strappy toe-post with ankle strap.',img:'https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=500&q=80',b:null,cols:['Black','Silver','White'],szs:['36','37','38','39','40','41']},
-  {id:7,n:"Men's Birkenstock Zurich Slide",c:'Footwear',d:'Minimal single-strap slide for men.',img:'https://images.unsplash.com/photo-1465453869711-7e174808ace9?w=500&q=80',b:null,cols:['Black','Oiled Brown','Navy'],szs:['40','41','42','43','44','45','46']},
-  {id:8,n:"Birkenstock Super-Birki Professional Clog",c:'Footwear',d:'Lightweight professional clog.',img:'https://images.unsplash.com/photo-1585386959984-a4155224a1ad?w=500&q=80',b:'new',cols:['Black','White','Grey'],szs:['36','37','38','39','40','41','42','43']},
-  {id:9,n:"Birkenstock Yao Sneaker Cork Insole",c:'Footwear',d:'Sneaker style with cork comfort.',img:'https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=500&q=80',b:'new',cols:['White','Black','Grey Blue'],szs:['36','37','38','39','40','41','42']},
-  {id:10,n:"Birkenstock Papillio Wedge-Heel Sandal",c:'Footwear',d:'Wedge-heeled Birkenstock.',img:'https://images.unsplash.com/photo-1535530992830-e25d07cfa780?w=500&q=80',b:null,cols:['Black','Floral','Beige'],szs:['36','37','38','39','40','41']},
-  {id:11,n:"Women's Birkenstock Florida Soft Footbed",c:'Footwear',d:'Florida sandal with plush soft footbed.',img:'https://images.unsplash.com/photo-1487222477894-8943e31ef7b2?w=500&q=80',b:'sale',cols:['Black','Tobacco','Habana Brown'],szs:['36','37','38','39','40','41']},
-  {id:12,n:"Women's Block-Heel Ankle Strap Sandals",c:'Footwear',d:'Block-heel sandals with ankle buckle.',img:'https://images.unsplash.com/photo-1518049362265-d5b2a6467637?w=500&q=80',b:'hot',cols:['Black','Nude','White','Red'],szs:['36','37','38','39','40','41']},
-  {id:13,n:"Women's Chunky Platform Sneakers",c:'Footwear',d:'Thick-sole platform trainers.',img:'https://images.unsplash.com/photo-1608231387042-66d1773070a5?w=500&q=80',b:'new',cols:['White','Black/White','Pink'],szs:['36','37','38','39','40','41']},
-  {id:14,n:"Women's Pointed-Toe Stiletto Heels",c:'Footwear',d:'Classic stiletto heels.',img:'https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=500&q=80',b:null,cols:['Black','Nude','Red','Silver'],szs:['36','37','38','39','40','41']},
-  {id:15,n:"Women's Soft Flat Ballet Pumps",c:'Footwear',d:'Comfortable flat ballet pumps.',img:'https://images.unsplash.com/photo-1487222477894-8943e31ef7b2?w=500&q=80',b:'sale',cols:['Black','Nude','White','Pink'],szs:['36','37','38','39','40','41']},
-  {id:16,n:"Men's Leather-Look Slip-On Loafer",c:'Footwear',d:'Smart slip-on loafers.',img:'https://images.unsplash.com/photo-1614252235316-8c857d38b5f4?w=500&q=80',b:null,cols:['Black','Brown'],szs:['40','41','42','43','44','45']},
-  {id:17,n:"Men's Lightweight Running Trainers",c:'Footwear',d:'Breathable lightweight running shoes.',img:'https://images.unsplash.com/photo-1491553895911-0055eca6402d?w=500&q=80',b:'hot',cols:['Black/White','Blue/White','Red/White'],szs:['40','41','42','43','44','45','46']},
-  {id:18,n:"Men's Dior-Style Luxury Slides",c:'Footwear',d:'Premium Dior-inspired luxury slides.',img:'https://images.unsplash.com/photo-1465453869711-7e174808ace9?w=500&q=80',b:'hot',cols:['Black','White','Brown'],szs:['40','41','42','43','44','45','46']},
-  {id:19,n:"Men's Classic Oxford Dress Shoes",c:'Footwear',d:'Classic Oxford shoes for formal wear.',img:'https://images.unsplash.com/photo-1533867617858-e7b97e060509?w=500&q=80',b:null,cols:['Black','Brown','Tan'],szs:['40','41','42','43','44','45']},
-  {id:20,n:"Women's Wedge Espadrille Sandals",c:'Footwear',d:'Classic rope-wedge espadrille sandals.',img:'https://images.unsplash.com/photo-1562183241-b937e95585b6?w=500&q=80',b:null,cols:['Beige','Black','Navy'],szs:['36','37','38','39','40','41']},
-  {id:21,n:'Large Canvas Tote Bag with Pendant',c:'Bags',d:'Spacious tote with decorative pendant.',img:'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=500&q=80',b:'hot',cols:['Black','Brown','Beige','Pink'],szs:['One Size']},
-  {id:22,n:'Quilted Chain-Strap Shoulder Bag',c:'Bags',d:'Elegant quilted bag with gold chain.',img:'https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=500&q=80',b:'new',cols:['Black','Beige','Pink','Red'],szs:['One Size']},
-  {id:23,n:'Small Crossbody Mini Shoulder Bag',c:'Bags',d:'Compact crossbody with adjustable strap.',img:'https://images.unsplash.com/photo-1594938298603-c8148c4b4869?w=500&q=80',b:null,cols:['Black','Brown','White','Red'],szs:['One Size']},
-  {id:24,n:'Luxury Handbag with Gold Hardware',c:'Bags',d:'Premium structured bag with gold hardware.',img:'https://images.unsplash.com/photo-1590874103328-eac38a683ce7?w=500&q=80',b:'hot',cols:['Black','Beige','Brown','Red'],szs:['One Size']},
-  {id:25,n:'Drawstring Bucket Style Bag',c:'Bags',d:'Trendy drawstring bucket bag.',img:'https://images.unsplash.com/photo-1566150905458-1bf1fc113f0d?w=500&q=80',b:null,cols:['Black','Brown','Tan'],szs:['One Size']},
-  {id:26,n:'Large Plush Fluffy Shoulder Bag',c:'Bags',d:'Oversized teddy-style shoulder bag.',img:'https://images.unsplash.com/photo-1575032617751-6ddec2089882?w=500&q=80',b:'new',cols:['Pink','Grey','Black','Cream'],szs:['One Size']},
-  {id:27,n:"Men's Professional Laptop Briefcase",c:'Bags',d:'Sleek briefcase with laptop compartment.',img:'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=500&q=80',b:null,cols:['Black','Dark Brown','Navy'],szs:['One Size']},
-  {id:28,n:'Multi-Compartment Travel Backpack',c:'Bags',d:'Large backpack for school or travel.',img:'https://images.unsplash.com/photo-1622560480605-d83c853bc5c3?w=500&q=80',b:null,cols:['Black','Grey','Blue','Pink'],szs:['One Size']},
-  {id:29,n:'Woven Straw Summer Beach Bag',c:'Bags',d:'Lightweight woven beach tote.',img:'https://images.unsplash.com/photo-1594938298603-c8148c4b4869?w=500&q=80',b:'sale',cols:['Natural','Black/Natural'],szs:['One Size']},
-  {id:30,n:'Mini Bum Bag Fanny Pack',c:'Bags',d:'Trendy mini bum bag.',img:'https://images.unsplash.com/photo-1594938298603-c8148c4b4869?w=500&q=80',b:'new',cols:['Black','Brown','Pink'],szs:['One Size']},
-  {id:31,n:'Floral Print Midi Wrap Dress',c:'Clothing',d:'Beautiful floral midi wrap dress.',img:'https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?w=500&q=80',b:'hot',cols:['Red Floral','Blue Floral','Yellow','Pink'],szs:['S','M','L','XL','XXL']},
-  {id:32,n:'Satin Silk Short Pyjama Set',c:'Clothing',d:'Ultra-soft satin pyjama short set.',img:'https://images.unsplash.com/photo-1631046215893-c30d6f1e4d67?w=500&q=80',b:'new',cols:['Pink','Blue','White','Purple','Black'],szs:['S','M','L','XL','XXL']},
-  {id:33,n:'Satin Silk Long Pyjama Set',c:'Clothing',d:'Elegant long-sleeve satin pyjama set.',img:'https://images.unsplash.com/photo-1618354691373-d851c5c3a990?w=500&q=80',b:null,cols:['Pink','Blue','White','Purple','Black'],szs:['S','M','L','XL','XXL']},
-  {id:34,n:"Women's Ribbed Bodycon Mini Dress",c:'Clothing',d:'Figure-hugging ribbed bodycon dress.',img:'https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?w=500&q=80',b:'hot',cols:['Black','Red','White','Olive','Blue'],szs:['S','M','L','XL']},
-  {id:35,n:"Women's Oversized Structured Blazer",c:'Clothing',d:'Sharp oversized blazer jacket.',img:'https://images.unsplash.com/photo-1551232864-3f0890e580d9?w=500&q=80',b:'new',cols:['Black','White','Beige','Pink'],szs:['S','M','L','XL']},
-  {id:36,n:"Men's Classic Cotton Polo Shirt",c:'Clothing',d:'Classic cotton polo shirt.',img:'https://images.unsplash.com/photo-1620012253295-c15cc3e65df4?w=500&q=80',b:null,cols:['White','Black','Navy','Red'],szs:['S','M','L','XL','XXL']},
-  {id:37,n:'High-Waist Skinny Stretch Jeans',c:'Clothing',d:'High-waist skinny stretch jeans.',img:'https://images.unsplash.com/photo-1542272604-787c3835535d?w=500&q=80',b:null,cols:['Light Blue','Dark Blue','Black'],szs:['26','27','28','29','30','31','32','33','34']},
-  {id:38,n:'Wide-Leg Palazzo Trousers',c:'Clothing',d:'Flowy wide-leg palazzo pants.',img:'https://images.unsplash.com/photo-1594938298603-c8148c4b4869?w=500&q=80',b:'sale',cols:['Black','White','Beige','Green'],szs:['S','M','L','XL','XXL']},
-  {id:39,n:'Matching Co-Ord Two-Piece Set',c:'Clothing',d:'Trendy matching top and skirt set.',img:'https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?w=500&q=80',b:'new',cols:['Black','White','Pink','Green'],szs:['S','M','L','XL']},
-  {id:40,n:'Satin Evening Slip Dress',c:'Clothing',d:'Elegant satin slip dress for events.',img:'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=500&q=80',b:'hot',cols:['Black','Champagne','Pink','Red'],szs:['S','M','L','XL']},
-  {id:41,n:'Nourishing Lip Balm Set (6 Pieces)',c:'Beauty',d:'6 moisturising lip balms in assorted flavours.',img:'https://images.unsplash.com/photo-1586495777744-4e6232bf2803?w=500&q=80',b:null,cols:['Assorted'],szs:['One Size']},
-  {id:42,n:'Professional Hair Care Toolkit (27pcs)',c:'Beauty',d:'Complete 27-piece professional hair kit.',img:'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=500&q=80',b:'hot',cols:['Black/Gold'],szs:['One Size']},
-  {id:43,n:'Vitamin C Brightening Face Serum',c:'Beauty',d:'Brightening serum with Vitamin C.',img:'https://images.unsplash.com/photo-1556228578-0d85b1a4d571?w=500&q=80',b:'new',cols:['One Variant'],szs:['30ml','50ml']},
-  {id:44,n:'Luxury Perfume Gift Set',c:'Beauty',d:'Long-lasting fragrance gift set.',img:'https://images.unsplash.com/photo-1541643600914-78b084683702?w=500&q=80',b:null,cols:['Assorted Scents'],szs:['50ml','100ml']},
-  {id:45,n:'Rechargeable Electric Face Massager',c:'Beauty',d:'Facial massage and skin lifting device.',img:'https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=500&q=80',b:'new',cols:['Pink','White','Rose Gold'],szs:['One Size']},
-  {id:46,n:'Cordless Automatic Hair Curling Wand',c:'Beauty',d:'Rechargeable automatic hair curler.',img:'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=500&q=80',b:'hot',cols:['Pink','White','Black'],szs:['One Size']},
-  {id:47,n:'Jade Roller & Gua Sha Facial Set',c:'Beauty',d:'Natural jade roller and gua sha set.',img:'https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=500&q=80',b:'sale',cols:['Green Jade','Pink Rose Quartz'],szs:['One Size']},
-  {id:48,n:'Complete Gel Nail Art Kit with UV Lamp',c:'Beauty',d:'Full nail art set with UV lamp.',img:'https://images.unsplash.com/photo-1604654894610-df63bc536371?w=500&q=80',b:null,cols:['Assorted'],szs:['One Size']},
-  {id:49,n:'Active Noise Cancelling Wireless Earbuds',c:'Electronics',d:'TWS earbuds with ANC and long battery.',img:'https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=500&q=80',b:'hot',cols:['Black','White'],szs:['One Size']},
-  {id:50,n:'Smart Fitness Watch with Heart Rate Monitor',c:'Electronics',d:'Smartwatch with steps and heart rate.',img:'https://images.unsplash.com/photo-1434494878577-86c23bcb06b9?w=500&q=80',b:'new',cols:['Black','Silver','Rose Gold'],szs:['One Size']},
-  {id:51,n:'Portable Waterproof Bluetooth Speaker',c:'Electronics',d:'Compact waterproof Bluetooth speaker.',img:'https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?w=500&q=80',b:null,cols:['Black','Red','Blue'],szs:['One Size']},
-  {id:52,n:'20000mAh Fast-Charge Power Bank',c:'Electronics',d:'High capacity power bank.',img:'https://images.unsplash.com/photo-1609091839311-d5365f9ff1c5?w=500&q=80',b:'hot',cols:['Black','White','Silver'],szs:['One Size']},
-  {id:53,n:'LED Ring Light with Stand',c:'Electronics',d:'Professional ring light for content creation.',img:'https://images.unsplash.com/photo-1625314897518-bb4fe6e95229?w=500&q=80',b:'new',cols:['White'],szs:['10 inch','14 inch','18 inch']},
-  {id:54,n:'Wireless Phone Charging Pad',c:'Electronics',d:'Fast Qi wireless charging for all devices.',img:'https://images.unsplash.com/photo-1609091839311-d5365f9ff1c5?w=500&q=80',b:null,cols:['Black','White'],szs:['One Size']},
-  {id:55,n:'Double-Wall Insulated Tumbler Bottle',c:'Home',d:'Keeps drinks hot or cold for hours.',img:'https://images.unsplash.com/photo-1602143407151-7111542de6e8?w=500&q=80',b:'sale',cols:['Pink','Blue','Green','Black','White'],szs:['500ml','750ml','1L']},
-  {id:56,n:'Ceramic Coffee Mug Set (4 Pieces)',c:'Home',d:'Beautiful ceramic mugs for coffee or tea.',img:'https://images.unsplash.com/photo-1514228742587-6b1558fcca3d?w=500&q=80',b:null,cols:['White','Black','Pastel Mix'],szs:['One Size']},
-  {id:57,n:'LED Fairy String Lights Decorative',c:'Home',d:'Decorative LED fairy lights.',img:'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=500&q=80',b:'hot',cols:['Warm White','Multicolor','Rose Gold'],szs:['3m','5m','10m']},
-  {id:58,n:'Ultrasonic Aromatherapy Diffuser LED',c:'Home',d:'Ultrasonic oil diffuser with colour LED.',img:'https://images.unsplash.com/photo-1555465910-31dec7475f58?w=500&q=80',b:'new',cols:['White','Wood Grain','Black'],szs:['One Size']},
-  {id:59,n:'Ceramic Non-Stick Frying Pan with Lid',c:'Home',d:'Healthy ceramic non-stick frying pan.',img:'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=500&q=80',b:null,cols:['Red','Black','Teal'],szs:['24cm','28cm','30cm']},
-  {id:60,n:'Soft Fluffy Sofa Throw Blanket',c:'Home',d:'Super-soft fluffy throw for sofa or bed.',img:'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=500&q=80',b:null,cols:['Grey','Beige','Pink','Navy'],szs:['130x150cm','150x200cm']},
-  {id:61,n:"Children's School Backpack",c:'Kids',d:'Durable kids school bag.',img:'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=500&q=80',b:'hot',cols:['Red','Blue','Pink','Green'],szs:['One Size']},
-  {id:62,n:"Children's Birkenstock Sandals Colour",c:'Kids',d:'Fun colourful Birkenstock sandals for kids.',img:'https://images.unsplash.com/photo-1604671801908-9f2e91f5e8fb?w=500&q=80',b:'new',cols:['Pink','Blue','Yellow','Red'],szs:['28','29','30','31','32','33','34','35']},
-  {id:63,n:"Kids' Colourful Water Bottle",c:'Kids',d:'Fun leak-proof water bottle.',img:'https://images.unsplash.com/photo-1602143407151-7111542de6e8?w=500&q=80',b:null,cols:['Pink','Blue','Yellow'],szs:['350ml','500ml']},
-  {id:64,n:'Educational Building Block Toy Set',c:'Kids',d:'Creative educational building blocks.',img:'https://images.unsplash.com/photo-1566479179817-c0d95f74b5f1?w=500&q=80',b:'new',cols:['Multicolor'],szs:['50 pieces','100 pieces']},
-  {id:65,n:"Children's Waterproof Rain Boots",c:'Kids',d:'Colourful waterproof rain boots.',img:'https://images.unsplash.com/photo-1566479179817-c0d95f74b5f1?w=500&q=80',b:null,cols:['Pink Stars','Blue Dino','Yellow Duck'],szs:['26','27','28','29','30','31','32']},
-  {id:66,n:'UV400 Fashion Sunglasses',c:'Accessories',d:'Trendy UV-protected sunglasses.',img:'https://images.unsplash.com/photo-1511499767150-a48a237f0083?w=500&q=80',b:'new',cols:['Black','Brown','Pink','Blue Mirror'],szs:['One Size']},
-  {id:67,n:'Dainty Layered Gold Chain Necklace',c:'Accessories',d:'Delicate layered gold-tone necklace.',img:'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=500&q=80',b:'hot',cols:['Gold','Silver','Rose Gold'],szs:['One Size']},
-  {id:68,n:'Freshwater Pearl Drop Earrings',c:'Accessories',d:'Elegant pearl drop earrings.',img:'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=500&q=80',b:null,cols:['White Pearl','Black Pearl'],szs:['One Size']},
-  {id:69,n:'Colourful Handcrafted Waist Bead Set',c:'Accessories',d:'Traditional handcrafted waist beads.',img:'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=500&q=80',b:'new',cols:['Multicolor','Red/Gold','Blue/Silver'],szs:['One Size']},
-  {id:70,n:'Non-Slip Thick Yoga & Exercise Mat',c:'Sports',d:'Premium non-slip exercise mat.',img:'https://images.unsplash.com/photo-1601925260368-ae2f83cf8b7f?w=500&q=80',b:'new',cols:['Purple','Blue','Pink','Black'],szs:['Standard','Extra Thick']},
-  {id:71,n:'Resistance Exercise Bands Set (5 Levels)',c:'Sports',d:'5 resistance bands for home workouts.',img:'https://images.unsplash.com/photo-1517344800994-e8ef8d82f9cc?w=500&q=80',b:null,cols:['Multicolor Set'],szs:['One Size']},
-  {id:72,n:"Women's High-Waist Sports Leggings",c:'Sports',d:'High-waist workout leggings with pocket.',img:'https://images.unsplash.com/photo-1538805060514-97d9cc17730c?w=500&q=80',b:'hot',cols:['Black','Navy','Grey','Wine Red'],szs:['XS','S','M','L','XL','XXL']},
-  {id:73,n:'Large Motivational Sports Water Bottle',c:'Sports',d:'Large sports bottle with time markers.',img:'https://images.unsplash.com/photo-1601925260368-ae2f83cf8b7f?w=500&q=80',b:'sale',cols:['Black','Grey','Blue','Pink'],szs:['1L','1.5L','2L']},
-  {id:74,n:'Speed Jump Rope Adjustable',c:'Sports',d:'Lightweight speed skipping rope.',img:'https://images.unsplash.com/photo-1517344800994-e8ef8d82f9cc?w=500&q=80',b:null,cols:['Black','Red','Blue'],szs:['One Size']},
-  {id:75,n:"Men's Linen Button-Down Shirt",c:'Clothing',d:'Breathable linen shirt for warm weather.',img:'https://images.unsplash.com/photo-1620012253295-c15cc3e65df4?w=500&q=80',b:'new',cols:['White','Beige','Light Blue','Olive'],szs:['S','M','L','XL','XXL']},
-  {id:76,n:'Cargo Multi-Pocket Trousers',c:'Clothing',d:'Trendy cargo pants with multiple pockets.',img:'https://images.unsplash.com/photo-1594938298603-c8148c4b4869?w=500&q=80',b:null,cols:['Khaki','Black','Grey','Olive'],szs:['S','M','L','XL','XXL']},
-  {id:77,n:"Men's Jogger Tracksuit Set",c:'Clothing',d:'Matching jogger sweatsuit set.',img:'https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=500&q=80',b:null,cols:['Black','Grey','Navy','Olive'],szs:['S','M','L','XL','XXL']},
-  {id:78,n:'Ruffle Off-Shoulder Summer Dress',c:'Clothing',d:'Romantic ruffle off-shoulder dress.',img:'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=500&q=80',b:'sale',cols:['White','Pink','Floral','Blue'],szs:['S','M','L','XL']},
-  {id:79,n:'Satin Evening Slip Maxi Dress',c:'Clothing',d:'Elegant satin maxi dress for events.',img:'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=500&q=80',b:'hot',cols:['Black','Champagne','Red','Emerald'],szs:['S','M','L','XL']},
-  {id:80,n:'Soft Fleece Pullover Hoodie',c:'Clothing',d:'Cosy fleece pullover hoodie.',img:'https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=500&q=80',b:null,cols:['Grey','Black','White','Pink'],szs:['S','M','L','XL','XXL']},
-];
-const EXTRAS=[
-  ['Eyebrow Pencil Set (5 Shades)','Beauty','https://images.unsplash.com/photo-1512496015851-a90fb38ba796?w=500&q=80'],
-  ['Collagen Sheet Face Masks (10 Pack)','Beauty','https://images.unsplash.com/photo-1556228578-0d85b1a4d571?w=500&q=80'],
-  ['Men Cologne Body Spray Gift Set','Beauty','https://images.unsplash.com/photo-1541643600914-78b084683702?w=500&q=80'],
-  ['Nail Polish Set (12 Colours)','Beauty','https://images.unsplash.com/photo-1604654894610-df63bc536371?w=500&q=80'],
-  ['Hair Growth Castor Oil Serum','Beauty','https://images.unsplash.com/photo-1556228578-0d85b1a4d571?w=500&q=80'],
-  ['Body Shimmer Glow Lotion','Beauty','https://images.unsplash.com/photo-1556228578-0d85b1a4d571?w=500&q=80'],
-  ['Wireless Karaoke Microphone Speaker','Electronics','https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?w=500&q=80'],
-  ['Mechanical Gaming Keyboard RGB','Electronics','https://images.unsplash.com/photo-1598986646512-9330bcc4c0dc?w=500&q=80'],
-  ['USB-C 7-in-1 Multi-Port Hub','Electronics','https://images.unsplash.com/photo-1609091839311-d5365f9ff1c5?w=500&q=80'],
-  ['Over-Ear Wireless Headphones','Electronics','https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=500&q=80'],
-  ['Smart LED Desk Lamp USB Rechargeable','Electronics','https://images.unsplash.com/photo-1625314897518-bb4fe6e95229?w=500&q=80'],
-  ['4K Action Camera Waterproof','Electronics','https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?w=500&q=80'],
-  ['Kitchen Knife Set (5 Pieces)','Home','https://images.unsplash.com/photo-1593618998160-e34014e67546?w=500&q=80'],
-  ['Decorative Cushion Cover Set (4pcs)','Home','https://images.unsplash.com/photo-1555465910-31dec7475f58?w=500&q=80'],
-  ['LED Smart Colour Strip Lights 5m','Home','https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=500&q=80'],
-  ['Moon Lamp LED Night Light','Home','https://images.unsplash.com/photo-1555465910-31dec7475f58?w=500&q=80'],
-  ['Scented Soy Wax Candle Set','Home','https://images.unsplash.com/photo-1555465910-31dec7475f58?w=500&q=80'],
-  ['Stainless Steel Lunch Box Set','Home','https://images.unsplash.com/photo-1602143407151-7111542de6e8?w=500&q=80'],
-  ['Pantry Storage Container Set','Home','https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=500&q=80'],
-  ['Silk Pillowcase Anti-Frizz','Home','https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=500&q=80'],
-  ['Baby Carrier Soft Wrap Sling','Kids','https://images.unsplash.com/photo-1566479179817-c0d95f74b5f1?w=500&q=80'],
-  ['Baby Bibs Set with Snaps (6pcs)','Kids','https://images.unsplash.com/photo-1566479179817-c0d95f74b5f1?w=500&q=80'],
-  ['Kids Colouring Art Set','Kids','https://images.unsplash.com/photo-1566479179817-c0d95f74b5f1?w=500&q=80'],
-  ['Kids Snack Lunch Box','Kids','https://images.unsplash.com/photo-1566479179817-c0d95f74b5f1?w=500&q=80'],
-  ['Children Light-Up LED Trainers','Kids','https://images.unsplash.com/photo-1566479179817-c0d95f74b5f1?w=500&q=80'],
-  ['Gold Layered Ring Set','Accessories','https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=500&q=80'],
-  ['Hair Claw Clip Set (6 Pieces)','Accessories','https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=500&q=80'],
-  ['Silk Satin Hair Bonnet Sleeping Cap','Accessories','https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=500&q=80'],
-  ['Slim Leather Wallet Card Holder','Accessories','https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=500&q=80'],
-  ['Minimalist Watch Leather Strap','Accessories','https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=500&q=80'],
-  ['Ab Roller Core Training Wheel','Sports','https://images.unsplash.com/photo-1601925260368-ae2f83cf8b7f?w=500&q=80'],
-  ['Foam Roller Muscle Massage','Sports','https://images.unsplash.com/photo-1517344800994-e8ef8d82f9cc?w=500&q=80'],
-  ['Gym Duffel Sports Bag','Sports','https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=500&q=80'],
-  ['Athletic Sports Bra Set (3 Pack)','Sports','https://images.unsplash.com/photo-1538805060514-97d9cc17730c?w=500&q=80'],
-  ['Adjustable Ankle Weights Pair','Sports','https://images.unsplash.com/photo-1517344800994-e8ef8d82f9cc?w=500&q=80'],
-  ['Puffer Vest Gilet Jacket','Clothing','https://images.unsplash.com/photo-1551232864-3f0890e580d9?w=500&q=80'],
-  ['Knit Ribbed Cardigan','Clothing','https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=500&q=80'],
-  ['Oversized Graphic Print T-Shirt','Clothing','https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=500&q=80'],
-  ['Formal Long Evening Gown','Clothing','https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=500&q=80'],
-  ['Tailored Smart Trousers Women','Clothing','https://images.unsplash.com/photo-1594938298603-c8148c4b4869?w=500&q=80'],
-  ["Men's Smart Chino Trousers",'Clothing','https://images.unsplash.com/photo-1594938298603-c8148c4b4869?w=500&q=80'],
-  ['Women Platform Knee-High Boots','Footwear','https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=500&q=80'],
-  ["Men's Pool Slides Casual Flip Flop",'Footwear','https://images.unsplash.com/photo-1465453869711-7e174808ace9?w=500&q=80'],
-  ['Transparent Clear Heel Sandal','Footwear','https://images.unsplash.com/photo-1487222477894-8943e31ef7b2?w=500&q=80'],
-  ['Beaded Friendship Bracelet Set','Accessories','https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=500&q=80'],
-  ['Silk Hair Scarf Head Wrap','Accessories','https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=500&q=80'],
-  ['Crystal Rhinestone Bobby Pins Set','Accessories','https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=500&q=80'],
-  ['Rattan Wicker Structured Handbag','Bags','https://images.unsplash.com/photo-1590874103328-eac38a683ce7?w=500&q=80'],
-  ['Clear Jelly Transparent Tote Bag','Bags','https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=500&q=80'],
-  ['Travel Weekender Overnight Bag','Bags','https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=500&q=80'],
-  ['Wristlet Phone Wallet Bag','Bags','https://images.unsplash.com/photo-1594938298603-c8148c4b4869?w=500&q=80'],
-  ['Retractable Luggage Suitcase','Bags','https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=500&q=80'],
-  ['Reusable Eco Shopping Bag Set','Home','https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=500&q=80'],
-  ['Compression Travel Packing Cubes','Home','https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=500&q=80'],
-  ['Foldable Compact Umbrella','Home','https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=500&q=80'],
-  ['Marble Print Serving Tray Board','Home','https://images.unsplash.com/photo-1514228742587-6b1558fcca3d?w=500&q=80'],
-  ['Nonstick Baking Tray Set','Home','https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=500&q=80'],
-  ['Yoga Balance Wobble Board','Sports','https://images.unsplash.com/photo-1517344800994-e8ef8d82f9cc?w=500&q=80'],
-  ['Swimming Goggles with Case','Sports','https://images.unsplash.com/photo-1517344800994-e8ef8d82f9cc?w=500&q=80'],
-  ['Men Training Compression Shorts','Sports','https://images.unsplash.com/photo-1538805060514-97d9cc17730c?w=500&q=80'],
-  ['Beard Oil Growth Serum Men','Beauty','https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=500&q=80'],
-  ['Hair Edge Control Brush Set','Beauty','https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=500&q=80'],
-  ['Deep Conditioning Hair Mask','Beauty','https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=500&q=80'],
-  ['Lash Lift & Brow Lamination Kit','Beauty','https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=500&q=80'],
-  ['Bluetooth Mini USB Fan Rechargeable','Electronics','https://images.unsplash.com/photo-1609091839311-d5365f9ff1c5?w=500&q=80'],
-  ['Smart Night Light Motion Sensor','Electronics','https://images.unsplash.com/photo-1625314897518-bb4fe6e95229?w=500&q=80'],
-  ['Selfie Remote Bluetooth Shutter','Electronics','https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?w=500&q=80'],
-  ['Adjustable Phone Tripod Stand','Electronics','https://images.unsplash.com/photo-1625314897518-bb4fe6e95229?w=500&q=80'],
-  ['Mini Portable Projector','Electronics','https://images.unsplash.com/photo-1625314897518-bb4fe6e95229?w=500&q=80'],
-  ["Women's Wrap Shirt Blouse",'Clothing','https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?w=500&q=80'],
-  ['Smocked Puff Sleeve Dress','Clothing','https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?w=500&q=80'],
-  ['Matching Family Pyjama Set','Clothing','https://images.unsplash.com/photo-1631046215893-c30d6f1e4d67?w=500&q=80'],
-  ["Men's Muscle Fit Gym Tank Top",'Clothing','https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=500&q=80'],
-  ['Printed Kimono Beach Cover-Up','Clothing','https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=500&q=80'],
-  ['Cropped Denim Jacket','Clothing','https://images.unsplash.com/photo-1551232864-3f0890e580d9?w=500&q=80'],
-  ["Women's Chelsea Ankle Boots",'Footwear','https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=500&q=80'],
-  ["Men's Slip-On Canvas Shoes",'Footwear','https://images.unsplash.com/photo-1491553895911-0055eca6402d?w=500&q=80'],
-  ["Women's Heel Mule Backless Shoe",'Footwear','https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=500&q=80'],
-  ['Vintage Brass Picture Frame Set','Home','https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=500&q=80'],
-  ['Colourful Stackable Storage Boxes','Home','https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=500&q=80'],
-  ['Outdoor Picnic Waterproof Mat','Home','https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=500&q=80'],
-  ['Vintage Round Frame Sunglasses','Accessories','https://images.unsplash.com/photo-1511499767150-a48a237f0083?w=500&q=80'],
-  ['Gold Hoop Earrings Set (3 Pairs)','Accessories','https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=500&q=80'],
-  ['Chunky Chain Statement Necklace','Accessories','https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=500&q=80'],
-  ['Reading Glasses Stylish Frame','Accessories','https://images.unsplash.com/photo-1511499767150-a48a237f0083?w=500&q=80'],
-  ['Yoga Foam Block Set (2 Pieces)','Sports','https://images.unsplash.com/photo-1601925260368-ae2f83cf8b7f?w=500&q=80'],
-  ['Adjustable Dumbbells Set','Sports','https://images.unsplash.com/photo-1517344800994-e8ef8d82f9cc?w=500&q=80'],
-  ['Sports Running Belt Waist Pack','Sports','https://images.unsplash.com/photo-1601925260368-ae2f83cf8b7f?w=500&q=80'],
-  ['Silicone Baby Teething Toy Set','Kids','https://images.unsplash.com/photo-1566479179817-c0d95f74b5f1?w=500&q=80'],
-  ['Kids Waterproof Sunhat','Kids','https://images.unsplash.com/photo-1566479179817-c0d95f74b5f1?w=500&q=80'],
-  ['Baby Socks Newborn Pack (6 Pairs)','Kids','https://images.unsplash.com/photo-1566479179817-c0d95f74b5f1?w=500&q=80'],
-  ['Kids Learning Tablet Toy','Kids','https://images.unsplash.com/photo-1566479179817-c0d95f74b5f1?w=500&q=80'],
-  ['Baby Play Mat Soft Foam','Kids','https://images.unsplash.com/photo-1566479179817-c0d95f74b5f1?w=500&q=80'],
-  ['Eyeglasses Blue Light Blocking','Accessories','https://images.unsplash.com/photo-1511499767150-a48a237f0083?w=500&q=80'],
-  ['Acrylic Makeup Organiser Tower','Home','https://images.unsplash.com/photo-1512496015851-a90fb38ba796?w=500&q=80'],
-  ['Bathroom Organiser Shelf Rack','Home','https://images.unsplash.com/photo-1555465910-31dec7475f58?w=500&q=80'],
-  ['Wall Mounted Coat Hooks Set','Home','https://images.unsplash.com/photo-1555465910-31dec7475f58?w=500&q=80'],
-  ['Wireless Earphone Headband Kids','Electronics','https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=500&q=80'],
-  ["Women's Sports Crop Top Set",'Sports','https://images.unsplash.com/photo-1538805060514-97d9cc17730c?w=500&q=80'],
-  ['Body Lotion Scrub Gift Set','Beauty','https://images.unsplash.com/photo-1556228578-0d85b1a4d571?w=500&q=80'],
-  ['Full Coverage Foundation Set','Beauty','https://images.unsplash.com/photo-1512496015851-a90fb38ba796?w=500&q=80'],
-  ['Contour Highlight Palette','Beauty','https://images.unsplash.com/photo-1512496015851-a90fb38ba796?w=500&q=80'],
-  ['Electric Callus Foot File Remover','Beauty','https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=500&q=80'],
-  ['Crystal Deodorant Natural Stone','Beauty','https://images.unsplash.com/photo-1556228578-0d85b1a4d571?w=500&q=80'],
-  ["Men's Cap Sports Hat",'Accessories','https://images.unsplash.com/photo-1511499767150-a48a237f0083?w=500&q=80'],
-  ["Men's Casual Leather Belt",'Accessories','https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=500&q=80'],
-  ['Oversized Knitted Tote Bag','Bags','https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=500&q=80'],
-  ['Quilted Diamond-Pattern Mini Bag','Bags','https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=500&q=80'],
-];
-const blist=['hot','new','sale',null,null,null];
-const ALL_BASE=[...BASE];
-EXTRAS.forEach((e,i)=>ALL_BASE.push({id:200+i,n:e[0],c:e[1],d:`Quality ${e[0]} sourced from trusted China shops.`,img:e[2],b:blist[(200+i)%6],cols:['As Shown','Black','White'],szs:['One Size','S','M','L']}));
-while(ALL_BASE.length<300){const x=ALL_BASE.length;const ref=BASE[x%BASE.length];ALL_BASE.push({...ref,id:2000+x,n:ref.n+' (Style '+(Math.floor(x/BASE.length)+2)+')'});}
-window.ALL_P=[...ALL_BASE];
+const BASE=[];
+const EXTRAS=[];
+// Base catalogue is empty — all items come from admin via Firebase
+window.ALL_P=[];
 
 function rebuildAll(){
   const custom=(window.CCAT||[]).map((c,i)=>({id:'fb_'+i,n:c.name||c.n||'Item',c:c.cat||c.c||'Other',d:c.desc||c.d||'',img:c.img||'',b:c.badge||c.b||null,cols:c.colors||c.cols||['As Shown'],szs:c.sizes||c.szs||['One Size']}));
-  window.ALL_P=[...custom,...ALL_BASE];
+  window.ALL_P=[...custom];
   renderProds();
 }
 window.rebuildAll=rebuildAll;
@@ -732,6 +537,7 @@ function renderProds(){
   const l=getList();
   const tot=l.length,pages=Math.ceil(tot/PER),start=(pg-1)*PER,page=l.slice(start,start+PER);
   document.getElementById('pcount').textContent=`${start+1}–${Math.min(start+PER,tot)} of ${tot} items`;
+  if(!page.length){document.getElementById('pgrid').innerHTML='<div style="grid-column:1/-1;text-align:center;padding:60px 20px;color:var(--mu)"><div style="font-size:48px;margin-bottom:16px">🛍️</div><div style="font-family:Syne,sans-serif;font-size:18px;font-weight:700;color:var(--p);margin-bottom:8px">Catalogue is empty</div><p style="font-size:14px">Nel is adding items soon! Check back or search for what you need.</p></div>';document.getElementById('pgn').innerHTML='';return;}
   document.getElementById('pgrid').innerHTML=page.map((p,i)=>`
     <div class="pc" onclick="openDetail('${p.id}')">
       <div class="pc-img">
