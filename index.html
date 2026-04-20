@@ -27,11 +27,7 @@ img{max-width:100%;display:block;}
 a{text-decoration:none;color:inherit;}
 ::-webkit-scrollbar{width:4px;}
 ::-webkit-scrollbar-thumb{background:var(--pm);border-radius:2px;}
-#ldr{position:fixed;inset:0;background:var(--p3);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;transition:opacity .5s,visibility .5s;}
-#ldr.off{opacity:0;visibility:hidden;}
-.lhex{width:60px;height:60px;background:var(--g);border-radius:14px;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:13px;font-weight:800;color:var(--p3);animation:lp 1.2s ease-in-out infinite;}
-@keyframes lp{0%,100%{transform:scale(1);}50%{transform:scale(1.12);}}
-#ldr p{color:rgba(255,255,255,.4);font-size:14px;}
+
 .topbar{background:var(--p3);padding:7px 40px;display:flex;justify-content:space-between;align-items:center;font-size:12px;color:rgba(255,255,255,.5);}
 .topbar a{color:rgba(255,255,255,.5);}.topbar a:hover{color:var(--g);}
 .tbl{display:flex;gap:20px;}
@@ -309,7 +305,7 @@ footer{background:var(--p3);padding:48px 40px 22px;}
 }
 </style></head>
 <body>
-<div id="ldr"><div class="lhex">IBN</div><p>Loading Import By Nel...</p></div>
+
 <div class="topbar">
   <div class="tbl"><span>📞 <a href="tel:+233273752465">+233 273 752 465</a></span><span>📍 Kasoa Brigade, Ghana</span></div>
   <a href="mailto:importbynel@gmail.com">✉️ importbynel@gmail.com</a>
@@ -510,13 +506,15 @@ footer{background:var(--p3);padding:48px 40px 22px;}
 <div class="dov" id="dov" onclick="bgclk(event)"><div class="dmod" id="dmod"><div class="dim" id="dim"></div><div class="din" id="din"></div></div></div>
 <div class="toast" id="toast"></div>
 <script type="module">
-import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import{getFirestore,collection,onSnapshot,query,orderBy}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+try{
+const{initializeApp}=await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js");
+const{getFirestore,collection,onSnapshot,query,orderBy}=await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
 const app=initializeApp({apiKey:"AIzaSyAExcjS0SaEoKZvHXmj5ryZ8u_5DwEk1lk",authDomain:"nelle-s-shipping-track.firebaseapp.com",projectId:"nelle-s-shipping-track",storageBucket:"nelle-s-shipping-track.firebasestorage.app",messagingSenderId:"464513009072",appId:"1:464513009072:web:1866f20aaeada20f2fc275"});
 const db=getFirestore(app);
 onSnapshot(collection(db,'ibn_available'),s=>{window.AVAIL=s.docs.map(d=>({id:d.id,...d.data()}));typeof renderAvail==='function'&&renderAvail();});
 onSnapshot(collection(db,'ibn_tracking'),s=>{window.FTRK={};s.docs.forEach(d=>{const t=d.data();if(t.num)window.FTRK[t.num.toUpperCase()]=t;});});
 onSnapshot(query(collection(db,'ibn_catalogue'),orderBy('ts','desc')),s=>{window.CCAT=s.docs.map(d=>({fid:d.id,...d.data()}));typeof rebuildAll==='function'&&rebuildAll();});
+}catch(e){console.log('Firebase offline, using defaults');}
 </script>
 <script>
 const WA='233273752465',PER=30;
@@ -901,10 +899,7 @@ function sendContact(){const n=document.getElementById('cn').value.trim(),p=docu
 function toggleMenu(){document.getElementById('mnav').classList.toggle('open');}
 let tt;function toast(m){const e=document.getElementById('toast');e.textContent=m;e.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>e.classList.remove('show'),3000);}
 rebuildAll();
-// Hide loader — max 2 seconds no matter what (fixes slow mobile)
-function hideLdr(){const l=document.getElementById('ldr');if(!l)return;l.classList.add('off');setTimeout(()=>l.style.display='none',500);}
-setTimeout(hideLdr, 2000);
-window.addEventListener('load',()=>setTimeout(hideLdr,300));
+
 </script>
 </body>
 </html>
