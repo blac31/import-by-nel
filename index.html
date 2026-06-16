@@ -306,10 +306,6 @@ footer{background:var(--p3);padding:48px 40px 22px;}
 </style></head>
 <body>
 
-<div id="debug-banner" style="background:#FF4500;color:white;padding:8px 16px;font-size:13px;font-weight:700;text-align:center;display:none">
-  Firebase: <span id="db-avail">?</span> available items | <span id="db-cat">?</span> catalogue items | <span id="db-trk">?</span> tracking
-  <button onclick="document.getElementById('debug-banner').style.display='none'" style="margin-left:10px;background:none;border:1px solid white;color:white;cursor:pointer;padding:2px 8px">✕</button>
-</div>
 <div class="topbar">
   <div class="tbl"><span>📞 <a href="tel:+233273752465">+233 273 752 465</a></span><span>📍 Kasoa Brigade, Ghana</span></div>
   <a href="mailto:importbynel@gmail.com">✉️ importbynel@gmail.com</a>
@@ -509,7 +505,15 @@ footer{background:var(--p3);padding:48px 40px 22px;}
 <a href="https://wa.me/233273752465?text=Hello!%20I%20want%20to%20order." target="_blank" class="fltwa">💬</a>
 <div class="dov" id="dov" onclick="bgclk(event)"><div class="dmod" id="dmod"><div class="dim" id="dim"></div><div class="din" id="din"></div></div></div>
 <div class="toast" id="toast"></div>
-
+<script type="module">
+import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import{getFirestore,collection,onSnapshot,query,orderBy}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+const app=initializeApp({apiKey:"AIzaSyAExcjS0SaEoKZvHXmj5ryZ8u_5DwEk1lk",authDomain:"nelle-s-shipping-track.firebaseapp.com",projectId:"nelle-s-shipping-track",storageBucket:"nelle-s-shipping-track.firebasestorage.app",messagingSenderId:"464513009072",appId:"1:464513009072:web:1866f20aaeada20f2fc275"});
+const db=getFirestore(app);
+onSnapshot(collection(db,'ibn_available'),s=>{window.AVAIL=s.docs.map(d=>({id:d.id,...d.data()}));typeof renderAvail==='function'&&renderAvail();});
+onSnapshot(collection(db,'ibn_tracking'),s=>{window.FTRK={};s.docs.forEach(d=>{const t=d.data();if(t.num)window.FTRK[t.num.toUpperCase()]=t;});});
+onSnapshot(query(collection(db,'ibn_catalogue'),orderBy('ts','desc')),s=>{window.CCAT=s.docs.map(d=>({fid:d.id,...d.data()}));typeof rebuildAll==='function'&&rebuildAll();});
+</script>
 <script>
 const WA='233273752465',PER=30;
 let pg=1,cat='',curItem=null,pdata=null,sc='',ss='';
@@ -528,25 +532,12 @@ function rebuildAll(){
 window.rebuildAll=rebuildAll;
 window.renderAvail=renderAvail;
 
-// Load from localStorage cache immediately (shows items even before Firebase connects)
-function loadFromCache(){
-  try{
-    const cachedAvail=localStorage.getItem('ibn_avail_cache');
-    if(cachedAvail){window.AVAIL=JSON.parse(cachedAvail);renderAvail();}
-    const cachedCat=localStorage.getItem('ibn_cat_cache');
-    if(cachedCat){window.CCAT=JSON.parse(cachedCat);rebuildAll();}
-    const cachedTrk=localStorage.getItem('ibn_trk_cache');
-    if(cachedTrk){window.FTRK=JSON.parse(cachedTrk);}
-  }catch(e){}
-}
-loadFromCache();
-
 function getList(){const l=window.ALL_P||ALL_BASE;return cat?l.filter(p=>p.c===cat):l;}
 function renderProds(){
   const l=getList();
   const tot=l.length,pages=Math.ceil(tot/PER),start=(pg-1)*PER,page=l.slice(start,start+PER);
   document.getElementById('pcount').textContent=`${start+1}–${Math.min(start+PER,tot)} of ${tot} items`;
-  if(!page.length){document.getElementById('pgrid').innerHTML='<div style="grid-column:1/-1;text-align:center;padding:60px 20px;color:var(--mu)"><div style="font-size:48px;margin-bottom:16px">🛍️</div><div style="font-family:Syne,sans-serif;font-size:18px;font-weight:700;color:var(--p);margin-bottom:8px">Catalogue is empty</div><p style="font-size:14px">Nel is adding items soon! Check back or search for what you need.</p></div>';document.getElementById('pgn').innerHTML='';return;}
+  if(!page.length){document.getElementById('pgrid').innerHTML='<div style="grid-column:1/-1;text-align:center;padding:60px 20px;color:var(--mu)"><div style="font-size:48px;margin-bottom:16px">🛍️</div><div style="font-family:Syne,sans-serif;font-size:18px;font-weight:700;color:var(--p);margin-bottom:8px">Catalogue is empty</div><p style="font-size:14px">Nel is adding items soon! Check back or search for what you need.</p></div>';document.getElementById('pag').innerHTML='';return;}
   document.getElementById('pgrid').innerHTML=page.map((p,i)=>`
     <div class="pc" onclick="openDetail('${p.id}')">
       <div class="pc-img">
@@ -715,36 +706,6 @@ function toggleMenu(){document.getElementById('mnav').classList.toggle('open');}
 let tt;function toast(m){const e=document.getElementById('toast');e.textContent=m;e.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>e.classList.remove('show'),3000);}
 rebuildAll();
 
-</script>
-
-<script type="module">
-import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import{getFirestore,collection,onSnapshot,query,orderBy}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-const app=initializeApp({apiKey:"AIzaSyAExcjS0SaEoKZvHXmj5ryZ8u_5DwEk1lk",authDomain:"nelle-s-shipping-track.firebaseapp.com",projectId:"nelle-s-shipping-track",storageBucket:"nelle-s-shipping-track.firebasestorage.app",messagingSenderId:"464513009072",appId:"1:464513009072:web:1866f20aaeada20f2fc275"});
-const db=getFirestore(app);
-onSnapshot(collection(db,'ibn_available'),s=>{
-  window.AVAIL=s.docs.map(d=>({id:d.id,...d.data()}));
-  localStorage.setItem('ibn_avail_cache',JSON.stringify(window.AVAIL));
-  const b=document.getElementById('debug-banner');
-  const da=document.getElementById('db-avail');
-  if(b)b.style.display='block';
-  if(da)da.textContent=s.docs.length+' items from Firebase';
-  renderAvail();
-});
-onSnapshot(collection(db,'ibn_tracking'),s=>{
-  window.FTRK={};
-  s.docs.forEach(d=>{const t=d.data();if(t.num)window.FTRK[t.num.toUpperCase()]=t;});
-  localStorage.setItem('ibn_trk_cache',JSON.stringify(window.FTRK));
-  const dt=document.getElementById('db-trk');
-  if(dt)dt.textContent=s.docs.length+' tracking from Firebase';
-});
-onSnapshot(query(collection(db,'ibn_catalogue'),orderBy('ts','desc')),s=>{
-  window.CCAT=s.docs.map(d=>({fid:d.id,...d.data()}));
-  localStorage.setItem('ibn_cat_cache',JSON.stringify(window.CCAT));
-  const dc=document.getElementById('db-cat');
-  if(dc)dc.textContent=s.docs.length+' items from Firebase';
-  rebuildAll();
-});
 </script>
 </body>
 </html>
