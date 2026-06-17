@@ -594,7 +594,7 @@ function renderAvail(){
   const items=window.AVAIL||[],g=document.getElementById('agrid');
   if(!items.length){g.innerHTML='<p style="color:rgba(255,255,255,.4);grid-column:1/-1;padding:20px;text-align:center">No available items right now. Check back soon!</p>';return;}
   g.innerHTML=items.map(a=>`
-    <div class="ac" style="${a.sold?'opacity:.6;cursor:not-allowed;':''}" onclick="${a.sold?'':'openAvail(''+a.id+'')'}">
+    <div class="ac" style="${a.sold?'opacity:.6;cursor:not-allowed;':''}" onclick="${a.sold?'':`openAvail('${a.id}')`}">
       <div class="ac-img">
         <img src="${a.img||'https://images.unsplash.com/photo-1483985988355-763728e1935b?w=400&q=80'}" alt="${a.name||''}" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1483985988355-763728e1935b?w=400&q=80'"/>
         <div style="position:absolute;top:8px;left:8px;background:${a.sold?'#DC2626':'#16A34A'};color:#fff;font-size:11px;font-weight:800;padding:3px 9px;border-radius:4px">${a.sold?'SOLD OUT':'IN GHANA ✅'}</div>
@@ -675,11 +675,7 @@ function doSearch(q){
   document.getElementById('sno').style.display=r.length?'none':'block';
   if(!r.length){
     document.getElementById('srgrid').innerHTML='';
-    document.getElementById('sno-wa').href=`https://wa.me/${WA}?text=${encodeURIComponent('Hello Import By Nel! 👋
-
-I am searching for: "'+q+'"
-
-Can you source this from China? Please send me the price!')}`;
+    document.getElementById('sno-wa').href=`https://wa.me/${WA}?text=${encodeURIComponent(`Hello Import By Nel! 👋\n\nI am searching for: "${q}"\n\nCan you source this from China? Please send me the price!`)}`;
   } else {
     document.getElementById('srgrid').innerHTML=r.slice(0,30).map(p=>`
       <div class="pc" onclick="openDetail('${p.id}')">
@@ -696,13 +692,7 @@ function onPDrop(e){e.preventDefault();const f=e.dataTransfer.files[0];if(f&&f.t
 function onPFile(e){const f=e.target.files[0];if(f)loadP(f);}
 function loadP(f){const r=new FileReader();r.onload=ev=>{pdata=ev.target.result;document.getElementById('ppimg').src=pdata;document.getElementById('pprev').style.display='block';};r.readAsDataURL(f);}
 function doPhotoSearch(){if(!pdata){toast('Please upload a photo first');return;}document.getElementById('ppnr').style.display='block';document.getElementById('pprev').scrollIntoView({behavior:'smooth'});}
-function sendPhotoWA(){const d=document.getElementById('pp-desc').value.trim();const m=`Hello Import By Nel! 👋
-
-I have a photo of an item I want from China.
-
-${d?'Description: '+d+'
-
-':''}Please help me find this and send the price!`;window.open(`https://wa.me/${WA}?text=${encodeURIComponent(m)}`,'_blank');toast('Opening WhatsApp! Please attach your photo 📸');}
+function sendPhotoWA(){const d=document.getElementById('pp-desc').value.trim();const m=`Hello Import By Nel! 👋\n\nI have a photo of an item I want from China.\n\n${d?`Description: ${d}\n\n`:''}Please help me find this and send the price!`;window.open(`https://wa.me/${WA}?text=${encodeURIComponent(m)}`,'_blank');toast('Opening WhatsApp! Please attach your photo 📸');}
 
 function doTrack(){
   const n=document.getElementById('tnum').value.trim().toUpperCase();
@@ -728,9 +718,7 @@ function doTrack(){
     <div class="prog">${steps.map((s,i)=>`<div class="pstep"><div class="pdot ${i<si?'done':i===si?'act':''}">${i<si?'✓':'·'}</div><div class="plbl ${i<si?'done':i===si?'act':''}">${s}</div></div>`).join('')}</div>`;
   tr.style.display='block';
 }
-function sendContact(){const n=document.getElementById('cn').value.trim(),p=document.getElementById('cp').value.trim(),m=document.getElementById('cm').value.trim();if(!m){toast('Please tell us what you need');return;}window.open(`https://wa.me/${WA}?text=${encodeURIComponent('Hello Import By Nel!👋
-
-'+(n?'Name: '+n+'\n':'')+(p?'Phone: '+p+'\n':'')+'Message: '+m)}`,'_blank');}
+function sendContact(){const n=document.getElementById('cn').value.trim(),p=document.getElementById('cp').value.trim(),m=document.getElementById('cm').value.trim();if(!m){toast('Please tell us what you need');return;}window.open(`https://wa.me/${WA}?text=${encodeURIComponent(`Hello Import By Nel!👋\n\n${n?`Name: ${n}\n`:''}${p?`Phone: ${p}\n`:''}Message: ${m}`)}`,'_blank');}
 function toggleMenu(){document.getElementById('mnav').classList.toggle('open');}
 let tt;function toast(m){const e=document.getElementById('toast');e.textContent=m;e.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>e.classList.remove('show'),3000);}
 rebuildAll();
