@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -507,12 +508,40 @@ footer{background:var(--p3);padding:48px 40px 22px;}
 <div class="toast" id="toast"></div>
 <script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import{getFirestore,collection,onSnapshot,query,orderBy}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-const app=initializeApp({apiKey:"AIzaSyAExcjS0SaEoKZvHXmj5ryZ8u_5DwEk1lk",authDomain:"nelle-s-shipping-track.firebaseapp.com",projectId:"nelle-s-shipping-track",storageBucket:"nelle-s-shipping-track.firebasestorage.app",messagingSenderId:"464513009072",appId:"1:464513009072:web:1866f20aaeada20f2fc275"});
+import{getFirestore,collection,getDocs,onSnapshot,query,orderBy}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+const cfg={apiKey:"AIzaSyAExcjS0SaEoKZvHXmj5ryZ8u_5DwEk1lk",authDomain:"nelle-s-shipping-track.firebaseapp.com",projectId:"nelle-s-shipping-track",storageBucket:"nelle-s-shipping-track.firebasestorage.app",messagingSenderId:"464513009072",appId:"1:464513009072:web:1866f20aaeada20f2fc275"};
+const app=initializeApp(cfg);
 const db=getFirestore(app);
-onSnapshot(collection(db,'ibn_available'),s=>{window.AVAIL=s.docs.map(d=>({id:d.id,...d.data()}));typeof renderAvail==='function'&&renderAvail();});
-onSnapshot(collection(db,'ibn_tracking'),s=>{window.FTRK={};s.docs.forEach(d=>{const t=d.data();if(t.num)window.FTRK[t.num.toUpperCase()]=t;});});
-onSnapshot(query(collection(db,'ibn_catalogue'),orderBy('ts','desc')),s=>{window.CCAT=s.docs.map(d=>({fid:d.id,...d.data()}));typeof rebuildAll==='function'&&rebuildAll();});
+
+function safeRebuild(){if(typeof window.rebuildAll==='function')window.rebuildAll();}
+function safeAvail(){if(typeof window.renderAvail==='function')window.renderAvail();}
+
+// Use getDocs as fallback alongside onSnapshot
+async function loadAll(){
+  try{
+    const catSnap=await getDocs(query(collection(db,'ibn_catalogue'),orderBy('ts','desc')));
+    window.CCAT=catSnap.docs.map(d=>({fid:d.id,...d.data()}));
+    safeRebuild();
+  }catch(e){console.error('cat load error',e);}
+  try{
+    const avSnap=await getDocs(collection(db,'ibn_available'));
+    window.AVAIL=avSnap.docs.map(d=>({id:d.id,...d.data()}));
+    safeAvail();
+  }catch(e){console.error('avail load error',e);}
+  try{
+    const trkSnap=await getDocs(collection(db,'ibn_tracking'));
+    window.FTRK={};
+    trkSnap.docs.forEach(d=>{const t=d.data();if(t.num)window.FTRK[t.num.toUpperCase()]=t;});
+  }catch(e){console.error('trk load error',e);}
+}
+
+// Call immediately
+loadAll();
+
+// Also keep realtime listeners
+onSnapshot(collection(db,'ibn_available'),s=>{window.AVAIL=s.docs.map(d=>({id:d.id,...d.data()}));safeAvail();},e=>console.error(e));
+onSnapshot(collection(db,'ibn_tracking'),s=>{window.FTRK={};s.docs.forEach(d=>{const t=d.data();if(t.num)window.FTRK[t.num.toUpperCase()]=t;});},e=>console.error(e));
+onSnapshot(query(collection(db,'ibn_catalogue'),orderBy('ts','desc')),s=>{window.CCAT=s.docs.map(d=>({fid:d.id,...d.data()}));safeRebuild();},e=>console.error(e));
 </script>
 <script>
 const WA='233273752465',PER=30;
