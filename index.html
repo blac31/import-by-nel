@@ -352,6 +352,7 @@ footer{background:var(--p3);padding:48px 40px 22px;}
       <p style="font-weight:700;color:var(--p);margin-bottom:6px">📸 Photo ready!</p>
       <p style="font-size:13px;color:var(--t2);margin-bottom:10px">Add a description to help us find the exact item:</p>
       <input type="text" id="pp-desc" placeholder="e.g. Women size L, red color..." style="width:100%;padding:10px 13px;border:1px solid var(--bd2);border-radius:var(--rs);font-family:'DM Sans',sans-serif;font-size:14px;margin-bottom:12px;outline:none"/>
+      <div style="background:#FFF3CD;border:1px solid #FFE69C;border-radius:var(--rs);padding:10px 13px;margin-bottom:12px;font-size:13px;color:#664D03">⚠️ <strong>Important:</strong> WhatsApp will open with a text message only. You must then tap the 📎 attach icon in WhatsApp yourself and select your photo to send it — the photo does NOT attach automatically.</div>
       <button onclick="sendPhotoWA()" style="background:var(--wa);color:var(--w);border:none;padding:12px 24px;border-radius:var(--rs);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;cursor:pointer">💬 Send to WhatsApp — We Find It!</button>
     </div>
   </div>
@@ -692,7 +693,7 @@ function onPDrop(e){e.preventDefault();const f=e.dataTransfer.files[0];if(f&&f.t
 function onPFile(e){const f=e.target.files[0];if(f)loadP(f);}
 function loadP(f){const r=new FileReader();r.onload=ev=>{pdata=ev.target.result;document.getElementById('ppimg').src=pdata;document.getElementById('pprev').style.display='block';};r.readAsDataURL(f);}
 function doPhotoSearch(){if(!pdata){toast('Please upload a photo first');return;}document.getElementById('ppnr').style.display='block';document.getElementById('pprev').scrollIntoView({behavior:'smooth'});}
-function sendPhotoWA(){const d=document.getElementById('pp-desc').value.trim();const m=`Hello Import By Nel! 👋\n\nI have a photo of an item I want from China.\n\n${d?`Description: ${d}\n\n`:''}Please help me find this and send the price!`;window.open(`https://wa.me/${WA}?text=${encodeURIComponent(m)}`,'_blank');toast('Opening WhatsApp! Please attach your photo 📸');}
+function sendPhotoWA(){const d=document.getElementById('pp-desc').value.trim();const m=`Hello Import By Nel! 👋\n\nI have a photo of an item I want from China.\n\n${d?`Description: ${d}\n\n`:''}Please help me find this and send the price!`;window.open(`https://wa.me/${WA}?text=${encodeURIComponent(m)}`,'_blank');toast('Opening WhatsApp! Now tap 📎 and attach your photo');}
 
 function doTrack(){
   const n=document.getElementById('tnum').value.trim().toUpperCase();
