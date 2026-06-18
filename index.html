@@ -341,20 +341,15 @@ footer{background:var(--p3);padding:48px 40px 22px;}
 <div class="ppsec" id="ppsec">
   <div class="ppin">
     <h3>📷 Search By Photo</h3>
-    <div class="pdrop" onclick="document.getElementById('pfile').click()" ondragover="event.preventDefault()" ondrop="onPDrop(event)">
-      <div style="font-size:36px;margin-bottom:10px">📷</div>
-      <p style="font-size:15px;color:var(--t2);margin-bottom:4px"><strong>Upload any photo</strong> of the item you want</p>
-      <p style="font-size:13px;color:var(--mu)">Saw it on Instagram, TikTok or anywhere? Upload it — we search trusted China shops for you!</p>
-      <input type="file" id="pfile" accept="image/*" onchange="onPFile(event)"/>
-    </div>
-    <div class="pprev" id="pprev"><img id="ppimg" alt="Your photo"/><button onclick="doPhotoSearch()" style="background:var(--p);color:var(--w);border:none;padding:12px 28px;border-radius:var(--rs);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;cursor:pointer;margin-top:8px">🔍 Find This Item</button></div>
-    <div class="ppnr" id="ppnr">
-      <p style="font-weight:700;color:var(--p);margin-bottom:6px">📸 Photo ready!</p>
-      <p style="font-size:13px;color:var(--t2);margin-bottom:10px">Add a description to help us find the exact item:</p>
-      <input type="text" id="pp-desc" placeholder="e.g. Women size L, red color..." style="width:100%;padding:10px 13px;border:1px solid var(--bd2);border-radius:var(--rs);font-family:'DM Sans',sans-serif;font-size:14px;margin-bottom:12px;outline:none"/>
-      <div style="background:#FFF3CD;border:1px solid #FFE69C;border-radius:var(--rs);padding:10px 13px;margin-bottom:12px;font-size:13px;color:#664D03">⚠️ <strong>Important:</strong> WhatsApp will open with a text message only. You must then tap the 📎 attach icon in WhatsApp yourself and select your photo to send it — the photo does NOT attach automatically.</div>
-      <button onclick="sendPhotoWA()" style="background:var(--wa);color:var(--w);border:none;padding:12px 24px;border-radius:var(--rs);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;cursor:pointer">💬 Send to WhatsApp — We Find It!</button>
-    </div>
+    <p style="font-size:13px;color:var(--mu);margin-bottom:16px">Saw it on Instagram, TikTok or anywhere? Tell us about it below, then send us the photo on WhatsApp!</p>
+    <p style="font-size:13px;font-weight:700;color:var(--p);margin-bottom:6px">Item Name</p>
+    <input type="text" id="pp-name" placeholder="e.g. Floral Maxi Dress" style="width:100%;padding:10px 13px;border:1px solid var(--bd2);border-radius:var(--rs);font-family:'DM Sans',sans-serif;font-size:14px;margin-bottom:12px;outline:none"/>
+    <p style="font-size:13px;font-weight:700;color:var(--p);margin-bottom:6px">Color</p>
+    <input type="text" id="pp-color" placeholder="e.g. Red, Black, Blue" style="width:100%;padding:10px 13px;border:1px solid var(--bd2);border-radius:var(--rs);font-family:'DM Sans',sans-serif;font-size:14px;margin-bottom:12px;outline:none"/>
+    <p style="font-size:13px;font-weight:700;color:var(--p);margin-bottom:6px">Description (size, style, anything else)</p>
+    <input type="text" id="pp-desc" placeholder="e.g. Women size L, long sleeve..." style="width:100%;padding:10px 13px;border:1px solid var(--bd2);border-radius:var(--rs);font-family:'DM Sans',sans-serif;font-size:14px;margin-bottom:14px;outline:none"/>
+    <div style="background:#FFF3CD;border:1px solid #FFE69C;border-radius:var(--rs);padding:10px 13px;margin-bottom:14px;font-size:13px;color:#664D03">⚠️ <strong>Important:</strong> After tapping the button below, WhatsApp will open with your details as text. You must then tap the 📎 attach icon yourself and select the item's photo to send it along — photos cannot be attached automatically from this site.</div>
+    <button onclick="sendPhotoWA()" style="background:var(--wa);color:var(--w);border:none;padding:12px 24px;border-radius:var(--rs);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;cursor:pointer">💬 Send to WhatsApp — We Find It!</button>
   </div>
 </div>
 <section id="home">
@@ -546,7 +541,7 @@ onSnapshot(query(collection(db,'ibn_catalogue'),orderBy('ts','desc')),s=>{window
 </script>
 <script>
 const WA='233273752465',PER=30;
-let pg=1,cat='',curItem=null,pdata=null,sc='',ss='';
+let pg=1,cat='',curItem=null,sc='',ss='';
 window.AVAIL=[];window.FTRK={};window.CCAT=[];
 
 const BASE=[];
@@ -627,6 +622,9 @@ function openDetail(id){
     <div class="dlbl">Select Size</div>
     <div class="dopts" id="szopts">${(p.szs||['One Size']).map(s=>`<button class="dopt" onclick="selOpt(this,'sz','${s}')">${s}</button>`).join('')}</div>
     <div class="ddel">🚢 Pre-order item — arrives in <strong>35–40 working days (Mon–Fri)</strong> including customs clearance in Ghana</div>
+    <div class="dlbl">Anything else? (optional)</div>
+    <input type="text" id="dpref" placeholder="e.g. I prefer a slightly darker shade..." style="width:100%;padding:10px 13px;border:1px solid var(--bd2);border-radius:var(--rs);font-family:'DM Sans',sans-serif;font-size:14px;margin-bottom:14px;outline:none"/>
+    <div style="background:#FFF3CD;border:1px solid #FFE69C;border-radius:var(--rs);padding:10px 13px;margin-bottom:14px;font-size:13px;color:#664D03">📸 Kindly attach a photo of the item when you reach WhatsApp — just tap the 📎 icon there. This helps us source the exact item for you.</div>
     <button class="dwab" onclick="sendDetailWA()">💬 Order This on WhatsApp</button>
     <div class="dnote">Nel will confirm the exact price on WhatsApp</div>`;
   document.getElementById('dov').classList.add('open');
@@ -634,16 +632,18 @@ function openDetail(id){
 function selOpt(btn,t,v){const g=t==='col'?'colopts':'szopts';document.querySelectorAll('#'+g+' .dopt').forEach(b=>b.classList.remove('sel'));btn.classList.add('sel');t==='col'?sc=v:ss=v;}
 function sendDetailWA(){
   if(!curItem)return;
+  const pref=(document.getElementById('dpref')||{}).value?.trim()||'';
   const m=`Hello Import By Nel! 👋
 
 📦 *Item:* ${curItem.n}
 🎨 *Colour:* ${sc||'To confirm'}
 📏 *Size:* ${ss||'To confirm'}
-🔗 *Photo:* ${curItem.img}
+📝 *Description:* ${curItem.d||'N/A'}${pref?`
+💭 *My preference:* ${pref}`:''}
 
 ⏰ I understand it takes 35–40 working days (Mon–Fri) to arrive.
 
-Please send me the price!`;
+Please send me the price! (Attaching a photo of the item below 📸)`;
   window.open(`https://wa.me/${WA}?text=${encodeURIComponent(m)}`,'_blank');
   closeDetail();
 }
@@ -658,7 +658,6 @@ function openAvail(id){
 🛍️ *Item:* ${a.name||''}
 💰 *Price:* ${a.price||''}
 📋 *Details:* ${a.spec||'N/A'}
-🔗 *Photo:* ${a.img||''}
 
 This item is available in Ghana. Please confirm. Thank you!`;
   window.open(`https://wa.me/${WA}?text=${encodeURIComponent(m)}`,'_blank');
@@ -689,11 +688,7 @@ function doSearch(q){
 function clearSearch(){document.getElementById('sres').classList.remove('show');document.getElementById('nq').value='';document.getElementById('hq').value='';}
 
 function togglePhoto(){const p=document.getElementById('ppsec');p.classList.toggle('open');if(p.classList.contains('open'))p.scrollIntoView({behavior:'smooth'});}
-function onPDrop(e){e.preventDefault();const f=e.dataTransfer.files[0];if(f&&f.type.startsWith('image/'))loadP(f);}
-function onPFile(e){const f=e.target.files[0];if(f)loadP(f);}
-function loadP(f){const r=new FileReader();r.onload=ev=>{pdata=ev.target.result;document.getElementById('ppimg').src=pdata;document.getElementById('pprev').style.display='block';};r.readAsDataURL(f);}
-function doPhotoSearch(){if(!pdata){toast('Please upload a photo first');return;}document.getElementById('ppnr').style.display='block';document.getElementById('pprev').scrollIntoView({behavior:'smooth'});}
-function sendPhotoWA(){const d=document.getElementById('pp-desc').value.trim();const m=`Hello Import By Nel! 👋\n\nI have a photo of an item I want from China.\n\n${d?`Description: ${d}\n\n`:''}Please help me find this and send the price!`;window.open(`https://wa.me/${WA}?text=${encodeURIComponent(m)}`,'_blank');toast('Opening WhatsApp! Now tap 📎 and attach your photo');}
+function sendPhotoWA(){const nm=document.getElementById('pp-name').value.trim(),co=document.getElementById('pp-color').value.trim(),d=document.getElementById('pp-desc').value.trim();if(!nm){toast('Please enter the item name');return;}const m=`Hello Import By Nel! 👋\n\nI saw an item I want from China.\n\nItem Name: ${nm}\n${co?`Color: ${co}\n`:''}${d?`Description: ${d}\n`:''}\nPlease help me find this and send the price! (Attaching photo below)`;window.open(`https://wa.me/${WA}?text=${encodeURIComponent(m)}`,'_blank');toast('Opening WhatsApp! Now tap 📎 and attach your photo');}
 
 function doTrack(){
   const n=document.getElementById('tnum').value.trim().toUpperCase();
