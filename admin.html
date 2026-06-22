@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -108,10 +109,17 @@ tbody td{padding:11px 16px;font-size:13px;color:var(--t);vertical-align:middle;}
 <div id="lsc">
   <div class="lbox">
     <div class="llogo"><div class="lhex">IBN</div><div><div class="lname">Import By Nel</div><div style="font-size:10px;color:var(--mu);text-align:center">Admin Panel</div></div></div>
-    <p class="lsub">🔐 Enter your admin password</p>
-    <div class="lerr" id="lerr">Incorrect password. Please try again.</div>
-    <div class="lg"><label>Password</label><input type="password" id="apass" placeholder="Enter admin password" onkeydown="if(event.key==='Enter')doLogin()"/></div>
-    <button class="lbtn" onclick="doLogin()">Login to Admin Panel</button>
+    <p class="lsub" id="lsub">🔐 We'll send a secure login link to your admin email</p>
+    <div class="lerr" id="lerr">Something went wrong. Please try again.</div>
+    <div class="lok" id="lok" style="display:none;background:#E6F4EA;color:#1E7E34;border:1px solid #B7E1C2;border-radius:8px;padding:12px 14px;font-size:13px;margin-bottom:14px;text-align:center"></div>
+    <div id="lstep1">
+      <div class="lg"><label>Admin Email</label><input type="email" id="aemail" placeholder="importbynel001@gmail.com" onkeydown="if(event.key==='Enter')doSendLink()"/></div>
+      <button class="lbtn" onclick="doSendLink()" id="lsendbtn">Send Me a Login Link</button>
+    </div>
+    <div id="lstep2" style="display:none;text-align:center;">
+      <div style="font-size:40px;margin-bottom:10px">📧</div>
+      <p style="font-size:13px;color:var(--mu);line-height:1.6">Check your email and tap the link we sent — it will bring you straight back here, logged in.</p>
+    </div>
   </div>
 </div>
 <div id="app">
@@ -171,9 +179,10 @@ tbody td{padding:11px 16px;font-size:13px;color:var(--t);vertical-align:middle;}
         </div>
         <div class="fg"><label>Description</label><input type="text" id="cat-desc" placeholder="Short description of the item..."/></div>
         <div class="frow2">
+          <div class="fg"><label>Price (GH₵)</label><input type="text" id="cat-price" placeholder="e.g. GH₵350"/></div>
           <div class="fg"><label>Colors (comma separated)</label><input type="text" id="cat-cols" placeholder="e.g. Red, Black, White, Blue"/></div>
-          <div class="fg"><label>Sizes (comma separated)</label><input type="text" id="cat-szs" placeholder="e.g. S, M, L, XL or 36, 37, 38"/></div>
         </div>
+        <div class="fg"><label>Sizes (comma separated)</label><input type="text" id="cat-szs" placeholder="e.g. S, M, L, XL or 36, 37, 38"/></div>
         <div class="fg">
           <label>Item Photo</label>
           <div style="display:flex;gap:10px;align-items:flex-start;flex-wrap:wrap;margin-bottom:8px">
@@ -189,7 +198,7 @@ tbody td{padding:11px 16px;font-size:13px;color:var(--t);vertical-align:middle;}
         <button class="clrbtn" onclick="clearCatForm()">Clear</button>
       </div>
       <div class="tblw">
-        <table><thead><tr><th>Photo</th><th>Item Name</th><th>Category</th><th>Colors</th><th>Sizes</th><th>Badge</th><th>Actions</th></tr></thead>
+        <table><thead><tr><th>Photo</th><th>Item Name</th><th>Category</th><th>Price</th><th>Colors</th><th>Sizes</th><th>Badge</th><th>Actions</th></tr></thead>
         <tbody id="cat-tbody"></tbody></table>
       </div>
     </div>
@@ -324,7 +333,13 @@ tbody td{padding:11px 16px;font-size:13px;color:var(--t);vertical-align:middle;}
 <script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import{getFirestore,collection,addDoc,updateDoc,deleteDoc,doc,onSnapshot,query,orderBy,serverTimestamp}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import{getAuth,sendSignInLinkToEmail,isSignInWithEmailLink,signInWithEmailLink,onAuthStateChanged,signOut}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 const app=initializeApp({apiKey:"AIzaSyAExcjS0SaEoKZvHXmj5ryZ8u_5DwEk1lk",authDomain:"nelle-s-shipping-track.firebaseapp.com",projectId:"nelle-s-shipping-track",storageBucket:"nelle-s-shipping-track.firebasestorage.app",messagingSenderId:"464513009072",appId:"1:464513009072:web:1866f20aaeada20f2fc275"});
+const auth=getAuth(app);
+const ADMIN_EMAIL='importbynel001@gmail.com';
+window.AUTH=auth;
+window.FAUTH={sendSignInLinkToEmail,isSignInWithEmailLink,signInWithEmailLink,onAuthStateChanged,signOut};
+window.ADMIN_EMAIL=ADMIN_EMAIL;
 const db=getFirestore(app);
 window.DB=db;window.FSS={addDoc,updateDoc,deleteDoc,doc,serverTimestamp,collection,query,orderBy,onSnapshot};
 
@@ -337,21 +352,56 @@ onSnapshot(query(collection(db,'ibn_catalogue'),orderBy('ts','desc')),s=>{window
 </script>
 
 <script>
-const PASS='Nel2024#';
 window.AV_ITEMS=[];window.TRK_ITEMS=[];window.CAT_ITEMS=[];
 let catPhotoData=null,avPhotoData=null;
 
-function doLogin(){
-  if(document.getElementById('apass').value===PASS){
+function doSendLink(){
+  const email=document.getElementById('aemail').value.trim();
+  if(!email){document.getElementById('lerr').textContent='Please enter your email.';document.getElementById('lerr').style.display='block';return;}
+  if(email.toLowerCase()!==window.ADMIN_EMAIL.toLowerCase()){document.getElementById('lerr').textContent='This email is not authorized for admin access.';document.getElementById('lerr').style.display='block';return;}
+  document.getElementById('lerr').style.display='none';
+  const btn=document.getElementById('lsendbtn');btn.textContent='Sending...';btn.disabled=true;
+  window.FAUTH.sendSignInLinkToEmail(window.AUTH,email,{url:window.location.href,handleCodeInApp:true}).then(()=>{
+    window.localStorage.setItem('ibnEmailForSignIn',email);
+    document.getElementById('lstep1').style.display='none';
+    document.getElementById('lstep2').style.display='block';
+  }).catch(e=>{
+    document.getElementById('lerr').textContent='Error sending link: '+e.message;
+    document.getElementById('lerr').style.display='block';
+    btn.textContent='Send Me a Login Link';btn.disabled=false;
+  });
+}
+function doLogout(){
+  window.FAUTH.signOut(window.AUTH).then(()=>{
+    document.getElementById('lsc').style.display='flex';
+    document.getElementById('app').style.display='none';
+  });
+}
+function completeEmailLinkSignIn(){
+  if(window.FAUTH.isSignInWithEmailLink(window.AUTH,window.location.href)){
+    let email=window.localStorage.getItem('ibnEmailForSignIn');
+    if(!email){email=prompt('Please confirm your email for sign-in:');}
+    if(!email)return;
+    window.FAUTH.signInWithEmailLink(window.AUTH,email,window.location.href).then(()=>{
+      window.localStorage.removeItem('ibnEmailForSignIn');
+      window.history.replaceState({},document.title,window.location.pathname);
+    }).catch(e=>{
+      document.getElementById('lerr').textContent='Login link invalid or expired: '+e.message;
+      document.getElementById('lerr').style.display='block';
+    });
+  }
+}
+completeEmailLinkSignIn();
+window.FAUTH.onAuthStateChanged(window.AUTH,(user)=>{
+  if(user&&user.email&&user.email.toLowerCase()===window.ADMIN_EMAIL.toLowerCase()){
     document.getElementById('lsc').style.display='none';
     document.getElementById('app').style.display='block';
     trackVisit();renderAnalytics();
-  } else {
-    document.getElementById('lerr').style.display='block';
-    document.getElementById('apass').value='';
+  }else{
+    document.getElementById('lsc').style.display='flex';
+    document.getElementById('app').style.display='none';
   }
-}
-function doLogout(){document.getElementById('lsc').style.display='flex';document.getElementById('app').style.display='none';document.getElementById('apass').value='';document.getElementById('lerr').style.display='none';}
+});
 function showPanel(id,btn){document.querySelectorAll('.panel').forEach(p=>p.classList.remove('on'));document.querySelectorAll('.atab').forEach(b=>b.classList.remove('on'));document.getElementById('panel-'+id).classList.add('on');if(btn)btn.classList.add('on');}
 function updateStats(){document.getElementById('s-cat').textContent=(window.CAT_ITEMS||[]).length;document.getElementById('s-av').textContent=(window.AV_ITEMS||[]).length;document.getElementById('s-trk').textContent=(window.TRK_ITEMS||[]).length;}
 
@@ -363,13 +413,14 @@ async function saveCatItem(){
   const name=document.getElementById('cat-name').value.trim();
   const cat=document.getElementById('cat-cat').value;
   const desc=document.getElementById('cat-desc').value.trim();
+  const price=document.getElementById('cat-price').value.trim();
   const colors=document.getElementById('cat-cols').value.split(',').map(s=>s.trim()).filter(Boolean);
   const sizes=document.getElementById('cat-szs').value.split(',').map(s=>s.trim()).filter(Boolean);
   const imgUrl=document.getElementById('cat-img-url').value.trim();
   const img=catPhotoData||imgUrl||'https://images.unsplash.com/photo-1483985988355-763728e1935b?w=400&q=80';
   const badge=document.getElementById('cat-badge').value||null;
   if(!name){toast('Please enter item name');return;}
-  const data={name,cat,desc,img,colors:colors.length?colors:['As Shown'],sizes:sizes.length?sizes:['One Size'],badge};
+  const data={name,cat,desc,price,img,colors:colors.length?colors:['As Shown'],sizes:sizes.length?sizes:['One Size'],badge};
   try{
     const{DB,FSS}=window;
     if(id){await FSS.updateDoc(FSS.doc(DB,'ibn_catalogue',id),data);toast('Item updated! ✅');}
@@ -377,10 +428,10 @@ async function saveCatItem(){
     clearCatForm();
   }catch(e){toast('Error: '+e.message);}
 }
-function clearCatForm(){document.getElementById('cat-edit-id').value='';['cat-name','cat-desc','cat-cols','cat-szs','cat-img-url'].forEach(id=>document.getElementById(id).value='');document.getElementById('cat-cat').value='Footwear';document.getElementById('cat-badge').value='';document.getElementById('cat-img-prev').style.display='none';document.getElementById('cat-form-ttl').textContent='➕ Add New Catalogue Item';catPhotoData=null;}
+function clearCatForm(){document.getElementById('cat-edit-id').value='';['cat-name','cat-desc','cat-price','cat-cols','cat-szs','cat-img-url'].forEach(id=>document.getElementById(id).value='');document.getElementById('cat-cat').value='Footwear';document.getElementById('cat-badge').value='';document.getElementById('cat-img-prev').style.display='none';document.getElementById('cat-form-ttl').textContent='➕ Add New Catalogue Item';catPhotoData=null;}
 function editCatItem(fid){
   const item=(window.CAT_ITEMS||[]).find(c=>c.fid===fid);if(!item)return;
-  document.getElementById('cat-edit-id').value=fid;document.getElementById('cat-name').value=item.name||'';document.getElementById('cat-cat').value=item.cat||'Footwear';document.getElementById('cat-desc').value=item.desc||'';document.getElementById('cat-cols').value=(item.colors||[]).join(', ');document.getElementById('cat-szs').value=(item.sizes||[]).join(', ');document.getElementById('cat-img-url').value=item.img||'';document.getElementById('cat-badge').value=item.badge||'';
+  document.getElementById('cat-edit-id').value=fid;document.getElementById('cat-name').value=item.name||'';document.getElementById('cat-cat').value=item.cat||'Footwear';document.getElementById('cat-desc').value=item.desc||'';document.getElementById('cat-price').value=item.price||'';document.getElementById('cat-cols').value=(item.colors||[]).join(', ');document.getElementById('cat-szs').value=(item.sizes||[]).join(', ');document.getElementById('cat-img-url').value=item.img||'';document.getElementById('cat-badge').value=item.badge||'';
   if(item.img){document.getElementById('cat-prev-img').src=item.img;document.getElementById('cat-img-prev').style.display='block';}
   document.getElementById('cat-form-ttl').textContent='✏️ Edit: '+item.name;catPhotoData=null;
   document.getElementById('panel-cat').scrollTo(0,0);
@@ -392,8 +443,8 @@ async function deleteCatItem(fid){
 function renderCatTable(){
   const tbody=document.getElementById('cat-tbody');
   const items=window.CAT_ITEMS||[];
-  if(!items.length){tbody.innerHTML='<tr><td colspan="7" style="text-align:center;padding:28px;color:var(--mu)">No custom items yet. Add your first item above!</td></tr>';return;}
-  tbody.innerHTML=items.map(p=>`<tr><td><img src="${p.img||''}" alt="" class="thumb" onerror="this.style.background='#EDE9FF'"/></td><td><div class="iname">${p.name||''}</div></td><td><span class="sbg s-pre">${p.cat||''}</span></td><td style="font-size:12px;color:var(--mu)">${(p.colors||[]).slice(0,3).join(', ')}${(p.colors||[]).length>3?'...':''}</td><td style="font-size:12px;color:var(--mu)">${(p.sizes||[]).slice(0,3).join(', ')}${(p.sizes||[]).length>3?'...':''}</td><td>${p.badge?`<span class="sbg ${p.badge==='hot'?'s-sold':p.badge==='new'?'s-ok':'s-pre'}">${p.badge.toUpperCase()}</span>`:'—'}</td><td><button class="abtn" onclick="editCatItem('${p.fid}')">✏️ Edit</button><button class="abtn abtn-del" onclick="deleteCatItem('${p.fid}')">🗑 Delete</button></td></tr>`).join('');
+  if(!items.length){tbody.innerHTML='<tr><td colspan="8" style="text-align:center;padding:28px;color:var(--mu)">No custom items yet. Add your first item above!</td></tr>';return;}
+  tbody.innerHTML=items.map(p=>`<tr><td><img src="${p.img||''}" alt="" class="thumb" onerror="this.style.background='#EDE9FF'"/></td><td><div class="iname">${p.name||''}</div></td><td><span class="sbg s-pre">${p.cat||''}</span></td><td style="font-weight:700;color:var(--p)">${p.price||'—'}</td><td style="font-size:12px;color:var(--mu)">${(p.colors||[]).slice(0,3).join(', ')}${(p.colors||[]).length>3?'...':''}</td><td style="font-size:12px;color:var(--mu)">${(p.sizes||[]).slice(0,3).join(', ')}${(p.sizes||[]).length>3?'...':''}</td><td>${p.badge?`<span class="sbg ${p.badge==='hot'?'s-sold':p.badge==='new'?'s-ok':'s-pre'}">${p.badge.toUpperCase()}</span>`:'—'}</td><td><button class="abtn" onclick="editCatItem('${p.fid}')">✏️ Edit</button><button class="abtn abtn-del" onclick="deleteCatItem('${p.fid}')">🗑 Delete</button></td></tr>`).join('');
 }
 
 // ── AVAILABLE IN GHANA ──────────────────────────────────────────
