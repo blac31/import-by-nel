@@ -353,6 +353,7 @@ onSnapshot(collection(db,'ibn_available'),s=>{window.AV_ITEMS=s.docs.map(d=>({fi
 onSnapshot(collection(db,'ibn_tracking'),s=>{window.TRK_ITEMS=s.docs.map(d=>({fid:d.id,...d.data()}));renderTrkTable();updateStats();});
 // Load custom catalogue
 onSnapshot(query(collection(db,'ibn_catalogue'),orderBy('ts','desc')),s=>{window.CAT_ITEMS=s.docs.map(d=>({fid:d.id,...d.data()}));renderCatTable();updateStats();});
+window.dispatchEvent(new Event('firebaseReady'));
 </script>
 
 <script>
@@ -363,6 +364,7 @@ function doSendLink(){
   const email=document.getElementById('aemail').value.trim();
   if(!email){document.getElementById('lerr').textContent='Please enter your email.';document.getElementById('lerr').style.display='block';return;}
   if(email.toLowerCase()!==window.ADMIN_EMAIL.toLowerCase()){document.getElementById('lerr').textContent='This email is not authorized for admin access.';document.getElementById('lerr').style.display='block';return;}
+  if(!window.FAUTH){document.getElementById('lerr').textContent='Still loading, please wait a second and try again.';document.getElementById('lerr').style.display='block';return;}
   document.getElementById('lerr').style.display='none';
   const btn=document.getElementById('lsendbtn');btn.textContent='Sending...';btn.disabled=true;
   window.FAUTH.sendSignInLinkToEmail(window.AUTH,email,{url:window.location.href,handleCodeInApp:true}).then(()=>{
@@ -398,17 +400,20 @@ function completeEmailLinkSignIn(){
     });
   }
 }
-completeEmailLinkSignIn();
-window.FAUTH.onAuthStateChanged(window.AUTH,(user)=>{
-  if(user&&user.email&&user.email.toLowerCase()===window.ADMIN_EMAIL.toLowerCase()){
-    document.getElementById('lsc').style.display='none';
-    document.getElementById('app').style.display='block';
-    trackVisit();renderAnalytics();
-  }else{
-    document.getElementById('lsc').style.display='flex';
-    document.getElementById('app').style.display='none';
-  }
-});
+function initAuthFlow(){
+  completeEmailLinkSignIn();
+  window.FAUTH.onAuthStateChanged(window.AUTH,(user)=>{
+    if(user&&user.email&&user.email.toLowerCase()===window.ADMIN_EMAIL.toLowerCase()){
+      document.getElementById('lsc').style.display='none';
+      document.getElementById('app').style.display='block';
+      trackVisit();renderAnalytics();
+    }else{
+      document.getElementById('lsc').style.display='flex';
+      document.getElementById('app').style.display='none';
+    }
+  });
+}
+if(window.FAUTH){initAuthFlow();}else{window.addEventListener('firebaseReady',initAuthFlow);}
 function showPanel(id,btn){document.querySelectorAll('.panel').forEach(p=>p.classList.remove('on'));document.querySelectorAll('.atab').forEach(b=>b.classList.remove('on'));document.getElementById('panel-'+id).classList.add('on');if(btn)btn.classList.add('on');}
 function updateStats(){document.getElementById('s-cat').textContent=(window.CAT_ITEMS||[]).length;document.getElementById('s-av').textContent=(window.AV_ITEMS||[]).length;document.getElementById('s-trk').textContent=(window.TRK_ITEMS||[]).length;}
 
