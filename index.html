@@ -358,6 +358,37 @@ footer{background:var(--p3);padding:48px 40px 22px;}
 .datc.added{background:var(--gr);}
 /* Cart badge on nav */
 .cart-nav-wrap{position:relative;display:inline-flex;}
+
+/* ── COUNTDOWN ── */
+.cdbg{background:linear-gradient(135deg,var(--p) 0%,var(--p2) 100%);padding:36px 40px;}
+.cdwrap{max-width:900px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap;}
+.cdleft{color:var(--w);}
+.cdleft .cdtag{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--g);margin-bottom:8px;}
+.cdleft h3{font-family:'Fraunces',serif;font-size:22px;font-weight:600;color:var(--w);margin-bottom:4px;}
+.cdleft p{font-size:13px;color:rgba(255,255,255,.65);}
+.cdboxes{display:flex;gap:10px;align-items:center;}
+.cdbox{background:rgba(255,255,255,.1);backdrop-filter:blur(10px);border:1px solid rgba(200,169,90,.3);border-radius:10px;padding:12px 16px;text-align:center;min-width:68px;}
+.cdnum{font-family:'Fraunces',serif;font-size:28px;font-weight:600;color:var(--g);line-height:1;}
+.cdlbl{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,.5);margin-top:4px;}
+.cdsep{font-family:'Fraunces',serif;font-size:24px;color:var(--g);font-weight:600;margin-bottom:12px;}
+.cdbtn{background:var(--g);color:var(--p);padding:13px 24px;border-radius:var(--rs);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;border:none;cursor:pointer;white-space:nowrap;}
+.cdbtn:hover{background:var(--gd);color:var(--w);}
+.cdclosed{background:rgba(220,38,38,.15);border:1px solid rgba(220,38,38,.3);border-radius:8px;padding:10px 16px;color:#FCA5A5;font-size:13px;font-family:'JetBrains Mono',monospace;letter-spacing:.5px;text-align:center;}
+@media(max-width:600px){.cdbg{padding:28px 16px;}.cdwrap{flex-direction:column;align-items:flex-start;}.cdboxes{gap:6px;}.cdbox{min-width:56px;padding:10px 12px;}.cdnum{font-size:22px;}}
+
+/* ── FAQ ── */
+.faqbg{background:var(--bg);padding:70px 40px;}
+.faqwrap{max-width:800px;margin:0 auto;}
+.faq-item{border:1px solid var(--bd);border-radius:var(--r);margin-bottom:12px;overflow:hidden;}
+.faq-q{width:100%;background:var(--w);border:none;padding:18px 22px;text-align:left;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:600;color:var(--p);cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:12px;}
+.faq-q:hover{background:var(--bg);}
+.faq-q svg{flex-shrink:0;transition:transform .3s;color:var(--g);}
+.faq-item.open .faq-q svg{transform:rotate(180deg);}
+.faq-a{display:none;padding:0 22px 18px;font-size:14px;color:var(--t2);line-height:1.75;background:var(--w);}
+.faq-item.open .faq-a{display:block;}
+.faq-pay{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;}
+.faq-pay span{background:var(--plt);border:1px solid var(--bd);border-radius:6px;padding:6px 12px;font-size:12px;font-weight:600;color:var(--p);font-family:'JetBrains Mono',monospace;}
+@media(max-width:600px){.faqbg{padding:40px 16px;}.faq-q{font-size:14px;padding:15px 16px;}.faq-a{padding:0 16px 15px;}}
 </style></head>
 <body>
 
@@ -451,6 +482,28 @@ footer{background:var(--p3);padding:48px 40px 22px;}
   <div class="banner b2"><div class="bio"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg></div><div><div class="bt">Photo Search</div><div class="bsub">Upload any photo — we find it</div></div></div>
   <div class="banner b3"><div class="bio"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg></div><div><div class="bt">Live Tracking</div><div class="bsub">Track your shipment real time</div></div></div>
 </div>
+
+<section class="cdbg" id="countdown">
+  <div class="cdwrap">
+    <div class="cdleft">
+      <div class="cdtag">⏰ Pre-Order Deadline</div>
+      <h3 id="cdtitle">Monthly Pre-Order Closing Soon</h3>
+      <p id="cdsubtitle">Order before the deadline — next shipment leaves shortly</p>
+    </div>
+    <div id="cdcontent">
+      <div class="cdboxes">
+        <div class="cdbox"><div class="cdnum" id="cddays">--</div><div class="cdlbl">Days</div></div>
+        <div class="cdsep">:</div>
+        <div class="cdbox"><div class="cdnum" id="cdhours">--</div><div class="cdlbl">Hours</div></div>
+        <div class="cdsep">:</div>
+        <div class="cdbox"><div class="cdnum" id="cdmins">--</div><div class="cdlbl">Mins</div></div>
+        <div class="cdsep">:</div>
+        <div class="cdbox"><div class="cdnum" id="cdsecs">--</div><div class="cdlbl">Secs</div></div>
+      </div>
+    </div>
+    <button class="cdbtn" onclick="document.getElementById('catalogue').scrollIntoView({behavior:'smooth'})">Order Before Deadline →</button>
+  </div>
+</section>
 <section class="vsec">
   <img class="vsec-bg" src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=1600&q=80" alt="Container ship port"/>
   <div class="vsec-ovl"></div>
@@ -552,6 +605,78 @@ footer{background:var(--p3);padding:48px 40px 22px;}
     <div class="rc"><div class="rstars">★★★★★</div><p class="rtxt">"Sent a photo of shoes from Instagram — they found it in 2 hours! Arrived exactly as shown. Very impressed!"</p><div class="rauth"><div class="rav">AB</div><div><div class="rname">Abena Boateng</div><div class="rloc">📍 Kasoa</div></div></div></div>
     <div class="rc"><div class="rstars">★★★★★</div><p class="rtxt">"Ordered clothes for my boutique. Quality was amazing and the tracking helped me know exactly when to expect my items!"</p><div class="rauth"><div class="rav">KA</div><div><div class="rname">Kofi Asante</div><div class="rloc">📍 Accra</div></div></div></div>
     <div class="rc"><div class="rstars">★★★★★</div><p class="rtxt">"Nel is very professional and honest. Gave me the exact price before I paid and items arrived right on time!"</p><div class="rauth"><div class="rav">EM</div><div><div class="rname">Esi Mensah</div><div class="rloc">📍 Winneba</div></div></div></div>
+  </div>
+</section>
+
+<section class="faqbg" id="faq">
+  <div class="faqwrap">
+    <div class="sech" style="margin-bottom:36px"><div class="stt">Frequently Asked <em>Questions</em></div></div>
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        How does the pre-order process work?
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="faq-a">Browse our catalogue, pick your item, select colour and size, and add to cart. When you're ready, tap "Order All on WhatsApp" — we receive your order, confirm the price and details with you, then source it directly from trusted China shops. Simple as that!</div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        How do I pay for my order?
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="faq-a">
+        We accept multiple payment methods for your convenience:
+        <div class="faq-pay">
+          <span>📱 MTN MoMo</span>
+          <span>📱 Vodafone Cash</span>
+          <span>💵 Cash on Delivery</span>
+          <span>🏦 Bank Transfer</span>
+        </div>
+        <br/>Payment details will be confirmed on WhatsApp when you place your order.
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        How long does delivery take?
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="faq-a">Items typically arrive in <strong>35–40 working days (Mon–Fri)</strong> from the order deadline, including customs clearance in Ghana. We ship monthly in containers from verified China suppliers. You'll receive a tracking number once your item is on its way.</div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        Can I track my order?
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="faq-a">Yes! Once your item ships, we'll send you a tracking number on WhatsApp. You can also enter it any time on our <a href="#tracking" style="color:var(--p);font-weight:600">Track Your Order</a> section on this page to see exactly where your shipment is.</div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        What if the item I want is not in the catalogue?
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="faq-a">No problem! We can source <strong>almost any item</strong> from China shops. Just use the "Photo Search" feature — describe the item or send us a photo on WhatsApp and we'll find it for you and send you the price.</div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        Is my order safe? What if something goes wrong?
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="faq-a">Every item is <strong>quality checked</strong> before it's shipped from China. If an item arrives damaged or significantly different from what was ordered, contact us immediately on WhatsApp and we will resolve it. We've been serving customers across Ghana with 500+ orders delivered — your trust is everything to us.</div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">
+        Can I order for someone else or in bulk?
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="faq-a">Absolutely! You can add multiple items to your cart and order them all at once. We also welcome bulk and business orders — contact us directly on WhatsApp to discuss wholesale pricing and special arrangements.</div>
+    </div>
+
   </div>
 </section>
 <section class="ctcbg" id="contact">
@@ -902,6 +1027,56 @@ function orderCartWA(){
 }
 
 cartUpdateBadge();
+
+// ── COUNTDOWN TIMER ──────────────────────────────────────────────────────────
+(function(){
+  function getDeadline(){
+    // Check Firebase for admin-set deadline
+    const stored = localStorage.getItem('ibn_deadline');
+    if(stored) return new Date(stored);
+    // Default: end of current month
+    const d = new Date();
+    return new Date(d.getFullYear(), d.getMonth()+1, 0, 23, 59, 59);
+  }
+  function pad(n){return String(n).padStart(2,'0');}
+  function tick(){
+    const now = new Date();
+    const deadline = getDeadline();
+    const diff = deadline - now;
+    const cdcontent = document.getElementById('cdcontent');
+    if(!cdcontent) return;
+    if(diff <= 0){
+      cdcontent.innerHTML = '<div class="cdclosed">🔒 Pre-order deadline has passed — next batch opens soon!</div>';
+      document.getElementById('cdtitle').textContent = 'Pre-Order Closed';
+      document.getElementById('cdsubtitle').textContent = 'We are preparing the next monthly batch';
+      return;
+    }
+    const days = Math.floor(diff / 86400000);
+    const hours = Math.floor((diff % 86400000) / 3600000);
+    const mins = Math.floor((diff % 3600000) / 60000);
+    const secs = Math.floor((diff % 60000) / 1000);
+    const d = document.getElementById('cddays');
+    const h = document.getElementById('cdhours');
+    const m = document.getElementById('cdmins');
+    const s = document.getElementById('cdsecs');
+    if(d) d.textContent = pad(days);
+    if(h) h.textContent = pad(hours);
+    if(m) m.textContent = pad(mins);
+    if(s) s.textContent = pad(secs);
+  }
+  tick();
+  setInterval(tick, 1000);
+})();
+
+// ── FAQ TOGGLE ───────────────────────────────────────────────────────────────
+function toggleFaq(btn){
+  const item = btn.closest('.faq-item');
+  const isOpen = item.classList.contains('open');
+  // Close all
+  document.querySelectorAll('.faq-item.open').forEach(i => i.classList.remove('open'));
+  // Open this one if it was closed
+  if(!isOpen) item.classList.add('open');
+}
 </script>
 
 <div class="cart-overlay" id="cartOverlay" onclick="closeCart()"></div>
