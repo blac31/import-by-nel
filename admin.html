@@ -141,6 +141,7 @@ tbody td{padding:11px 16px;font-size:13px;color:var(--t);vertical-align:middle;}
     <button class="atab" onclick="showPanel('trk',this)">📦 Tracking Numbers</button>
     <button class="atab" onclick="showPanel('an',this)">📈 Analytics</button>
     <button class="atab" onclick="showPanel('edit',this)">✏️ Edit Base Items</button>
+    <button class="atab" onclick="showPanel('deadline',this)">⏰ Pre-Order Deadline</button>
   </div>
   <div class="abody">
     <div class="stats">
@@ -331,6 +332,24 @@ tbody td{padding:11px 16px;font-size:13px;color:var(--t);vertical-align:middle;}
       </div>
     </div>
 
+    <div class="panel" id="panel-deadline">
+      <h2 class="panel-title">⏰ Pre-Order Deadline</h2>
+      <p style="color:var(--mu);font-size:14px;margin-bottom:24px">Set the deadline date and time for your monthly pre-order. This shows a live countdown timer on your website so customers know when to order by.</p>
+      <div class="card" style="max-width:500px">
+        <div class="fg">
+          <label>Deadline Date & Time</label>
+          <input type="datetime-local" id="deadlineInput" style="width:100%;padding:12px 14px;border:1.5px solid var(--bd);border-radius:var(--rs);font-family:'DM Sans',sans-serif;font-size:15px;color:var(--t);outline:none;background:#fff"/>
+        </div>
+        <div class="fg">
+          <label>Custom Message (optional)</label>
+          <input type="text" id="deadlineMsg" placeholder="e.g. July batch closing soon — order now!" style="width:100%;padding:12px 14px;border:1.5px solid var(--bd);border-radius:var(--rs);font-family:'DM Sans',sans-serif;font-size:15px;color:var(--t);outline:none"/>
+        </div>
+        <button class="savebtn" onclick="saveDeadline()">⏰ Set Deadline</button>
+        <button class="clrbtn" onclick="clearDeadline()">Clear Deadline</button>
+        <div id="deadlineStatus" style="margin-top:14px;font-size:13px;color:var(--mu)"></div>
+      </div>
+    </div>
+
 <div class="toast" id="toast"></div>
 
 <!-- FIREBASE -->
@@ -414,7 +433,7 @@ function initAuthFlow(){
   });
 }
 if(window.FAUTH){initAuthFlow();}else{window.addEventListener('firebaseReady',initAuthFlow);}
-function showPanel(id,btn){document.querySelectorAll('.panel').forEach(p=>p.classList.remove('on'));document.querySelectorAll('.atab').forEach(b=>b.classList.remove('on'));document.getElementById('panel-'+id).classList.add('on');if(btn)btn.classList.add('on');}
+function showPanel(id,btn){document.querySelectorAll('.panel').forEach(p=>p.classList.remove('on'));document.querySelectorAll('.atab').forEach(b=>b.classList.remove('on'));document.getElementById('panel-'+id).classList.add('on');if(btn)btn.classList.add('on');if(id==='deadline')loadDeadlinePanel();}
 function updateStats(){document.getElementById('s-cat').textContent=(window.CAT_ITEMS||[]).length;document.getElementById('s-av').textContent=(window.AV_ITEMS||[]).length;document.getElementById('s-trk').textContent=(window.TRK_ITEMS||[]).length;}
 
 // ── CATALOGUE ──────────────────────────────────────────────────
@@ -753,6 +772,46 @@ document.querySelectorAll('.atab').forEach(btn=>{
   });
 });
 
+function saveDeadline(){
+  const val=document.getElementById('deadlineInput').value;
+  const msg=document.getElementById('deadlineMsg').value.trim();
+  if(!val){toast('Please pick a date and time');return;}
+  const d=new Date(val);
+  if(d<=new Date()){toast('Deadline must be in the future');return;}
+  localStorage.setItem('ibn_deadline',d.toISOString());
+  if(msg)localStorage.setItem('ibn_deadline_msg',msg);
+  else localStorage.removeItem('ibn_deadline_msg');
+  const status=document.getElementById('deadlineStatus');
+  if(status)status.innerHTML=`<span style="color:var(--gr)">✅ Deadline set: <strong>${d.toLocaleString()}</strong> — countdown is live on your site!</span>`;
+  toast('Deadline saved! Countdown is now live ✅');
+}
+function clearDeadline(){
+  if(!confirm('Clear the deadline? The countdown will use the end of current month as default.'))return;
+  localStorage.removeItem('ibn_deadline');
+  localStorage.removeItem('ibn_deadline_msg');
+  document.getElementById('deadlineInput').value='';
+  document.getElementById('deadlineMsg').value='';
+  const status=document.getElementById('deadlineStatus');
+  if(status)status.textContent='Deadline cleared — using end of month as default.';
+  toast('Deadline cleared');
+}
+function loadDeadlinePanel(){
+  const stored=localStorage.getItem('ibn_deadline');
+  const msg=localStorage.getItem('ibn_deadline_msg');
+  if(stored){
+    const d=new Date(stored);
+    const inp=document.getElementById('deadlineInput');
+    if(inp){
+      // Format for datetime-local input
+      const pad=n=>String(n).padStart(2,'0');
+      inp.value=`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+    }
+    const msgInp=document.getElementById('deadlineMsg');
+    if(msgInp&&msg)msgInp.value=msg;
+    const status=document.getElementById('deadlineStatus');
+    if(status)status.innerHTML=`<span style="color:var(--gr)">✅ Current deadline: <strong>${d.toLocaleString()}</strong></span>`;
+  }
+}
 let tt;function toast(m){const e=document.getElementById('toast');e.textContent=m;e.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>e.classList.remove('show'),3500);}
 </script>
 </body>
