@@ -197,7 +197,7 @@ tbody td{padding:11px 16px;font-size:13px;color:var(--t);vertical-align:middle;}
           <div class="img-prev" id="cat-img-prev"><img id="cat-prev-img" alt="Preview"/></div>
         </div>
         <div class="fg"><label>Badge</label>
-          <select id="cat-badge"><option value="">None</option><option value="hot">🔥 HOT</option><option value="new">✨ NEW</option><option value="sale">💰 SALE</option></select>
+          <select id="cat-badge"><option value="">None</option><option value="hot">🔥 HOT</option><option value="new">✨ NEW</option><option value="sale">💰 SALE</option><option value="sold">🚫 SOLD OUT</option></select>
         </div>
         <button class="savebtn" onclick="saveCatItem()">💾 Save to Catalogue</button>
         <button class="clrbtn" onclick="clearCatForm()">Clear</button>
@@ -475,7 +475,7 @@ function renderCatTable(){
   const tbody=document.getElementById('cat-tbody');
   const items=window.CAT_ITEMS||[];
   if(!items.length){tbody.innerHTML='<tr><td colspan="8" style="text-align:center;padding:28px;color:var(--mu)">No custom items yet. Add your first item above!</td></tr>';return;}
-  tbody.innerHTML=items.map(p=>`<tr><td><img src="${p.img||''}" alt="" class="thumb" onerror="this.style.background='#EDE9FF'"/></td><td><div class="iname">${p.name||''}</div></td><td><span class="sbg s-pre">${p.cat||''}</span></td><td style="font-weight:700;color:var(--p)">${p.price||'—'}</td><td style="font-size:12px;color:var(--mu)">${(p.colors||[]).slice(0,3).join(', ')}${(p.colors||[]).length>3?'...':''}</td><td style="font-size:12px;color:var(--mu)">${(p.sizes||[]).slice(0,3).join(', ')}${(p.sizes||[]).length>3?'...':''}</td><td>${p.badge?`<span class="sbg ${p.badge==='hot'?'s-sold':p.badge==='new'?'s-ok':'s-pre'}">${p.badge.toUpperCase()}</span>`:'—'}</td><td><button class="abtn" onclick="editCatItem('${p.fid}')">✏️ Edit</button><button class="abtn abtn-del" onclick="deleteCatItem('${p.fid}')">🗑 Delete</button></td></tr>`).join('');
+  tbody.innerHTML=items.map(p=>`<tr><td><img src="${p.img||''}" alt="" class="thumb" onerror="this.style.background='#EDE9FF'"/></td><td><div class="iname">${p.name||''}</div></td><td><span class="sbg s-pre">${p.cat||''}</span></td><td style="font-weight:700;color:var(--p)">${p.price||'—'}</td><td style="font-size:12px;color:var(--mu)">${(p.colors||[]).slice(0,3).join(', ')}${(p.colors||[]).length>3?'...':''}</td><td style="font-size:12px;color:var(--mu)">${(p.sizes||[]).slice(0,3).join(', ')}${(p.sizes||[]).length>3?'...':''}</td><td>${p.badge?`<span class="sbg ${p.badge==='hot'?'s-sold':p.badge==='new'?'s-ok':p.badge==='sold'?'s-sold':' s-pre'}">${p.badge==='sold'?'🚫 SOLD OUT':p.badge.toUpperCase()}</span>`:'—'}</td><td><button class="abtn" onclick="editCatItem('${p.fid}')">✏️ Edit</button><button class="abtn abtn-del" onclick="deleteCatItem('${p.fid}')">🗑 Delete</button></td></tr>`).join('');
 }
 
 // ── AVAILABLE IN GHANA ──────────────────────────────────────────
