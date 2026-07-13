@@ -844,11 +844,10 @@ function sendDetailWA(){
 📦 *Item:* ${curItem.n}
 🎨 *Colour:* ${sc||'To confirm'}
 📏 *Size:* ${ss||'To confirm'}
-🔗 *Photo:* ${curItem.img}
 
 ⏰ I understand it takes 35–40 working days (Mon–Fri) to arrive.
 
-Please send me the price!`;
+Please send me the price! (I will attach the item photo below 📸)`;
   window.open(`https://wa.me/${WA}?text=${encodeURIComponent(m)}`,'_blank');
   closeDetail();
 }
@@ -863,7 +862,6 @@ function openAvail(id){
 🛍️ *Item:* ${a.name||''}
 💰 *Price:* ${a.price||''}
 📋 *Details:* ${a.spec||'N/A'}
-🔗 *Photo:* ${a.img||''}
 
 This item is available in Ghana. Please confirm. Thank you!`;
   window.open(`https://wa.me/${WA}?text=${encodeURIComponent(m)}`,'_blank');
