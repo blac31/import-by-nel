@@ -766,11 +766,13 @@ async function loadAll(){
   try{const s=await getDocs(query(collection(db,'ibn_catalogue'),orderBy('ts','desc')));window.CCAT=s.docs.map(d=>({fid:d.id,...d.data()}));safeRebuild();}catch(e){console.error('cat',e);}
   try{const s=await getDocs(collection(db,'ibn_available'));window.AVAIL=s.docs.map(d=>({id:d.id,...d.data()}));safeAvail();}catch(e){console.error('avail',e);}
   try{const s=await getDocs(collection(db,'ibn_tracking'));window.FTRK={};s.docs.forEach(d=>{const t=d.data();if(t.num)window.FTRK[t.num.toUpperCase()]=t;});}catch(e){console.error('trk',e);}
+  try{const s=await getDocs(query(collection(db,'ibn_reviews'),orderBy('ts','desc')));window.REVIEWS=s.docs.map(d=>({fid:d.id,...d.data()}));if(typeof renderReviews==='function')renderReviews();}catch(e){console.error('reviews',e);}
 }
 loadAll();
 onSnapshot(collection(db,'ibn_available'),s=>{window.AVAIL=s.docs.map(d=>({id:d.id,...d.data()}));safeAvail();},e=>console.error(e));
 onSnapshot(collection(db,'ibn_tracking'),s=>{window.FTRK={};s.docs.forEach(d=>{const t=d.data();if(t.num)window.FTRK[t.num.toUpperCase()]=t;});},e=>console.error(e));
 onSnapshot(query(collection(db,'ibn_catalogue'),orderBy('ts','desc')),s=>{window.CCAT=s.docs.map(d=>({fid:d.id,...d.data()}));safeRebuild();},e=>console.error(e));
+onSnapshot(query(collection(db,'ibn_reviews'),orderBy('ts','desc')),s=>{window.REVIEWS=s.docs.map(d=>({fid:d.id,...d.data()}));if(typeof renderReviews==='function')renderReviews();},e=>console.error(e));
 </script>
 <script>
 const WA='233273752465',PER=30;
