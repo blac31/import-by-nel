@@ -795,6 +795,37 @@ function clearDeadline(){
   if(status)status.textContent='Deadline cleared — using end of month as default.';
   toast('Deadline cleared');
 }
+async function saveReview(){
+  const name=document.getElementById('rev-name').value.trim();
+  const loc=document.getElementById('rev-loc').value.trim();
+  const text=document.getElementById('rev-text').value.trim();
+  const stars=parseInt(document.getElementById('rev-stars').value)||5;
+  const photo=document.getElementById('rev-photo').value.trim();
+  const verified=document.getElementById('rev-verified').checked;
+  if(!name||!text){toast('Please enter name and review text');return;}
+  const initials=name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+  try{
+    await window.FSS.addDoc(window.FSS.collection(window.DB,'ibn_reviews'),{name,loc:loc||'Ghana',text:text.startsWith('"')?text:`"${text}"`,stars,photo,verified,initials,ts:window.FSS.serverTimestamp()});
+    document.getElementById('rev-name').value='';
+    document.getElementById('rev-loc').value='';
+    document.getElementById('rev-text').value='';
+    document.getElementById('rev-photo').value='';
+    document.getElementById('rev-stars').value='5';
+    document.getElementById('rev-verified').checked=true;
+    toast('Review added! ✅');
+  }catch(e){toast('Error: '+e.message);}
+}
+async function deleteReview(fid){
+  if(!confirm('Delete this review?'))return;
+  try{await window.FSS.deleteDoc(window.FSS.doc(window.DB,'ibn_reviews',fid));toast('Deleted');}catch(e){toast('Error: '+e.message);}
+}
+function renderRevTable(){
+  const tbody=document.getElementById('rev-tbody');
+  if(!tbody)return;
+  const items=window.REV_ITEMS||[];
+  if(!items.length){tbody.innerHTML='<p style="color:var(--mu);font-size:13px;padding:16px 0">No reviews yet. Add your first review above!</p>';return;}
+  tbody.innerHTML=items.map(r=>`<div style="display:flex;align-items:flex-start;gap:12px;padding:14px 0;border-bottom:1px solid var(--bd);">${r.photo?`<img src="${r.photo}" style="width:40px;height:40px;border-radius:50%;object-fit:cover;border:2px solid var(--g);flex-shrink:0" onerror="this.style.background='var(--plt)'">`:`<div style="width:40px;height:40px;border-radius:50%;background:var(--p);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0">${r.initials||'?'}</div>`}<div style="flex:1;min-width:0"><div style="font-weight:700;font-size:13px;color:var(--p)">${r.name} <span style="font-weight:400;color:var(--mu);font-size:11px">— ${r.loc}</span></div><div style="font-size:12px;color:var(--g);margin:2px 0">${'★'.repeat(r.stars||5)}</div><div style="font-size:12px;color:var(--t2);line-height:1.5">${r.text}</div>${r.verified?'<span style="font-size:10px;color:var(--gr);font-weight:600">✓ Verified</span>':''}</div><button class="abtn abtn-del" onclick="deleteReview('${r.fid}')" style="flex-shrink:0">🗑 Delete</button></div>`).join('');
+}
 function loadDeadlinePanel(){
   const stored=localStorage.getItem('ibn_deadline');
   const msg=localStorage.getItem('ibn_deadline_msg');
