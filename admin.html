@@ -142,6 +142,7 @@ tbody td{padding:11px 16px;font-size:13px;color:var(--t);vertical-align:middle;}
     <button class="atab" onclick="showPanel('an',this)">📈 Analytics</button>
     <button class="atab" onclick="showPanel('edit',this)">✏️ Edit Base Items</button>
     <button class="atab" onclick="showPanel('deadline',this)">⏰ Pre-Order Deadline</button>
+    <button class="atab" onclick="showPanel('reviews',this)">⭐ Reviews</button>
   </div>
   <div class="abody">
     <div class="stats">
@@ -350,6 +351,39 @@ tbody td{padding:11px 16px;font-size:13px;color:var(--t);vertical-align:middle;}
       </div>
     </div>
 
+    <div class="panel" id="panel-reviews">
+      <h2 class="panel-title">⭐ Customer Reviews</h2>
+      <p style="color:var(--mu);font-size:14px;margin-bottom:24px">Add real customer reviews with photos. These appear on your live site instantly.</p>
+      <div class="card" style="margin-bottom:24px">
+        <h3 style="font-size:15px;font-weight:700;color:var(--p);margin-bottom:16px">➕ Add New Review</h3>
+        <div class="frow2">
+          <div class="fg"><label>Customer Name *</label><input type="text" id="rev-name" placeholder="e.g. Abena Boateng"/></div>
+          <div class="fg"><label>Location</label><input type="text" id="rev-loc" placeholder="e.g. Kasoa"/></div>
+        </div>
+        <div class="fg"><label>Review Text *</label><textarea id="rev-text" placeholder="What did the customer say?" rows="3" style="width:100%;padding:12px 14px;border:1.5px solid var(--bd);border-radius:var(--rs);font-family:'DM Sans',sans-serif;font-size:14px;resize:vertical;outline:none"></textarea></div>
+        <div class="frow2">
+          <div class="fg">
+            <label>Star Rating</label>
+            <select id="rev-stars" style="width:100%;padding:12px 14px;border:1.5px solid var(--bd);border-radius:var(--rs);font-family:'DM Sans',sans-serif;font-size:14px;outline:none;background:#fff">
+              <option value="5">★★★★★ 5 Stars</option>
+              <option value="4">★★★★☆ 4 Stars</option>
+              <option value="3">★★★☆☆ 3 Stars</option>
+            </select>
+          </div>
+          <div class="fg"><label>Customer Photo URL (optional)</label><input type="text" id="rev-photo" placeholder="Paste image link here..."/></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
+          <input type="checkbox" id="rev-verified" checked style="width:16px;height:16px;cursor:pointer"/>
+          <label for="rev-verified" style="font-size:14px;color:var(--t);cursor:pointer">Mark as Verified Customer</label>
+        </div>
+        <button class="savebtn" onclick="saveReview()">⭐ Add Review</button>
+      </div>
+      <div class="card">
+        <h3 style="font-size:15px;font-weight:700;color:var(--p);margin-bottom:16px">Current Reviews</h3>
+        <div id="rev-tbody"><p style="color:var(--mu);font-size:13px">No reviews added yet.</p></div>
+      </div>
+    </div>
+
 <div class="toast" id="toast"></div>
 
 <!-- FIREBASE -->
@@ -372,6 +406,8 @@ onSnapshot(collection(db,'ibn_available'),s=>{window.AV_ITEMS=s.docs.map(d=>({fi
 onSnapshot(collection(db,'ibn_tracking'),s=>{window.TRK_ITEMS=s.docs.map(d=>({fid:d.id,...d.data()}));renderTrkTable();updateStats();});
 // Load custom catalogue
 onSnapshot(query(collection(db,'ibn_catalogue'),orderBy('ts','desc')),s=>{window.CAT_ITEMS=s.docs.map(d=>({fid:d.id,...d.data()}));renderCatTable();updateStats();});
+// Load reviews
+onSnapshot(query(collection(db,'ibn_reviews'),orderBy('ts','desc')),s=>{window.REV_ITEMS=s.docs.map(d=>({fid:d.id,...d.data()}));renderRevTable();});
 window.dispatchEvent(new Event('firebaseReady'));
 </script>
 
