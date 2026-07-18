@@ -260,9 +260,11 @@ nav{background:rgba(248,244,238,0.75);backdrop-filter:blur(20px);-webkit-backdro
 .cform h3{font-family:'Fraunces',serif;font-size:17px;font-weight:700;color:var(--p);margin-bottom:16px;}
 .fg{margin-bottom:13px;}
 .fg label{display:block;font-size:11px;color:var(--mu);margin-bottom:4px;text-transform:uppercase;letter-spacing:.4px;font-weight:600;}
-.fg input,.fg textarea{width:100%;padding:11px 13px;border:1px solid var(--bd);border-radius:var(--rs);font-family:'DM Sans',sans-serif;font-size:14px;color:var(--t);background:var(--w);outline:none;}
-.fg input:focus,.fg textarea:focus{border-color:var(--p);}
+.fg input,.fg textarea,.fg select{width:100%;padding:11px 13px;border:1px solid var(--bd);border-radius:var(--rs);font-family:'DM Sans',sans-serif;font-size:14px;color:var(--t);background:var(--w);outline:none;}
+.fg input:focus,.fg textarea:focus,.fg select:focus{border-color:var(--p);}
 .fg textarea{height:78px;resize:vertical;}
+.fg input[type=file]{padding:9px;font-size:13px;}
+.rc.rc-me{border-color:var(--g);}
 .wab{width:100%;padding:13px;background:var(--wa);color:var(--w);border:none;border-radius:var(--rs);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;}
 .wab:hover{background:#20B858;}
 .mapw{margin-top:18px;border-radius:var(--r);overflow:hidden;border:1px solid var(--bd);}
@@ -650,6 +652,29 @@ footer{background:var(--p3);padding:48px 40px 22px;}
     <div class="rc"><div class="rstars">★★★★★</div><p class="rtxt">"Ordered clothes for my boutique. Quality was amazing and the tracking helped me know exactly when to expect my items!"</p><div class="rauth"><div class="rav">KA</div><div><div class="rname">Kofi Asante</div><div class="rloc">📍 Accra</div></div></div></div>
     <div class="rc"><div class="rstars">★★★★★</div><p class="rtxt">"Nel is very professional and honest. Gave me the exact price before I paid and items arrived right on time!"</p><div class="rauth"><div class="rav">EM</div><div><div class="rname">Esi Mensah</div><div class="rloc">📍 Winneba</div></div></div></div>
   </div>
+  <div class="revg" id="revg-dynamic"></div>
+  <div class="cform" id="revform" style="max-width:520px;margin:40px auto 0;">
+    <h3>⭐ Share Your Experience</h3>
+    <div class="fg"><label>Your Name *</label><input type="text" id="rv-name" placeholder="Full name"/></div>
+    <div class="fg"><label>Location</label><input type="text" id="rv-loc" placeholder="e.g. Kasoa"/></div>
+    <div class="fg"><label>Rating</label>
+      <select id="rv-stars">
+        <option value="5">★★★★★ 5 Stars</option>
+        <option value="4">★★★★☆ 4 Stars</option>
+        <option value="3">★★★☆☆ 3 Stars</option>
+        <option value="2">★★☆☆☆ 2 Stars</option>
+        <option value="1">★☆☆☆☆ 1 Star</option>
+      </select>
+    </div>
+    <div class="fg"><label>Your Review *</label><textarea id="rv-text" placeholder="Tell us about your experience..."></textarea></div>
+    <div class="fg">
+      <label>Add a Photo (optional)</label>
+      <input type="file" id="rv-photo-file" accept="image/*" onchange="onRevPhoto(event)"/>
+      <div id="rv-photo-prev" style="display:none;margin-top:8px"><img id="rv-photo-img" style="height:70px;border-radius:8px;border:1px solid var(--bd);object-fit:cover" alt="Preview"/></div>
+    </div>
+    <button class="wab" style="background:var(--p)" onclick="submitReview()">⭐ Submit Review</button>
+    <div id="rv-msg" style="display:none;margin-top:10px;font-size:13px;text-align:center;font-weight:600"></div>
+  </div>
 </section>
 
 <section class="faqbg" id="faq">
@@ -758,7 +783,7 @@ footer{background:var(--p3);padding:48px 40px 22px;}
 <div class="toast" id="toast"></div>
 <script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import{getFirestore,collection,getDocs,onSnapshot,query,orderBy}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import{getFirestore,collection,getDocs,onSnapshot,query,orderBy,addDoc,serverTimestamp}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 const cfg={apiKey:"AIzaSyAExcjS0SaEoKZvHXmj5ryZ8u_5DwEk1lk",authDomain:"nelle-s-shipping-track.firebaseapp.com",projectId:"nelle-s-shipping-track",storageBucket:"nelle-s-shipping-track.firebasestorage.app",messagingSenderId:"464513009072",appId:"1:464513009072:web:1866f20aaeada20f2fc275"};
 const app=initializeApp(cfg);
 const db=getFirestore(app);
@@ -771,7 +796,7 @@ async function loadAll(){
   try{const s=await getDocs(query(collection(db,'ibn_reviews'),orderBy('ts','desc')));window.REVIEWS=s.docs.map(d=>({fid:d.id,...d.data()}));if(typeof renderReviews==='function')renderReviews();}catch(e){console.error('reviews',e);}
 }
 loadAll();
-window._db=db;window._collection=collection;window._fsAdd=addDoc;
+window._db=db;window._collection=collection;window._fsAdd=addDoc;window._fsTs=serverTimestamp;
   onSnapshot(collection(db,'ibn_available'),s=>{window.AVAIL=s.docs.map(d=>({id:d.id,...d.data()}));safeAvail();},e=>console.error(e));
 onSnapshot(collection(db,'ibn_tracking'),s=>{window.FTRK={};s.docs.forEach(d=>{const t=d.data();if(t.num)window.FTRK[t.num.toUpperCase()]=t;});},e=>console.error(e));
 onSnapshot(query(collection(db,'ibn_catalogue'),orderBy('ts','desc')),s=>{window.CCAT=s.docs.map(d=>({fid:d.id,...d.data()}));safeRebuild();},e=>console.error(e));
@@ -963,6 +988,57 @@ function doTrack(){
 function sendContact(){const n=document.getElementById('cn').value.trim(),p=document.getElementById('cp').value.trim(),m=document.getElementById('cm').value.trim();if(!m){toast('Please tell us what you need');return;}window.open(`https://wa.me/${WA}?text=${encodeURIComponent(`Hello Import By Nel!👋\n\n${n?`Name: ${n}\n`:''}${p?`Phone: ${p}\n`:''}Message: ${m}`)}`,'_blank');}
 function toggleMenu(){document.getElementById('mnav').classList.toggle('open');}
 let tt;function toast(m){const e=document.getElementById('toast');e.textContent=m;e.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>e.classList.remove('show'),3000);}
+
+// ── CUSTOMER REVIEWS ────────────────────────────────────────────
+function renderReviews(){
+  const el=document.getElementById('revg-dynamic');
+  if(!el)return;
+  const items=(window.REVIEWS||[]).filter(r=>r&&(r.text||r.name));
+  if(!items.length){el.innerHTML='';return;}
+  el.innerHTML=items.map(r=>{
+    const stars=Math.max(1,Math.min(5,r.stars||5));
+    const avatar=r.photo?`<img src="${r.photo}" class="rav" style="object-fit:cover" onerror="this.outerHTML='<div class=&quot;rav&quot;>${(r.initials||'?')}</div>'"/>`:`<div class="rav">${r.initials||'?'}</div>`;
+    return `<div class="rc"><div class="rstars">${'★'.repeat(stars)}${'☆'.repeat(5-stars)}</div><p class="rtxt">${r.text||''}</p><div class="rauth">${avatar}<div><div class="rname">${r.name||'Anonymous'}${r.verified?' <span style="color:var(--gr);font-size:11px;font-weight:600">✓ Verified</span>':''}</div><div class="rloc">📍 ${r.loc||'Ghana'}</div></div></div></div>`;
+  }).join('');
+}
+window.renderReviews=renderReviews;
+
+let revPhotoData=null;
+function onRevPhoto(e){
+  const f=e.target.files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=ev=>{revPhotoData=ev.target.result;document.getElementById('rv-photo-img').src=revPhotoData;document.getElementById('rv-photo-prev').style.display='block';};
+  r.readAsDataURL(f);
+}
+window.onRevPhoto=onRevPhoto;
+
+async function submitReview(){
+  const msgEl=document.getElementById('rv-msg');
+  const showMsg=(text,ok)=>{msgEl.style.display='block';msgEl.style.color=ok?'var(--gr)':'var(--re)';msgEl.textContent=text;};
+  const name=document.getElementById('rv-name').value.trim();
+  const loc=document.getElementById('rv-loc').value.trim();
+  const stars=parseInt(document.getElementById('rv-stars').value)||5;
+  const text=document.getElementById('rv-text').value.trim();
+  if(!name||!text){showMsg('Please enter your name and review.',false);return;}
+  if(!window._db||!window._collection||!window._fsAdd){showMsg('Still loading, please try again in a moment.',false);return;}
+  const initials=name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2)||'?';
+  try{
+    await window._fsAdd(window._collection(window._db,'ibn_reviews'),{
+      name,loc:loc||'Ghana',text:text.startsWith('"')?text:`"${text}"`,stars,
+      photo:revPhotoData||'',verified:false,initials,
+      ts:window._fsTs?window._fsTs():Date.now()
+    });
+    showMsg('Thank you! Your review has been submitted. ✅',true);
+    document.getElementById('rv-name').value='';
+    document.getElementById('rv-loc').value='';
+    document.getElementById('rv-text').value='';
+    document.getElementById('rv-stars').value='5';
+    document.getElementById('rv-photo-file').value='';
+    document.getElementById('rv-photo-prev').style.display='none';
+    revPhotoData=null;
+  }catch(e){showMsg('Error submitting review: '+e.message,false);}
+}
+window.submitReview=submitReview;
 
 // ── ANALYTICS ─────────────────────────────────────────────────────
 function anGet(){try{return JSON.parse(localStorage.getItem('ibn_analytics')||'{}')}catch(e){return{};}}
