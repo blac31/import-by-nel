@@ -278,7 +278,9 @@ footer{background:var(--p3);padding:48px 40px 22px;}
 .fcol a:hover{color:var(--g);}
 .fbot{border-top:1px solid rgba(255,255,255,.07);padding-top:18px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;font-size:12px;color:rgba(255,255,255,.28);}
 .fbot span:last-child{color:var(--g);font-weight:600;}
-.fltwa{position:fixed;bottom:24px;right:24px;z-index:90;width:56px;height:56px;border-radius:50%;background:var(--wa);color:var(--w);display:flex;align-items:center;justify-content:center;font-size:24px;box-shadow:0 4px 18px rgba(37,211,102,.45);text-decoration:none;transition:transform .3s;}
+.fltwa{position:fixed;bottom:24px;right:24px;z-index:9999;width:60px;height:60px;border-radius:50%;background:var(--wa);color:var(--w);display:flex;align-items:center;justify-content:center;font-size:26px;box-shadow:0 4px 20px rgba(37,211,102,.5);text-decoration:none;animation:waPulse 2s ease-in-out infinite;}
+.fltwa:hover{transform:scale(1.12);}
+@keyframes waPulse{0%,100%{box-shadow:0 4px 20px rgba(37,211,102,.5);}50%{box-shadow:0 4px 32px rgba(37,211,102,.85),0 0 0 8px rgba(37,211,102,.15);}}
 .fltwa:hover{transform:scale(1.1);}
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--p3);color:var(--w);padding:12px 22px;border-radius:var(--rs);font-size:14px;z-index:999;opacity:0;transition:all .3s;pointer-events:none;font-weight:600;border:1px solid rgba(255,215,0,.3);}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
@@ -769,7 +771,8 @@ async function loadAll(){
   try{const s=await getDocs(query(collection(db,'ibn_reviews'),orderBy('ts','desc')));window.REVIEWS=s.docs.map(d=>({fid:d.id,...d.data()}));if(typeof renderReviews==='function')renderReviews();}catch(e){console.error('reviews',e);}
 }
 loadAll();
-onSnapshot(collection(db,'ibn_available'),s=>{window.AVAIL=s.docs.map(d=>({id:d.id,...d.data()}));safeAvail();},e=>console.error(e));
+window._db=db;window._collection=collection;window._fsAdd=addDoc;
+  onSnapshot(collection(db,'ibn_available'),s=>{window.AVAIL=s.docs.map(d=>({id:d.id,...d.data()}));safeAvail();},e=>console.error(e));
 onSnapshot(collection(db,'ibn_tracking'),s=>{window.FTRK={};s.docs.forEach(d=>{const t=d.data();if(t.num)window.FTRK[t.num.toUpperCase()]=t;});},e=>console.error(e));
 onSnapshot(query(collection(db,'ibn_catalogue'),orderBy('ts','desc')),s=>{window.CCAT=s.docs.map(d=>({fid:d.id,...d.data()}));safeRebuild();},e=>console.error(e));
 onSnapshot(query(collection(db,'ibn_reviews'),orderBy('ts','desc')),s=>{window.REVIEWS=s.docs.map(d=>({fid:d.id,...d.data()}));if(typeof renderReviews==='function')renderReviews();},e=>console.error(e));
@@ -819,7 +822,7 @@ function renderProds(){
   pa.innerHTML=h;
 }
 function goPage(p){pg=p;renderProds();document.getElementById('catalogue').scrollIntoView({behavior:'smooth'});}
-function filterCat(c,btn){cat=c;pg=1;clearSearch();document.querySelectorAll('.cb').forEach(b=>b.classList.remove('on'));btn.classList.add('on');rebuildAll();}
+function filterCat(c,btn){if(c)anTrack('cat_clicks',c);cat=c;pg=1;clearSearch();document.querySelectorAll('.cb').forEach(b=>b.classList.remove('on'));btn.classList.add('on');rebuildAll();}
 
 function renderAvail(){
   const items=window.AVAIL||[],g=document.getElementById('agrid');
@@ -873,11 +876,13 @@ function sendDetailWA(){
 
 📦 *Item:* ${curItem.n}
 🎨 *Colour:* ${sc||'To confirm'}
-📏 *Size:* ${ss||'To confirm'}
+📏 *Size:* ${ss||'To confirm'}${refLine()}
 
 ⏰ I understand it takes 35–40 working days (Mon–Fri) to arrive.
 
 Please send me the price! (I will attach the item photo below 📸)`;
+  anTrack('wa','item_order');
+  notifyOrder(curItem.n||'Item');
   window.open(`https://wa.me/${WA}?text=${encodeURIComponent(m)}`,'_blank');
   closeDetail();
 }
@@ -891,15 +896,18 @@ function openAvail(id){
 
 🛍️ *Item:* ${a.name||''}
 💰 *Price:* ${a.price||''}
-📋 *Details:* ${a.spec||'N/A'}
+📋 *Details:* ${a.spec||'N/A'}${refLine()}
 
 This item is available in Ghana. Please confirm. Thank you!`;
+  anTrack('wa','avail_order');
+  notifyOrder(a.name||'Available Item');
   window.open(`https://wa.me/${WA}?text=${encodeURIComponent(m)}`,'_blank');
 }
 
 function doSearch(q){
   if(!q||!q.trim()){clearSearch();return;}
   q=q.trim();
+  anTrack('searches',q.toLowerCase());
   document.getElementById('sq-txt').textContent='"'+q+'"';
   const l=window.ALL_P||ALL_BASE;
   const r=l.filter(p=>(p.n||'').toLowerCase().includes(q.toLowerCase())||(p.c||'').toLowerCase().includes(q.toLowerCase())||(p.d||'').toLowerCase().includes(q.toLowerCase()));
@@ -955,6 +963,75 @@ function doTrack(){
 function sendContact(){const n=document.getElementById('cn').value.trim(),p=document.getElementById('cp').value.trim(),m=document.getElementById('cm').value.trim();if(!m){toast('Please tell us what you need');return;}window.open(`https://wa.me/${WA}?text=${encodeURIComponent(`Hello Import By Nel!👋\n\n${n?`Name: ${n}\n`:''}${p?`Phone: ${p}\n`:''}Message: ${m}`)}`,'_blank');}
 function toggleMenu(){document.getElementById('mnav').classList.toggle('open');}
 let tt;function toast(m){const e=document.getElementById('toast');e.textContent=m;e.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>e.classList.remove('show'),3000);}
+
+// ── ANALYTICS ─────────────────────────────────────────────────────
+function anGet(){try{return JSON.parse(localStorage.getItem('ibn_analytics')||'{}')}catch(e){return{};}}
+function anSave(d){localStorage.setItem('ibn_analytics',JSON.stringify(d));}
+function anTrack(key,sub){
+  const d=anGet();
+  // Total counts
+  d[key]=(d[key]||0)+1;
+  // Daily breakdown
+  const today=new Date().toISOString().slice(0,10);
+  if(!d.daily)d.daily={};
+  if(!d.daily[today])d.daily[today]={views:0,wa:0,searches:0,orders:0};
+  if(d.daily[today][key]!==undefined)d.daily[today][key]++;
+  // Sub-keys (search terms, categories clicked)
+  if(sub){
+    if(!d[key+'_top'])d[key+'_top']={};
+    d[key+'_top'][sub]=(d[key+'_top'][sub]||0)+1;
+  }
+  anSave(d);
+}
+// Track page view on load
+anTrack('views');
+
+// ── REFERRAL CODE SYSTEM ──────────────────────────────────────────
+(function(){
+  // Check URL for ref code e.g. importbynel.netlify.app?ref=JOHN
+  const params=new URLSearchParams(window.location.search);
+  const ref=params.get('ref');
+  if(ref){
+    localStorage.setItem('ibn_ref',ref.toUpperCase());
+    anTrack('referrals',ref.toUpperCase());
+  }
+})();
+
+function getRef(){return localStorage.getItem('ibn_ref')||'';}
+// ── ORDER NOTIFICATIONS ───────────────────────────────────────────
+function requestNotifPermission(){
+  if('Notification' in window && Notification.permission==='default'){
+    Notification.requestPermission();
+  }
+}
+// Request permission after 3 seconds (non-intrusive)
+setTimeout(requestNotifPermission, 3000);
+
+function notifyOrder(itemName){
+  // Store in Firebase so admin sees it
+  if(window._db && window._fsAdd){
+    try{
+      window._fsAdd(window._collection(window._db,'ibn_notifications'),{
+        item:itemName,
+        ts:new Date().toISOString(),
+        read:false
+      });
+    }catch(e){}
+  }
+  // Browser notification for Nel if she has the site open
+  if('Notification' in window && Notification.permission==='granted'){
+    new Notification('🛍️ New Order — Import By Nel',{
+      body:`Someone just ordered: ${itemName}`,
+      icon:'https://importbynel.netlify.app/icon.png'
+    });
+  }
+}
+
+function refLine(){
+  const r=getRef();
+  return r?`
+🎟️ *Referral Code:* ${r}`:'';
+}
 rebuildAll();
 
 // Journey video sequence
@@ -1197,7 +1274,9 @@ function orderCartWA(){
       msg+=`   View item: ${link}\n\n`;
     });
     if(hasPrice)msg+=`💰 *Estimated Total: GH₵${total.toFixed(0)}*\n`;
-    msg+=`💳 *Payment Method:* ${payMethod}\n\nPlease confirm my order. Thank you!`;
+    msg+=`💳 *Payment Method:* ${payMethod}${refLine()}\n\nPlease confirm my order. Thank you!`;
+    anTrack('orders','cart');
+    notifyOrder(`Cart order (${items.length} items)`);
     window.open(`https://wa.me/${WA}?text=${encodeURIComponent(msg)}`,'_blank');
     closeCart();
   });
