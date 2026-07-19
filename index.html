@@ -84,7 +84,9 @@ nav{background:rgba(248,244,238,0.75);backdrop-filter:blur(20px);-webkit-backdro
 .hero h1 em{color:var(--g);font-style:italic;font-weight:400;}
 .hdesc{font-size:15px;color:rgba(255,255,255,.58);line-height:1.7;margin-bottom:14px;}
 .hdbadge{display:inline-flex;align-items:center;gap:7px;background:rgba(200,169,90,.08);border:1px solid rgba(200,169,90,.25);color:var(--gd);padding:8px 14px;border-radius:var(--rs);font-size:12px;font-weight:600;margin-bottom:22px;}
-.hsrch{background:rgba(255,255,255,.12);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.25);border-radius:var(--rs);overflow:hidden;display:flex;margin-bottom:14px;box-shadow:0 4px 24px rgba(0,0,0,.2);}
+.hsrch{background:rgba(255,255,255,.12);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.25);border-radius:var(--rs);overflow:hidden;display:flex;align-items:center;margin-bottom:14px;box-shadow:0 4px 24px rgba(0,0,0,.2);}
+.hcam{background:none;border:none;border-right:1px solid rgba(255,255,255,.18);color:rgba(255,255,255,.75);font-size:17px;padding:12px 12px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.hcam:hover{color:var(--g);}
 .hsrch input{flex:1;padding:14px 18px;border:none;background:none;font-family:'DM Sans',sans-serif;font-size:15px;color:var(--w);outline:none;}
 .hsrch input::placeholder{color:rgba(255,255,255,.55);}
 .hsb{background:var(--g);border:none;padding:14px 24px;color:var(--p);font-size:15px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;}
@@ -326,6 +328,7 @@ footer{background:var(--p3);padding:48px 40px 22px;}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 @media(max-width:900px){
   .topbar,.nmid{display:none;}
+  .nr{display:none;}
   nav{padding:0 16px;}
   .hbg{display:flex;}
   .hero{padding:0 16px;}
@@ -512,6 +515,8 @@ footer{background:var(--p3);padding:48px 40px 22px;}
   <div class="mns"><input type="text" id="mq" placeholder="Search any item..."/><button class="mnsb" onclick="doSearch(document.getElementById('mq').value);toggleMenu()">🔍</button></div>
   <a href="#home" onclick="toggleMenu()">Home</a><a href="#catalogue" onclick="toggleMenu()">Pre-Order Catalogue</a><a href="#available" onclick="toggleMenu()">Available in Ghana</a><a href="#tracking" onclick="toggleMenu()">Track Order</a><a href="#services" onclick="toggleMenu()">Services</a><a href="#about" onclick="toggleMenu()">About</a><a href="#reviews" onclick="toggleMenu()">Reviews</a><a href="#contact" onclick="toggleMenu()">Contact</a>
   <a href="javascript:void(0)" onclick="toggleMenu();openAccountModal()">👤 My Account</a>
+  <a href="javascript:void(0)" onclick="toggleMenu();openWishlist()">❤️ Wishlist <span id="mWishCount" style="background:var(--re);color:#fff;border-radius:10px;padding:1px 8px;font-size:11px;margin-left:6px;font-weight:700"></span></a>
+  <a href="javascript:void(0)" onclick="toggleMenu();openCart()">🛒 Cart <span id="mCartCount" style="background:var(--g);color:var(--p);border-radius:10px;padding:1px 8px;font-size:11px;margin-left:6px;font-weight:700"></span></a>
   <a href="https://wa.me/233273752465" target="_blank" class="mnwa">💬 Order on WhatsApp</a>
 </div>
 <div class="catnav">
@@ -552,7 +557,7 @@ footer{background:var(--p3);padding:48px 40px 22px;}
         <h1>Shop Any Item<br/>From China.<br/><em>We Deliver It.</em></h1>
         <p class="hdesc">Browse our catalogue, upload a photo, or describe what you want — we source it from trusted China shops and deliver to you in Ghana.</p>
         <div class="hdbadge"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:5px;vertical-align:middle"><path d="M2 20h20M6 9H2v5l2 6h16l2-6V9h-4M6 9V5h12v4M9 9v11M15 9v11"/></svg> Orders arrive in 35–40 working days (Mon–Fri) including customs</div>
-        <div class="hsrch"><input type="text" id="hq" placeholder="e.g. Birkenstock, red dress, earbuds..."/><button class="hsb" onclick="doSearch(document.getElementById('hq').value)">Search</button></div>
+        <div class="hsrch"><button class="hcam" onclick="togglePhoto()" title="Search by photo" aria-label="Search by photo">📷</button><input type="text" id="hq" placeholder="e.g. Birkenstock, red dress, earbuds..."/><button class="hsb" onclick="doSearch(document.getElementById('hq').value)">Search</button></div>
         <button class="hpb" onclick="togglePhoto()">📷 Can't describe it? Upload a photo instead</button>
         <div class="hst-row">
           <div class="hst"><div class="hst-ico"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#C8A95A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg></div><div><div class="hst-n">500+</div><div class="hst-l">Orders Delivered</div></div></div>
@@ -1166,7 +1171,16 @@ function doTrack(){
   tr.style.display='block';
 }
 function sendContact(){const n=document.getElementById('cn').value.trim(),p=document.getElementById('cp').value.trim(),m=document.getElementById('cm').value.trim();if(!m){toast('Please tell us what you need');return;}window.open(`https://wa.me/${WA}?text=${encodeURIComponent(`Hello Import By Nel!👋\n\n${n?`Name: ${n}\n`:''}${p?`Phone: ${p}\n`:''}Message: ${m}`)}`,'_blank');}
-function toggleMenu(){document.getElementById('mnav').classList.toggle('open');}
+function toggleMenu(){
+  const el=document.getElementById('mnav');
+  el.classList.toggle('open');
+  if(el.classList.contains('open')){
+    const wc=(typeof wishLoad==='function')?wishLoad().length:0;
+    const cc=(typeof cartLoad==='function')?cartLoad().reduce((s,i)=>s+(i.qty||1),0):0;
+    const we=document.getElementById('mWishCount');if(we)we.textContent=wc>0?wc:'';
+    const ce=document.getElementById('mCartCount');if(ce)ce.textContent=cc>0?cc:'';
+  }
+}
 let tt;function toast(m){const e=document.getElementById('toast');e.textContent=m;e.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>e.classList.remove('show'),3000);}
 
 // ── CUSTOMER ACCOUNTS ───────────────────────────────────────────
