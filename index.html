@@ -1403,26 +1403,27 @@ async function submitReview(){
 window.submitReview=submitReview;
 
 // ── ANALYTICS ─────────────────────────────────────────────────────
-function anGet(){try{return JSON.parse(localStorage.getItem('ibn_analytics')||'{}')}catch(e){return{};}}
-function anSave(d){localStorage.setItem('ibn_analytics',JSON.stringify(d));}
 function anTrack(key,sub){
-  const d=anGet();
-  // Total counts
-  d[key]=(d[key]||0)+1;
-  // Daily breakdown
-  const today=new Date().toISOString().slice(0,10);
-  if(!d.daily)d.daily={};
-  if(!d.daily[today])d.daily[today]={views:0,wa:0,searches:0,orders:0};
-  if(d.daily[today][key]!==undefined)d.daily[today][key]++;
-  // Sub-keys (search terms, categories clicked)
-  if(sub){
-    if(!d[key+'_top'])d[key+'_top']={};
-    d[key+'_top'][sub]=(d[key+'_top'][sub]||0)+1;
+  if(!window._db||!window._fsSetDoc||!window._fsDoc||!window._fsIncrement)return;
+  const inc=window._fsIncrement;
+  window._fsSetDoc(window._fsDoc(window._db,'ibn_analytics','totals'),{[key]:inc(1)},{merge:true}).catch(e=>console.error('an',e));
+  if(key==='views'){
+    const today=new Date().toISOString().slice(0,10);
+    window._fsSetDoc(window._fsDoc(window._db,'ibn_analytics_daily',today),{views:inc(1)},{merge:true}).catch(e=>{});
+    const isMobile=/Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
+    window._fsSetDoc(window._fsDoc(window._db,'ibn_analytics','totals'),{[isMobile?'mobile':'desktop']:inc(1)},{merge:true}).catch(e=>{});
   }
-  anSave(d);
+  if(sub){
+    const collMap={searches:'ibn_analytics_terms',cat_clicks:'ibn_analytics_categories',referrals:'ibn_analytics_referrals'};
+    const collName=collMap[key];
+    if(collName){
+      const docId=String(sub).toLowerCase().trim().replace(/[^a-z0-9_-]/g,'_').slice(0,80)||'unknown';
+      window._fsSetDoc(window._fsDoc(window._db,collName,docId),{label:sub,count:inc(1)},{merge:true}).catch(e=>{});
+    }
+  }
 }
 // Track page view on load
-anTrack('views');
+setTimeout(()=>anTrack('views'),800);
 
 // ── REFERRAL CODE SYSTEM ──────────────────────────────────────────
 (function(){
