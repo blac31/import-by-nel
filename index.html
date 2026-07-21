@@ -853,7 +853,7 @@ footer{background:var(--p3);padding:48px 40px 22px;}
 <script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import{getFirestore,collection,getDocs,onSnapshot,query,orderBy,addDoc,serverTimestamp,where,doc,setDoc,increment,getDoc}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-import{getAuth,createUserWithEmailAndPassword,signInWithEmailAndPassword,onAuthStateChanged,signOut,updateProfile}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import{getAuth,createUserWithEmailAndPassword,signInWithEmailAndPassword,onAuthStateChanged,signOut,updateProfile,sendPasswordResetEmail,updatePassword,reauthenticateWithCredential,EmailAuthProvider}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 const cfg={apiKey:"AIzaSyAExcjS0SaEoKZvHXmj5ryZ8u_5DwEk1lk",authDomain:"nelle-s-shipping-track.firebaseapp.com",projectId:"nelle-s-shipping-track",storageBucket:"nelle-s-shipping-track.firebasestorage.app",messagingSenderId:"464513009072",appId:"1:464513009072:web:1866f20aaeada20f2fc275"};
 const app=initializeApp(cfg);
 const db=getFirestore(app);
@@ -869,7 +869,7 @@ async function loadAll(){
 loadAll();
 window._db=db;window._collection=collection;window._fsAdd=addDoc;window._fsTs=serverTimestamp;window._fsWhere=where;window._fsDoc=doc;window._fsSetDoc=setDoc;window._fsGetDocs=getDocs;window._fsQuery=query;window._fsOrderBy=orderBy;window._fsIncrement=increment;window._fsGetDoc=getDoc;
 window._auth=auth;
-window._authFns={createUserWithEmailAndPassword,signInWithEmailAndPassword,onAuthStateChanged,signOut,updateProfile};
+window._authFns={createUserWithEmailAndPassword,signInWithEmailAndPassword,onAuthStateChanged,signOut,updateProfile,sendPasswordResetEmail,updatePassword,reauthenticateWithCredential,EmailAuthProvider};
 onAuthStateChanged(auth,(user)=>{
   window.CURRENT_USER=user||null;
   if(typeof window.onAccountAuthChanged==='function')window.onAccountAuthChanged(user);
@@ -1200,6 +1200,7 @@ function switchAuthTab(mode){
   document.getElementById('acctSignupFields').style.display=isLogin?'none':'block';
   document.getElementById('acctSubmitBtn').textContent=isLogin?'Log In':'Create Account';
   document.getElementById('acctSubmitBtn').onclick=isLogin?doLogin:doSignUp;
+  document.getElementById('acctForgotWrap').style.display=isLogin?'block':'none';
   document.getElementById('acct-msg').style.display='none';
 }
 function acctMsg(text,ok){const m=document.getElementById('acct-msg');m.style.display='block';m.style.color=ok?'var(--gr)':'var(--re)';m.textContent=text;}
@@ -1234,6 +1235,43 @@ async function doLogin(){
   try{
     await window._authFns.signInWithEmailAndPassword(window._auth,email,pass);
   }catch(e){acctMsg(friendlyAuthError(e),false);}
+}
+function togglePwVis(inputId,btn){
+  const inp=document.getElementById(inputId);
+  const showing=inp.type==='text';
+  inp.type=showing?'password':'text';
+  btn.textContent=showing?'👁️':'🙈';
+}
+async function doForgotPassword(){
+  const email=document.getElementById('acct-email').value.trim();
+  if(!email){acctMsg('Enter your email above first, then tap "Forgot password?" again.',false);return;}
+  if(!window._auth||!window._authFns){acctMsg('Still loading, please try again in a moment.',false);return;}
+  try{
+    await window._authFns.sendPasswordResetEmail(window._auth,email);
+    acctMsg('Password reset link sent! Check your email inbox (and spam folder).',true);
+  }catch(e){acctMsg(friendlyAuthError(e),false);}
+}
+function toggleChangePw(){
+  const w=document.getElementById('changePwWrap');
+  w.style.display=w.style.display==='none'?'block':'none';
+}
+async function doChangePassword(){
+  const oldPw=document.getElementById('cpw-old').value;
+  const newPw=document.getElementById('cpw-new').value;
+  const msgEl=document.getElementById('cpw-msg');
+  const showMsg=(t,ok)=>{msgEl.style.display='block';msgEl.style.color=ok?'var(--gr)':'var(--re)';msgEl.textContent=t;};
+  if(!oldPw||!newPw){showMsg('Please fill in both fields.',false);return;}
+  if(newPw.length<6){showMsg('New password should be at least 6 characters.',false);return;}
+  const user=window.CURRENT_USER;
+  if(!user||!window._authFns){showMsg('Please log in again first.',false);return;}
+  try{
+    const cred=window._authFns.EmailAuthProvider.credential(user.email,oldPw);
+    await window._authFns.reauthenticateWithCredential(user,cred);
+    await window._authFns.updatePassword(user,newPw);
+    showMsg('Password updated! ✅',true);
+    document.getElementById('cpw-old').value='';
+    document.getElementById('cpw-new').value='';
+  }catch(e){showMsg(friendlyAuthError(e),false);}
 }
 function doLogout(){
   if(window._auth&&window._authFns)window._authFns.signOut(window._auth);
@@ -1745,7 +1783,16 @@ function orderCartWA(){
         <div class="fg"><label>Phone (WhatsApp)</label><input type="tel" id="acct-phone" placeholder="+233 ..."/></div>
       </div>
       <div class="fg"><label>Email</label><input type="email" id="acct-email" placeholder="you@example.com"/></div>
-      <div class="fg"><label>Password</label><input type="password" id="acct-password" placeholder="At least 6 characters"/></div>
+      <div class="fg">
+        <label>Password</label>
+        <div style="position:relative">
+          <input type="password" id="acct-password" placeholder="At least 6 characters" style="padding-right:44px"/>
+          <button type="button" onclick="togglePwVis('acct-password',this)" style="position:absolute;top:0;right:0;height:100%;width:40px;background:none;border:none;cursor:pointer;font-size:15px;color:var(--mu)">👁️</button>
+        </div>
+      </div>
+      <div id="acctForgotWrap" style="text-align:right;margin:-10px 0 12px">
+        <a href="javascript:void(0)" onclick="doForgotPassword()" style="font-size:12px;color:var(--p);font-weight:600;text-decoration:underline">Forgot password?</a>
+      </div>
 
       <button class="wab" style="background:var(--p)" id="acctSubmitBtn" onclick="doLogin()">Log In</button>
       <div id="acct-msg" style="display:none;margin-top:10px;font-size:13px;text-align:center;font-weight:600"></div>
@@ -1755,6 +1802,21 @@ function orderCartWA(){
       <div class="pay-title" id="acctGreeting">👋 Hi there</div>
       <div class="pay-sub">Here's your order history.</div>
       <div id="acctOrdersList" style="max-height:280px;overflow-y:auto;margin-bottom:16px"></div>
+
+      <div style="border-top:1px solid var(--bd);padding-top:14px;margin-bottom:14px">
+        <a href="javascript:void(0)" onclick="toggleChangePw()" style="font-size:13px;color:var(--p);font-weight:700">🔒 Change Password</a>
+        <div id="changePwWrap" style="display:none;margin-top:12px">
+          <div class="fg"><label>Current Password</label>
+            <div style="position:relative"><input type="password" id="cpw-old" style="padding-right:44px"/><button type="button" onclick="togglePwVis('cpw-old',this)" style="position:absolute;top:0;right:0;height:100%;width:40px;background:none;border:none;cursor:pointer;font-size:15px;color:var(--mu)">👁️</button></div>
+          </div>
+          <div class="fg"><label>New Password</label>
+            <div style="position:relative"><input type="password" id="cpw-new" placeholder="At least 6 characters" style="padding-right:44px"/><button type="button" onclick="togglePwVis('cpw-new',this)" style="position:absolute;top:0;right:0;height:100%;width:40px;background:none;border:none;cursor:pointer;font-size:15px;color:var(--mu)">👁️</button></div>
+          </div>
+          <button class="wab" style="background:var(--p)" onclick="doChangePassword()">Update Password</button>
+          <div id="cpw-msg" style="display:none;margin-top:8px;font-size:12px;text-align:center;font-weight:600"></div>
+        </div>
+      </div>
+
       <button class="wab" style="background:var(--t2)" onclick="doLogout()">Log Out</button>
     </div>
   </div>
