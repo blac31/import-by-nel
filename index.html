@@ -1303,13 +1303,50 @@ function onAccountAuthChanged(user){
     document.getElementById('acctLoggedInView').style.display='block';
     document.getElementById('acctGreeting').textContent='👋 Hi '+(user.displayName||'there');
     loadMyOrders(user.uid);
+    mergeAccountCartWishlist(user.uid);
   }else{
     if(btn)btn.textContent='👤 Account';
     document.getElementById('acctAuthView').style.display='block';
     document.getElementById('acctLoggedInView').style.display='none';
     document.getElementById('acct-email').value='';
     document.getElementById('acct-password').value='';
+    clearGuestCartWishlist();
   }
+}
+async function mergeAccountCartWishlist(uid){
+  if(!window._fsGetDoc||!window._fsDoc)return;
+  try{
+    const snap=await window._fsGetDoc(window._fsDoc(window._db,'ibn_customers',uid));
+    const remote=snap.exists()?snap.data():{};
+    const remoteCart=remote.cart||[];
+    const remoteWish=remote.wishlist||[];
+    const localCart=cartLoad();
+    const localWish=wishLoad();
+    const mergedCart=[...remoteCart];
+    localCart.forEach(li=>{
+      const dup=mergedCart.find(ri=>ri.id===li.id&&ri.col===li.col&&ri.sz===li.sz);
+      if(!dup)mergedCart.push(li);
+    });
+    const mergedWish=Array.from(new Set([...remoteWish,...localWish]));
+    localStorage.setItem(CART_KEY,JSON.stringify(mergedCart));
+    localStorage.setItem(WISH_KEY,JSON.stringify(mergedWish));
+    refreshCartWishUI();
+    syncAccountData();
+  }catch(e){console.error('merge account data',e);}
+}
+function clearGuestCartWishlist(){
+  localStorage.setItem(CART_KEY,JSON.stringify([]));
+  localStorage.setItem(WISH_KEY,JSON.stringify([]));
+  refreshCartWishUI();
+}
+function refreshCartWishUI(){
+  if(typeof cartUpdateBadge==='function')cartUpdateBadge();
+  if(typeof updateWishCount==='function')updateWishCount();
+  if(typeof renderProds==='function')renderProds();
+  const cp=document.getElementById('cartPanel');
+  if(cp&&cp.classList.contains('open')&&typeof renderCart==='function')renderCart();
+  const wp=document.getElementById('wishPanel');
+  if(wp&&wp.classList.contains('open')&&typeof renderWishlist==='function')renderWishlist();
 }
 window.openAccountModal=openAccountModal;window.closeAccountModal=closeAccountModal;window.switchAuthTab=switchAuthTab;
 window.doSignUp=doSignUp;window.doLogin=doLogin;window.doLogout=doLogout;window.onAccountAuthChanged=onAccountAuthChanged;
@@ -1491,12 +1528,16 @@ rebuildAll();
 // ── CART SYSTEM ──────────────────────────────────────────────────────────────
 const CART_KEY='ibn_cart_v1';
 function cartLoad(){try{return JSON.parse(localStorage.getItem(CART_KEY))||[];}catch(e){return[];}}
-function cartSave(items){try{localStorage.setItem(CART_KEY,JSON.stringify(items));}catch(e){}}
+function cartSave(items){try{localStorage.setItem(CART_KEY,JSON.stringify(items));}catch(e){}syncAccountData();}
 
 // ── WISHLIST ────────────────────────────────────────────────────
 const WISH_KEY='ibn_wishlist_v1';
 function wishLoad(){try{return JSON.parse(localStorage.getItem(WISH_KEY))||[];}catch(e){return[];}}
-function wishSave(ids){try{localStorage.setItem(WISH_KEY,JSON.stringify(ids));}catch(e){}}
+function wishSave(ids){try{localStorage.setItem(WISH_KEY,JSON.stringify(ids));}catch(e){}syncAccountData();}
+function syncAccountData(){
+  if(!window.CURRENT_USER||!window._fsSetDoc||!window._fsDoc)return;
+  window._fsSetDoc(window._fsDoc(window._db,'ibn_customers',window.CURRENT_USER.uid),{cart:cartLoad(),wishlist:wishLoad()},{merge:true}).catch(e=>console.error('sync',e));
+}
 function isWished(id){return wishLoad().includes(String(id));}
 function toggleWish(id,btn){
   id=String(id);
