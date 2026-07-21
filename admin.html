@@ -139,6 +139,7 @@ tbody td{padding:11px 16px;font-size:13px;color:var(--t);vertical-align:middle;}
     <button class="atab" onclick="showPanel('cat',this)">🛍️ Manage Catalogue</button>
     <button class="atab" onclick="showPanel('avail',this)">🇬🇭 Available in Ghana</button>
     <button class="atab" onclick="showPanel('trk',this)">📦 Tracking Numbers</button>
+    <button class="atab" onclick="showPanel('orders',this)">🧾 Orders</button>
     <button class="atab" onclick="showPanel('an',this)">📈 Analytics</button>
     <button class="atab" onclick="showPanel('edit',this)">✏️ Edit Base Items</button>
     <button class="atab" onclick="showPanel('deadline',this)">⏰ Pre-Order Deadline</button>
@@ -287,6 +288,16 @@ tbody td{padding:11px 16px;font-size:13px;color:var(--t);vertical-align:middle;}
       </div>
     </div>
 
+    <!-- ORDERS -->
+    <div class="panel" id="panel-orders">
+      <div class="ph"><div class="pttl">🧾 Customer Orders</div></div>
+      <div class="info-box">These are orders placed by customers who are logged into an account. Update the status here to move an order forward — the customer will see the same progress reflected in "My Account" on the live site.</div>
+      <div class="tblw">
+        <table><thead><tr><th>Item</th><th>Customer</th><th>Colour / Size</th><th>Price</th><th>Date</th><th>Status</th></tr></thead>
+        <tbody id="orders-tbody"><tr><td colspan="6" style="text-align:center;color:var(--mu);padding:16px">Loading orders...</td></tr></tbody></table>
+      </div>
+    </div>
+
     <!-- ANALYTICS -->
     <div class="panel" id="panel-an">
       <div class="ph"><div class="pttl">📈 Site Analytics</div></div>
@@ -411,7 +422,7 @@ tbody td{padding:11px 16px;font-size:13px;color:var(--t);vertical-align:middle;}
 <!-- FIREBASE -->
 <script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import{getFirestore,collection,addDoc,updateDoc,deleteDoc,doc,onSnapshot,query,orderBy,serverTimestamp,getDocs}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import{getFirestore,collection,addDoc,updateDoc,deleteDoc,doc,onSnapshot,query,orderBy,serverTimestamp,getDocs,getDoc}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 import{getAuth,sendSignInLinkToEmail,isSignInWithEmailLink,signInWithEmailLink,onAuthStateChanged,signOut}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 const app=initializeApp({apiKey:"AIzaSyAExcjS0SaEoKZvHXmj5ryZ8u_5DwEk1lk",authDomain:"nelle-s-shipping-track.firebaseapp.com",projectId:"nelle-s-shipping-track",storageBucket:"nelle-s-shipping-track.firebasestorage.app",messagingSenderId:"464513009072",appId:"1:464513009072:web:1866f20aaeada20f2fc275"});
 const auth=getAuth(app);
@@ -420,7 +431,7 @@ window.AUTH=auth;
 window.FAUTH={sendSignInLinkToEmail,isSignInWithEmailLink,signInWithEmailLink,onAuthStateChanged,signOut};
 window.ADMIN_EMAIL=ADMIN_EMAIL;
 const db=getFirestore(app);
-window.DB=db;window.FSS={addDoc,updateDoc,deleteDoc,doc,serverTimestamp,collection,query,orderBy,onSnapshot,getDocs};
+window.DB=db;window.FSS={addDoc,updateDoc,deleteDoc,doc,serverTimestamp,collection,query,orderBy,onSnapshot,getDocs,getDoc};
 
 // Load available items
 onSnapshot(collection(db,'ibn_available'),s=>{window.AV_ITEMS=s.docs.map(d=>({fid:d.id,...d.data()}));renderAvTable();updateStats();});
@@ -564,7 +575,7 @@ function initAuthFlow(){
   });
 }
 if(window.FAUTH){initAuthFlow();}else{window.addEventListener('firebaseReady',initAuthFlow);}
-function showPanel(id,btn){document.querySelectorAll('.panel').forEach(p=>p.classList.remove('on'));document.querySelectorAll('.atab').forEach(b=>b.classList.remove('on'));document.getElementById('panel-'+id).classList.add('on');if(btn)btn.classList.add('on');if(id==='deadline')loadDeadlinePanel();}
+function showPanel(id,btn){document.querySelectorAll('.panel').forEach(p=>p.classList.remove('on'));document.querySelectorAll('.atab').forEach(b=>b.classList.remove('on'));document.getElementById('panel-'+id).classList.add('on');if(btn)btn.classList.add('on');if(id==='deadline')loadDeadlinePanel();if(id==='orders')loadOrdersPanel();if(id==='an')renderAnalytics();}
 function updateStats(){document.getElementById('s-cat').textContent=(window.CAT_ITEMS||[]).length;document.getElementById('s-av').textContent=(window.AV_ITEMS||[]).length;document.getElementById('s-trk').textContent=(window.TRK_ITEMS||[]).length;}
 
 // ── CATALOGUE ──────────────────────────────────────────────────
@@ -737,46 +748,52 @@ function trackVisit(){
   a.weekly[today]=(a.weekly[today]||0)+1;
   localStorage.setItem('ibn_an',JSON.stringify(a));
 }
-function renderAnalytics(){
-  const d=JSON.parse(localStorage.getItem('ibn_analytics')||'{}');
-  // Update stat cards
-  const views=d.views||0,wa=d.wa||0,searches=d.searches||0,orders=d.orders||0;
-  document.getElementById('an-views').textContent=views;
-  document.getElementById('an-wa').textContent=wa;
-  document.getElementById('an-srch').textContent=searches;
-  document.getElementById('an-photo').textContent=orders;
+// ── ANALYTICS (real, cross-visitor data from Firestore) ────────
+async function renderAnalytics(){
+  const{DB,FSS}=window;
+  const setTxt=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=v;};
+  try{
+    const totalsSnap=await FSS.getDoc(FSS.doc(DB,'ibn_analytics','totals'));
+    const t=totalsSnap.exists()?totalsSnap.data():{};
+    const views=t.views||0,wa=t.wa||0,searches=t.searches||0,orders=t.orders||0;
+    const mobile=t.mobile||0,desktop=t.desktop||0;
+    setTxt('an-views',views);setTxt('an-wa',wa);setTxt('an-srch',searches);setTxt('an-photo',orders);
 
-  // Daily chart — last 7 days
-  const daily=d.daily||{};
-  const days=[];for(let i=6;i>=0;i--){const dt=new Date();dt.setDate(dt.getDate()-i);days.push(dt.toISOString().slice(0,10));}
-  const maxV=Math.max(...days.map(dt=>(daily[dt]||{}).views||0),1);
-  const weekEl=document.getElementById('an-week');
-  if(weekEl)weekEl.innerHTML=days.map(dt=>{
-    const dv=(daily[dt]||{}).views||0;
-    const label=new Date(dt).toLocaleDateString('en-GB',{weekday:'short'});
-    return `<div class="bar-item"><div class="bar-lbl">${label}</div><div class="bar-track"><div class="bar-fill" style="width:${Math.round((dv/maxV)*100)}%"></div></div><div class="bar-cnt">${dv}</div></div>`;
-  }).join('');
+    // Daily chart — last 7 days, real per-day view counts
+    const days=[];for(let i=6;i>=0;i--){const dt=new Date();dt.setDate(dt.getDate()-i);days.push(dt.toISOString().slice(0,10));}
+    const dailySnaps=await Promise.all(days.map(dt=>FSS.getDoc(FSS.doc(DB,'ibn_analytics_daily',dt)).catch(()=>null)));
+    const dailyCounts=dailySnaps.map(s=>(s&&s.exists&&s.exists())?(s.data().views||0):0);
+    const maxV=Math.max(...dailyCounts,1);
+    const weekEl=document.getElementById('an-week');
+    if(weekEl)weekEl.innerHTML=days.map((dt,i)=>{
+      const dv=dailyCounts[i];
+      const label=new Date(dt).toLocaleDateString('en-GB',{weekday:'short'});
+      return `<div class="bar-item"><div class="bar-lbl">${label}</div><div class="bar-track"><div class="bar-fill" style="width:${Math.round((dv/maxV)*100)}%"></div></div><div class="bar-cnt">${dv}</div></div>`;
+    }).join('');
 
-  // Top searches
-  const srchTop=Object.entries(d.searches_top||{}).sort((a,b)=>b[1]-a[1]).slice(0,5);
-  const srchEl=document.getElementById('an-top');
-  if(srchEl)srchEl.innerHTML=srchTop.length?srchTop.map(([q,n])=>`<div class="arow"><span class="arow-l">🔍 "${q}"</span><span class="arow-v">${n}x</span></div>`).join(''):'<p style="color:var(--mu);font-size:13px;padding:10px 0">No searches yet</p>';
+    // Top searches — real terms from ibn_analytics_terms
+    const srchSnap=await FSS.getDocs(FSS.collection(DB,'ibn_analytics_terms'));
+    const srchTop=srchSnap.docs.map(d=>d.data()).sort((a,b)=>(b.count||0)-(a.count||0)).slice(0,5);
+    const srchEl=document.getElementById('an-top');
+    if(srchEl)srchEl.innerHTML=srchTop.length?srchTop.map(r=>`<div class="arow"><span class="arow-l">🔍 "${r.label||''}"</span><span class="arow-v">${r.count||0}x</span></div>`).join(''):'<p style="color:var(--mu);font-size:13px;padding:10px 0">No searches yet</p>';
 
-  // Top categories
-  const catTop=Object.entries(d.cat_clicks_top||{}).sort((a,b)=>b[1]-a[1]).slice(0,5);
-  const catEl=document.getElementById('an-cats');
-  if(catEl)catEl.innerHTML=catTop.length?catTop.map(([c,n])=>`<div class="arow"><span class="arow-l">${c}</span><span class="arow-v">${n} clicks</span></div>`).join(''):'<p style="color:var(--mu);font-size:13px;padding:10px 0">No category clicks yet</p>';
+    // Top categories — real clicks from ibn_analytics_categories
+    const catSnap=await FSS.getDocs(FSS.collection(DB,'ibn_analytics_categories'));
+    const catTop=catSnap.docs.map(d=>d.data()).sort((a,b)=>(b.count||0)-(a.count||0)).slice(0,5);
+    const catEl=document.getElementById('an-cats');
+    if(catEl)catEl.innerHTML=catTop.length?catTop.map(r=>`<div class="arow"><span class="arow-l">${r.label||''}</span><span class="arow-v">${r.count||0} clicks</span></div>`).join(''):'<p style="color:var(--mu);font-size:13px;padding:10px 0">No category clicks yet</p>';
 
-  // Device breakdown estimate
-  const mob=Math.round(views*0.68),desk=views-mob;
-  const devEl=document.getElementById('an-dev');
-  if(devEl)devEl.innerHTML=`<div class="bar-item"><div class="bar-lbl">📱 Mobile</div><div class="bar-track"><div class="bar-fill" style="width:68%"></div></div><div class="bar-cnt">${mob}</div></div><div class="bar-item"><div class="bar-lbl">💻 Desktop</div><div class="bar-track"><div class="bar-fill" style="width:32%;background:var(--gd)"></div></div><div class="bar-cnt">${desk}</div></div>`;
+    // Device breakdown — real counts tracked per visit, not estimated
+    const devEl=document.getElementById('an-dev');
+    const devTotal=mobile+desktop;
+    if(devEl)devEl.innerHTML=devTotal>0?`<div class="bar-item"><div class="bar-lbl">📱 Mobile</div><div class="bar-track"><div class="bar-fill" style="width:${Math.round((mobile/devTotal)*100)}%"></div></div><div class="bar-cnt">${mobile}</div></div><div class="bar-item"><div class="bar-lbl">💻 Desktop</div><div class="bar-track"><div class="bar-fill" style="width:${Math.round((desktop/devTotal)*100)}%;background:var(--gd)"></div></div><div class="bar-cnt">${desktop}</div></div>`:'<p style="color:var(--mu);font-size:13px;padding:10px 0">No data yet</p>';
 
-  // Referral codes used
-  const refTop=Object.entries(d.referrals_top||{}).sort((a,b)=>b[1]-a[1]).slice(0,5);
-  // If there's a referrals section, populate it
-  const refEl=document.getElementById('an-refs');
-  if(refEl)refEl.innerHTML=refTop.length?refTop.map(([c,n])=>`<div class="arow"><span class="arow-l">🎟️ ${c}</span><span class="arow-v">${n} visits</span></div>`).join(''):'<p style="color:var(--mu);font-size:13px;padding:10px 0">No referral codes used yet</p>';
+    // Referral codes — real visits from ibn_analytics_referrals
+    const refSnap=await FSS.getDocs(FSS.collection(DB,'ibn_analytics_referrals'));
+    const refTop=refSnap.docs.map(d=>d.data()).sort((a,b)=>(b.count||0)-(a.count||0)).slice(0,5);
+    const refEl=document.getElementById('an-refs');
+    if(refEl)refEl.innerHTML=refTop.length?refTop.map(r=>`<div class="arow"><span class="arow-l">🎟️ ${r.label||''}</span><span class="arow-v">${r.count||0} visits</span></div>`).join(''):'<p style="color:var(--mu);font-size:13px;padding:10px 0">No referral codes used yet</p>';
+  }catch(e){console.error('analytics load error',e);}
 }
 
 function filterBaseItems(){
@@ -917,6 +934,27 @@ function renderRevTable(){
   const items=window.REV_ITEMS||[];
   if(!items.length){tbody.innerHTML='<p style="color:var(--mu);font-size:13px;padding:16px 0">No reviews yet. Add your first review above!</p>';return;}
   tbody.innerHTML=items.map(r=>`<div style="display:flex;align-items:flex-start;gap:12px;padding:14px 0;border-bottom:1px solid var(--bd);">${r.photo?`<img src="${r.photo}" style="width:40px;height:40px;border-radius:50%;object-fit:cover;border:2px solid var(--g);flex-shrink:0" onerror="this.style.background='var(--plt)'">`:`<div style="width:40px;height:40px;border-radius:50%;background:var(--p);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0">${r.initials||'?'}</div>`}<div style="flex:1;min-width:0"><div style="font-weight:700;font-size:13px;color:var(--p)">${r.name} <span style="font-weight:400;color:var(--mu);font-size:11px">— ${r.loc}</span></div><div style="font-size:12px;color:var(--g);margin:2px 0">${'★'.repeat(r.stars||5)}</div><div style="font-size:12px;color:var(--t2);line-height:1.5">${r.text}</div>${r.verified?'<span style="font-size:10px;color:var(--gr);font-weight:600">✓ Verified</span>':''}</div><button class="abtn abtn-del" onclick="deleteReview('${r.fid}')" style="flex-shrink:0">🗑 Delete</button></div>`).join('');
+}
+const ORDER_STATUSES=['Order Placed','Processing','In Transit','Arrived at Port','Delivered'];
+async function loadOrdersPanel(){
+  const tbody=document.getElementById('orders-tbody');
+  try{
+    const{DB,FSS}=window;
+    const snap=await FSS.getDocs(FSS.query(FSS.collection(DB,'ibn_orders'),FSS.orderBy('ts','desc')));
+    if(snap.empty){tbody.innerHTML='<tr><td colspan="6" style="text-align:center;color:var(--mu);padding:16px">No orders yet</td></tr>';return;}
+    tbody.innerHTML=snap.docs.map(d=>{
+      const o=d.data();
+      const dt=o.ts&&o.ts.toDate?o.ts.toDate().toLocaleDateString():'—';
+      return `<tr><td><div class="iname">${o.item||''}</div></td><td style="font-size:12px">${o.name||o.email||'—'}</td><td style="font-size:12px">${o.col||''}${o.col&&o.sz?' / ':''}${o.sz||''}</td><td style="font-weight:700;color:var(--p)">${o.price||'—'}</td><td style="font-size:12px;color:var(--mu)">${dt}</td><td><select onchange="updateOrderStatus('${d.id}',this.value)" style="padding:6px 8px;border:1px solid var(--bd);border-radius:6px;font-size:12px">${ORDER_STATUSES.map(s=>`<option value="${s}" ${o.status===s?'selected':''}>${s}</option>`).join('')}</select></td></tr>`;
+    }).join('');
+  }catch(e){tbody.innerHTML=`<tr><td colspan="6" style="text-align:center;color:var(--re);padding:16px">Error loading orders: ${e.message}</td></tr>`;}
+}
+async function updateOrderStatus(docId,status){
+  try{
+    const{DB,FSS}=window;
+    await FSS.updateDoc(FSS.doc(DB,'ibn_orders',docId),{status});
+    toast('Order status updated ✅');
+  }catch(e){toast('Error: '+e.message);}
 }
 function loadDeadlinePanel(){
   const stored=localStorage.getItem('ibn_deadline');
