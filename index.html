@@ -675,9 +675,9 @@ footer{background:var(--p3);padding:48px 40px 22px;}
 <section class="trkbg" id="tracking">
   <div class="trkin">
     <div class="trkttl">Track Your Order</div>
-    <div class="trksub">Enter your tracking number to see exactly where your shipment is right now</div>
+    <div class="trksub">Enter your shipping mark to see all your items together</div>
     <div class="trkbox">
-      <div class="trkrow"><input type="text" class="trkinp" id="tnum" placeholder="Enter tracking number e.g. NEL-2026-001" onkeydown="if(event.key==='Enter')doTrack()"/><button class="trkbtn" onclick="doTrack()">Track</button></div>
+      <div class="trkrow"><input type="text" class="trkinp" id="tnum" placeholder="Enter your shipping mark e.g. NEL-JANE01" onkeydown="if(event.key==='Enter')doTrack()"/><button class="trkbtn" onclick="doTrack()">Track</button></div>
       <div class="trkres" id="tres"></div>
       <div class="trknf" id="tnf">❌ Not found. <a href="https://wa.me/233273752465" target="_blank" style="color:var(--g);font-weight:700">Contact us on WhatsApp</a>.</div>
     </div>
@@ -863,7 +863,7 @@ function safeAvail(){if(typeof window.renderAvail==='function')window.renderAvai
 async function loadAll(){
   try{const s=await getDocs(query(collection(db,'ibn_catalogue'),orderBy('ts','desc')));window.CCAT=s.docs.map(d=>({fid:d.id,...d.data()}));safeRebuild();}catch(e){console.error('cat',e);}
   try{const s=await getDocs(collection(db,'ibn_available'));window.AVAIL=s.docs.map(d=>({id:d.id,...d.data()}));safeAvail();}catch(e){console.error('avail',e);}
-  try{const s=await getDocs(collection(db,'ibn_tracking'));window.FTRK={};s.docs.forEach(d=>{const t=d.data();if(t.num)window.FTRK[t.num.toUpperCase()]=t;});}catch(e){console.error('trk',e);}
+  try{const s=await getDocs(collection(db,'ibn_shipmarks'));window.FSHIP={};s.docs.forEach(d=>{const t=d.data();if(t.mark)window.FSHIP[t.mark.toUpperCase()]=t;});}catch(e){console.error('ship',e);}
   try{const s=await getDocs(query(collection(db,'ibn_reviews'),orderBy('ts','desc')));window.REVIEWS=s.docs.map(d=>({fid:d.id,...d.data()}));if(typeof renderReviews==='function')renderReviews();}catch(e){console.error('reviews',e);}
 }
 loadAll();
@@ -875,14 +875,14 @@ onAuthStateChanged(auth,(user)=>{
   if(typeof window.onAccountAuthChanged==='function')window.onAccountAuthChanged(user);
 });
   onSnapshot(collection(db,'ibn_available'),s=>{window.AVAIL=s.docs.map(d=>({id:d.id,...d.data()}));safeAvail();},e=>console.error(e));
-onSnapshot(collection(db,'ibn_tracking'),s=>{window.FTRK={};s.docs.forEach(d=>{const t=d.data();if(t.num)window.FTRK[t.num.toUpperCase()]=t;});},e=>console.error(e));
+onSnapshot(collection(db,'ibn_shipmarks'),s=>{window.FSHIP={};s.docs.forEach(d=>{const t=d.data();if(t.mark)window.FSHIP[t.mark.toUpperCase()]=t;});},e=>console.error(e));
 onSnapshot(query(collection(db,'ibn_catalogue'),orderBy('ts','desc')),s=>{window.CCAT=s.docs.map(d=>({fid:d.id,...d.data()}));safeRebuild();},e=>console.error(e));
 onSnapshot(query(collection(db,'ibn_reviews'),orderBy('ts','desc')),s=>{window.REVIEWS=s.docs.map(d=>({fid:d.id,...d.data()}));if(typeof renderReviews==='function')renderReviews();},e=>console.error(e));
 </script>
 <script>
 const WA='233273752465',PER=30;
 let pg=1,cat='',curItem=null,pdata=null,sc='',ss='';
-window.AVAIL=[];window.FTRK={};window.CCAT=[];
+window.AVAIL=[];window.FSHIP={};window.CCAT=[];
 
 const BASE=[];
 const EXTRAS=[];
@@ -1149,25 +1149,27 @@ function sendPhotoWA(){const nm=document.getElementById('pp-name')?.value.trim()
 function doTrack(){
   const n=document.getElementById('tnum').value.trim().toUpperCase();
   const tr=document.getElementById('tres'),nf=document.getElementById('tnf');
-  if(!n){toast('Please enter your tracking number');return;}
-  const demo={'NEL-2026-001':{num:'NEL-2026-001',item:'Mixed Clothing & Accessories',qty:'45 pieces',cont:'MSKU7234891',status:'In Transit',etd:'15 Mar 2026',eta:'10 Apr 2026',from:'Guangzhou, China',to:'Tema Port, Ghana',step:2},'NEL-2026-002':{num:'NEL-2026-002',item:'Footwear & Bags Collection',qty:'60 pieces',cont:'TCKU3456782',status:'Arrived at Port',etd:'20 Mar 2026',eta:'14 Apr 2026',from:'Guangzhou, China',to:'Tema Port, Ghana',step:3}};
-  const d=(window.FTRK||{})[n]||demo[n];
-  if(!d){tr.style.display='none';nf.style.display='block';return;}
+  if(!n){toast('Please enter your shipping mark');return;}
+  const d=(window.FSHIP||{})[n];
+  if(!d||!d.items||!d.items.length){tr.style.display='none';nf.style.display='block';return;}
   nf.style.display='none';
-  const steps=['Order Placed','Processing','In Transit','At Port','Delivered'];
-  const si=Math.max(0,['Order Placed','Processing','In Transit','Arrived at Port','Delivered'].indexOf(d.status));
-  tr.innerHTML=`<div style="font-size:15px;font-weight:700;color:var(--w);margin-bottom:12px">📦 ${d.item}</div>
-    <div class="tcells">
-      <div class="tc"><div class="tc-l">Tracking #</div><div class="tc-v gld">${n}</div></div>
-      <div class="tc"><div class="tc-l">Status</div><div class="tc-v grn">${d.status}</div></div>
-      <div class="tc"><div class="tc-l">Quantity</div><div class="tc-v">${d.qty||'—'}</div></div>
-      <div class="tc"><div class="tc-l">Container</div><div class="tc-v">${d.cont||'—'}</div></div>
-      <div class="tc"><div class="tc-l">Departed</div><div class="tc-v">${d.etd||'—'}</div></div>
-      <div class="tc"><div class="tc-l">Arriving</div><div class="tc-v">${d.eta||'—'}</div></div>
-      <div class="tc"><div class="tc-l">Origin</div><div class="tc-v">${d.from||'China'}</div></div>
-      <div class="tc"><div class="tc-l">Destination</div><div class="tc-v">${d.to||'Ghana'}</div></div>
-    </div>
-    <div class="prog">${steps.map((s,i)=>`<div class="pstep"><div class="pdot ${i<si?'done':i===si?'act':''}">${i<si?'✓':'·'}</div><div class="plbl ${i<si?'done':i===si?'act':''}">${s}</div></div>`).join('')}</div>`;
+  tr.innerHTML=`<div style="font-size:15px;font-weight:700;color:var(--w);margin-bottom:12px">📦 Shipping Mark: ${n}</div>
+    <div style="overflow-x:auto">
+    <table style="width:100%;border-collapse:collapse;font-size:13px">
+      <thead><tr style="background:rgba(255,255,255,.08)">
+        <th style="padding:10px;text-align:left;color:var(--g);font-weight:700">Item</th>
+        <th style="padding:10px;text-align:left;color:var(--g);font-weight:700">Quantity</th>
+        <th style="padding:10px;text-align:left;color:var(--g);font-weight:700">ETD</th>
+        <th style="padding:10px;text-align:left;color:var(--g);font-weight:700">ETA</th>
+      </tr></thead>
+      <tbody>${d.items.map(it=>`<tr style="border-top:1px solid rgba(255,255,255,.1)">
+        <td style="padding:10px;color:#fff">${it.name||''}</td>
+        <td style="padding:10px;color:rgba(255,255,255,.8)">${it.qty||'—'}</td>
+        <td style="padding:10px;color:rgba(255,255,255,.8)">${it.etd||'—'}</td>
+        <td style="padding:10px;color:rgba(255,255,255,.8)">${it.eta||'—'}</td>
+      </tr>`).join('')}</tbody>
+    </table>
+    </div>`;
   tr.style.display='block';
 }
 function sendContact(){const n=document.getElementById('cn').value.trim(),p=document.getElementById('cp').value.trim(),m=document.getElementById('cm').value.trim();if(!m){toast('Please tell us what you need');return;}window.open(`https://wa.me/${WA}?text=${encodeURIComponent(`Hello Import By Nel!👋\n\n${n?`Name: ${n}\n`:''}${p?`Phone: ${p}\n`:''}Message: ${m}`)}`,'_blank');}
