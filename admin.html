@@ -138,7 +138,7 @@ tbody td{padding:11px 16px;font-size:13px;color:var(--t);vertical-align:middle;}
     <button class="atab on" onclick="showPanel('dash',this)">📊 Dashboard</button>
     <button class="atab" onclick="showPanel('cat',this)">🛍️ Manage Catalogue</button>
     <button class="atab" onclick="showPanel('avail',this)">🇬🇭 Available in Ghana</button>
-    <button class="atab" onclick="showPanel('trk',this)">📦 Tracking Numbers</button>
+    <button class="atab" onclick="showPanel('trk',this)">📦 Shipping Marks</button>
     <button class="atab" onclick="showPanel('orders',this)">🧾 Orders</button>
     <button class="atab" onclick="showPanel('an',this)">📈 Analytics</button>
     <button class="atab" onclick="showPanel('edit',this)">✏️ Edit Base Items</button>
@@ -150,7 +150,7 @@ tbody td{padding:11px 16px;font-size:13px;color:var(--t);vertical-align:middle;}
       <div class="stat"><div class="stat-l">Base Catalogue</div><div class="stat-v">300</div></div>
       <div class="stat"><div class="stat-l">My Custom Items</div><div class="stat-v gld" id="s-cat">0</div></div>
       <div class="stat"><div class="stat-l">Available in Ghana</div><div class="stat-v grn" id="s-av">0</div></div>
-      <div class="stat"><div class="stat-l">Tracking Numbers</div><div class="stat-v" id="s-trk">0</div></div>
+      <div class="stat"><div class="stat-l">Shipping Marks</div><div class="stat-v" id="s-trk">0</div></div>
     </div>
 
     <!-- DASHBOARD -->
@@ -165,7 +165,7 @@ tbody td{padding:11px 16px;font-size:13px;color:var(--t);vertical-align:middle;}
         <strong style="color:var(--p)">How to use this admin panel:</strong><br/>
         • <strong>Manage Catalogue</strong> — Add your own items with correct names and photos (from your phone or URL). They appear at the top of your website catalogue.<br/>
         • <strong>Available in Ghana</strong> — Add items you already have in stock with price. Mark as Sold Out when finished.<br/>
-        • <strong>Tracking Numbers</strong> — Add shipment tracking numbers so customers can track their orders on the main site in real time.<br/>
+        • <strong>Shipping Marks</strong> — Give each customer a shipping mark, add all their items to it, so they can track everything together on the main site.<br/>
         • <strong>Analytics</strong> — See how many people visit your site and what they search for.
       </div>
     </div>
@@ -258,33 +258,22 @@ tbody td{padding:11px 16px;font-size:13px;color:var(--t);vertical-align:middle;}
 
     <!-- TRACKING -->
     <div class="panel" id="panel-trk">
-      <div class="ph"><div class="pttl">📦 Tracking Number Manager</div></div>
+      <div class="ph"><div class="pttl">📦 Shipping Mark Manager</div></div>
       <div class="fcard">
-        <h3>➕ Add Tracking Number</h3>
-        <div class="frow2">
-          <div class="fg"><label>Tracking Number *</label><input type="text" id="t-num" placeholder="e.g. NEL-2026-003"/></div>
-          <div class="fg"><label>Item / Batch Name *</label><input type="text" id="t-item" placeholder="e.g. April Clothing Batch"/></div>
+        <h3 id="ship-form-ttl">➕ Add Shipping Mark</h3>
+        <div class="fg"><label>Shipping Mark *</label><input type="text" id="sm-mark" placeholder="e.g. NEL-JANE01"/></div>
+        <div class="fg">
+          <label>Items in this shipment</label>
+          <div style="font-size:11px;color:var(--mu);margin-bottom:8px">Add every item that belongs to this customer's shipping mark. They'll see all of them together when they search their mark.</div>
+          <div id="sm-item-rows"></div>
+          <button type="button" class="abtn" onclick="addShipItemRow()" style="margin-top:6px">+ Add Item</button>
         </div>
-        <div class="frow2">
-          <div class="fg"><label>Quantity</label><input type="text" id="t-qty" placeholder="e.g. 40 pieces"/></div>
-          <div class="fg"><label>Container Number</label><input type="text" id="t-cont" placeholder="e.g. MSKU7234891"/></div>
-        </div>
-        <div class="frow2">
-          <div class="fg"><label>ETD (Departure Date)</label><input type="text" id="t-etd" placeholder="e.g. 20 Apr 2026"/></div>
-          <div class="fg"><label>ETA (Arrival Date)</label><input type="text" id="t-eta" placeholder="e.g. 25 May 2026"/></div>
-        </div>
-        <div class="frow2">
-          <div class="fg"><label>Origin</label><input type="text" id="t-from" placeholder="e.g. Guangzhou, China" value="Guangzhou, China"/></div>
-          <div class="fg"><label>Destination</label><input type="text" id="t-to" placeholder="e.g. Tema Port, Ghana" value="Tema Port, Ghana"/></div>
-        </div>
-        <div class="fg"><label>Current Status</label>
-          <select id="t-status"><option value="Order Placed">Order Placed</option><option value="Processing">Processing</option><option value="In Transit">In Transit</option><option value="Arrived at Port">Arrived at Port</option><option value="Delivered">Delivered</option></select>
-        </div>
-        <button class="savebtn" onclick="saveTrk()">💾 Save Tracking Number</button>
-        <button class="clrbtn" onclick="clearTrkForm()">Clear / Add New</button>
+        <input type="hidden" id="sm-edit-id"/>
+        <button class="savebtn" onclick="saveShipMark()">💾 Save Shipping Mark</button>
+        <button class="clrbtn" onclick="clearShipForm()">Clear / Add New</button>
       </div>
       <div class="tblw">
-        <table><thead><tr><th>Tracking #</th><th>Item / Batch</th><th>Qty</th><th>ETD</th><th>ETA</th><th>Status</th><th>Actions</th></tr></thead>
+        <table><thead><tr><th>Shipping Mark</th><th>Items</th><th>Actions</th></tr></thead>
         <tbody id="trk-tbody"></tbody></table>
       </div>
     </div>
@@ -437,7 +426,7 @@ window.DB=db;window.FSS={addDoc,updateDoc,deleteDoc,doc,serverTimestamp,collecti
 // Load available items
 onSnapshot(collection(db,'ibn_available'),s=>{window.AV_ITEMS=s.docs.map(d=>({fid:d.id,...d.data()}));renderAvTable();updateStats();});
 // Load tracking
-onSnapshot(collection(db,'ibn_tracking'),s=>{window.TRK_ITEMS=s.docs.map(d=>({fid:d.id,...d.data()}));renderTrkTable();updateStats();});
+onSnapshot(collection(db,'ibn_shipmarks'),s=>{window.SHIP_ITEMS=s.docs.map(d=>({fid:d.id,...d.data()}));renderShipTable();updateStats();});
 // Load custom catalogue
 onSnapshot(query(collection(db,'ibn_catalogue'),orderBy('ts','desc')),s=>{window.CAT_ITEMS=s.docs.map(d=>({fid:d.id,...d.data()}));renderCatTable();updateStats();});
 // Load reviews
@@ -446,7 +435,7 @@ window.dispatchEvent(new Event('firebaseReady'));
 </script>
 
 <script>
-window.AV_ITEMS=[];window.TRK_ITEMS=[];window.CAT_ITEMS=[];
+window.AV_ITEMS=[];window.SHIP_ITEMS=[];window.CAT_ITEMS=[];
 let catMediaList=[],avPhotoData=null;
 function compressImageFile(file,maxDim,quality){
   return new Promise((resolve,reject)=>{
@@ -497,6 +486,7 @@ function addCatVideoUrl(){
 }
 function removeCatMedia(idx){catMediaList.splice(idx,1);renderCatMediaStrip();}
 if(document.getElementById('cat-media-strip'))renderCatMediaStrip();
+if(document.getElementById('sm-item-rows'))addShipItemRow();
 function renderCatMediaStrip(){
   const wrap=document.getElementById('cat-media-strip');
   if(!wrap)return;
@@ -577,7 +567,7 @@ function initAuthFlow(){
 }
 if(window.FAUTH){initAuthFlow();}else{window.addEventListener('firebaseReady',initAuthFlow);}
 function showPanel(id,btn){document.querySelectorAll('.panel').forEach(p=>p.classList.remove('on'));document.querySelectorAll('.atab').forEach(b=>b.classList.remove('on'));document.getElementById('panel-'+id).classList.add('on');if(btn)btn.classList.add('on');if(id==='deadline')loadDeadlinePanel();if(id==='orders')loadOrdersPanel();if(id==='an')renderAnalytics();}
-function updateStats(){document.getElementById('s-cat').textContent=(window.CAT_ITEMS||[]).length;document.getElementById('s-av').textContent=(window.AV_ITEMS||[]).length;document.getElementById('s-trk').textContent=(window.TRK_ITEMS||[]).length;}
+function updateStats(){document.getElementById('s-cat').textContent=(window.CAT_ITEMS||[]).length;document.getElementById('s-av').textContent=(window.AV_ITEMS||[]).length;document.getElementById('s-trk').textContent=(window.SHIP_ITEMS||[]).length;}
 
 // ── CATALOGUE ──────────────────────────────────────────────────
 function toggleVarPrice(){
@@ -695,58 +685,85 @@ function renderAvTable(){
   tbody.innerHTML=items.map(a=>`<tr><td><img src="${a.img||''}" alt="" class="thumb" onerror="this.style.background='#EDE9FF'"/></td><td><div class="iname">${a.name||''}</div></td><td style="font-weight:700;color:var(--p)">${a.price||''}</td><td style="color:var(--mu);font-size:12px">${a.spec||'—'}</td><td><span class="sbg ${a.sold?'s-sold':'s-ok'}">${a.sold?'Sold Out':'In Stock'}</span></td><td><button class="abtn" onclick="editAvItem('${a.fid}')">✏️ Edit</button><button class="abtn ${a.sold?'abtn-ok':'abtn-sold'}" onclick="toggleSold('${a.fid}')">${a.sold?'✅ Mark Available':'🔴 Sold Out'}</button><button class="abtn abtn-del" onclick="deleteAvItem('${a.fid}')">🗑</button></td></tr>`).join('');
 }
 
-// ── TRACKING ────────────────────────────────────────────────────
-async function saveTrk(){
-  const num=document.getElementById('t-num').value.trim().toUpperCase();
-  const item=document.getElementById('t-item').value.trim();
-  if(!num||!item){toast('Please fill in tracking number and item name');return;}
-  const data={num,item,qty:document.getElementById('t-qty').value.trim(),cont:document.getElementById('t-cont').value.trim(),etd:document.getElementById('t-etd').value.trim(),eta:document.getElementById('t-eta').value.trim(),from:document.getElementById('t-from').value.trim(),to:document.getElementById('t-to').value.trim(),status:document.getElementById('t-status').value};
+// ── SHIPPING MARKS ────────────────────────────────────────────
+let shipItemRows=[];
+function addShipItemRow(item){
+  const rowId='r'+Date.now()+Math.random().toString(36).slice(2,6);
+  shipItemRows.push(rowId);
+  const wrap=document.getElementById('sm-item-rows');
+  const div=document.createElement('div');
+  div.id=rowId;
+  div.style.cssText='display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap;align-items:center;background:var(--bg);padding:10px;border-radius:8px';
+  div.innerHTML=`
+    <input type="text" placeholder="Item name" class="si-name" value="${item&&item.name||''}" style="flex:2;min-width:120px;padding:8px 10px;border:1px solid var(--bd);border-radius:6px;font-size:13px"/>
+    <input type="text" placeholder="Qty" class="si-qty" value="${item&&item.qty||''}" style="flex:1;min-width:70px;padding:8px 10px;border:1px solid var(--bd);border-radius:6px;font-size:13px"/>
+    <input type="text" placeholder="ETD" class="si-etd" value="${item&&item.etd||''}" style="flex:1;min-width:90px;padding:8px 10px;border:1px solid var(--bd);border-radius:6px;font-size:13px"/>
+    <input type="text" placeholder="ETA" class="si-eta" value="${item&&item.eta||''}" style="flex:1;min-width:90px;padding:8px 10px;border:1px solid var(--bd);border-radius:6px;font-size:13px"/>
+    <button type="button" onclick="removeShipItemRow('${rowId}')" style="background:var(--re);color:#fff;border:none;width:26px;height:26px;border-radius:50%;cursor:pointer;font-size:12px">✕</button>`;
+  wrap.appendChild(div);
+}
+function removeShipItemRow(rowId){
+  shipItemRows=shipItemRows.filter(r=>r!==rowId);
+  const el=document.getElementById(rowId);if(el)el.remove();
+}
+function collectShipItems(){
+  return shipItemRows.map(rowId=>{
+    const el=document.getElementById(rowId);if(!el)return null;
+    return{
+      name:el.querySelector('.si-name').value.trim(),
+      qty:el.querySelector('.si-qty').value.trim(),
+      etd:el.querySelector('.si-etd').value.trim(),
+      eta:el.querySelector('.si-eta').value.trim()
+    };
+  }).filter(it=>it&&it.name);
+}
+async function saveShipMark(){
+  const mark=document.getElementById('sm-mark').value.trim().toUpperCase();
+  if(!mark){toast('Please enter a shipping mark');return;}
+  const items=collectShipItems();
+  if(!items.length){toast('Please add at least one item');return;}
+  const editId=document.getElementById('sm-edit-id').value;
+  const data={mark,items};
   try{
     const{DB,FSS}=window;
-    if(window._editTrkFid){
-      await FSS.updateDoc(FSS.doc(DB,'ibn_tracking',window._editTrkFid),data);
-      window._editTrkFid=null;
-      toast('Tracking number updated! ✅');
-    } else {
-      await FSS.addDoc(FSS.collection(DB,'ibn_tracking'),{...data,ts:FSS.serverTimestamp()});
-      toast('Tracking number saved! ✅ Customers can now track: '+num);
+    if(editId){
+      await FSS.updateDoc(FSS.doc(DB,'ibn_shipmarks',editId),data);
+      toast('Shipping mark updated! ✅');
+    }else{
+      await FSS.addDoc(FSS.collection(DB,'ibn_shipmarks'),{...data,ts:FSS.serverTimestamp()});
+      toast('Shipping mark saved! ✅ Customer can now track: '+mark);
     }
-    ['t-num','t-item','t-qty','t-cont','t-etd','t-eta'].forEach(id=>document.getElementById(id).value='');
-    document.getElementById('t-from').value='Guangzhou, China';
-    document.getElementById('t-to').value='Tema Port, Ghana';
+    clearShipForm();
   }catch(e){toast('Error: '+e.message);}
 }
-function editTrk(fid){
-  const t=(window.TRK_ITEMS||[]).find(x=>x.fid===fid);if(!t)return;
-  window._editTrkFid=fid;
-  document.getElementById('t-num').value=t.num||'';
-  document.getElementById('t-item').value=t.item||'';
-  document.getElementById('t-qty').value=t.qty||'';
-  document.getElementById('t-cont').value=t.cont||'';
-  document.getElementById('t-etd').value=t.etd||'';
-  document.getElementById('t-eta').value=t.eta||'';
-  document.getElementById('t-from').value=t.from||'Guangzhou, China';
-  document.getElementById('t-to').value=t.to||'Tema Port, Ghana';
-  document.getElementById('t-status').value=t.status||'In Transit';
-  toast('Tracking loaded for editing — change details and click Save ✏️');
+function editShipMark(fid){
+  const s=(window.SHIP_ITEMS||[]).find(x=>x.fid===fid);if(!s)return;
+  document.getElementById('sm-edit-id').value=fid;
+  document.getElementById('sm-mark').value=s.mark||'';
+  document.getElementById('sm-item-rows').innerHTML='';
+  shipItemRows=[];
+  (s.items&&s.items.length?s.items:[{}]).forEach(it=>addShipItemRow(it));
+  document.getElementById('ship-form-ttl').textContent='✏️ Edit: '+s.mark;
+  toast('Shipping mark loaded for editing ✏️');
   document.getElementById('panel-trk').scrollTo(0,0);
 }
-function clearTrkForm(){
-  window._editTrkFid=null;
-  ['t-num','t-item','t-qty','t-cont','t-etd','t-eta'].forEach(id=>document.getElementById(id).value='');
-  document.getElementById('t-from').value='Guangzhou, China';
-  document.getElementById('t-to').value='Tema Port, Ghana';
-  document.getElementById('t-status').value='In Transit';
+function clearShipForm(){
+  document.getElementById('sm-edit-id').value='';
+  document.getElementById('sm-mark').value='';
+  document.getElementById('sm-item-rows').innerHTML='';
+  shipItemRows=[];
+  addShipItemRow();
+  document.getElementById('ship-form-ttl').textContent='➕ Add Shipping Mark';
 }
-async function deleteTrk(fid){
-  if(!confirm('Delete this tracking number?'))return;
-  try{await window.FSS.deleteDoc(window.FSS.doc(window.DB,'ibn_tracking',fid));toast('Deleted');}catch(e){toast('Error: '+e.message);}
+async function deleteShipMark(fid){
+  if(!confirm('Delete this shipping mark?'))return;
+  try{await window.FSS.deleteDoc(window.FSS.doc(window.DB,'ibn_shipmarks',fid));toast('Deleted');}catch(e){toast('Error: '+e.message);}
 }
-function renderTrkTable(){
+function renderShipTable(){
   const tbody=document.getElementById('trk-tbody');
-  const items=window.TRK_ITEMS||[];
-  if(!items.length){tbody.innerHTML='<tr><td colspan="7" style="text-align:center;padding:28px;color:var(--mu)">No tracking numbers yet. Add your first one above!</td></tr>';return;}
-  tbody.innerHTML=items.map(t=>`<tr><td style="font-weight:700;color:var(--gd)">${t.num||''}</td><td><div class="iname">${t.item||''}</div></td><td>${t.qty||'—'}</td><td>${t.etd||'—'}</td><td>${t.eta||'—'}</td><td><span class="sbg ${['Arrived at Port','Delivered'].includes(t.status)?'s-ok':'s-pre'}">${t.status||''}</span></td><td><button class="abtn" onclick="editTrk('${t.fid}')">✏️ Edit</button><button class="abtn abtn-del" onclick="deleteTrk('${t.fid}')">🗑 Delete</button></td></tr>`).join('');
+  const items=window.SHIP_ITEMS||[];
+  if(!items.length){tbody.innerHTML='<tr><td colspan="3" style="text-align:center;padding:28px;color:var(--mu)">No shipping marks yet. Add your first one above!</td></tr>';return;}
+  tbody.innerHTML=items.map(s=>`<tr><td style="font-weight:700;color:var(--gd)">${s.mark||''}</td><td style="font-size:12px;color:var(--mu)">${(s.items||[]).length} item${(s.items||[]).length===1?'':'s'}: ${(s.items||[]).map(it=>it.name).join(', ')}</td><td><button class="abtn" onclick="editShipMark('${s.fid}')">✏️ Edit</button><button class="abtn abtn-del" onclick="deleteShipMark('${s.fid}')">🗑 Delete</button></td></tr>`).join('');
 }
 
 // ── ANALYTICS ───────────────────────────────────────────────────
