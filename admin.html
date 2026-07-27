@@ -548,17 +548,16 @@ function initAuthFlow(){
       document.getElementById('lsc').style.display='none';
       document.getElementById('app').style.display='block';
       trackVisit();renderAnalytics();
-  // Load notifications from Firebase
-  if(window.DB&&window.FSS){
-    (async()=>{
-      try{
-        const nSnap=await window.FSS.getDocs(window.FSS.collection(window.DB,'ibn_notifications'));
-        const notifs=nSnap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>b.ts>a.ts?1:-1).slice(0,10);
-        const nel=document.getElementById('an-notifs');
-        if(nel)nel.innerHTML=notifs.length?notifs.map(n=>`<div class="arow"><span class="arow-l">🛍️ ${n.item||'Order'}</span><span class="arow-v" style="font-size:11px;color:var(--mu)">${n.ts?new Date(n.ts).toLocaleDateString('en-GB',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}):''}</span></div>`).join(''):'<p style="color:var(--mu);font-size:13px;padding:10px 0">No orders yet</p>';
-      }catch(e){console.log('Notifs:',e);}
-    })();
-  }
+      if(window.DB&&window.FSS){
+        (async()=>{
+          try{
+            const nSnap=await window.FSS.getDocs(window.FSS.collection(window.DB,'ibn_notifications'));
+            const notifs=nSnap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>b.ts>a.ts?1:-1).slice(0,10);
+            const nel=document.getElementById('an-notifs');
+            if(nel)nel.innerHTML=notifs.length?notifs.map(n=>`<div class="arow"><span class="arow-l">🛍️ ${n.item||'Order'}</span><span class="arow-v" style="font-size:11px;color:var(--mu)">${n.ts?new Date(n.ts).toLocaleDateString('en-GB',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}):''}</span></div>`).join(''):'<p style="color:var(--mu);font-size:13px;padding:10px 0">No orders yet</p>';
+          }catch(e){console.log('Notifs:',e);}
+        })();
+      }
     }else{
       document.getElementById('lsc').style.display='flex';
       document.getElementById('app').style.display='none';
