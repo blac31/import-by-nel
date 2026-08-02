@@ -437,6 +437,7 @@ window.dispatchEvent(new Event('firebaseReady'));
 <script>
 window.AV_ITEMS=[];window.SHIP_ITEMS=[];window.CAT_ITEMS=[];
 let catMediaList=[],avPhotoData=null;
+let shipItemRows=[];
 function compressImageFile(file,maxDim,quality){
   return new Promise((resolve,reject)=>{
     const r=new FileReader();
@@ -486,8 +487,7 @@ function addCatVideoUrl(){
 }
 function removeCatMedia(idx){catMediaList.splice(idx,1);renderCatMediaStrip();}
 if(document.getElementById('cat-media-strip'))renderCatMediaStrip();
-// Defer addShipItemRow until regular script has loaded
-window.addEventListener('firebaseReady',()=>{if(document.getElementById('sm-item-rows'))addShipItemRow();});
+if(document.getElementById('sm-item-rows'))addShipItemRow();
 function renderCatMediaStrip(){
   const wrap=document.getElementById('cat-media-strip');
   if(!wrap)return;
@@ -687,7 +687,6 @@ function renderAvTable(){
 }
 
 // ── SHIPPING MARKS ────────────────────────────────────────────
-let shipItemRows=[];
 function addShipItemRow(item){
   const rowId='r'+Date.now()+Math.random().toString(36).slice(2,6);
   shipItemRows.push(rowId);
