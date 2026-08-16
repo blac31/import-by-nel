@@ -176,6 +176,13 @@ tbody td{padding:11px 16px;font-size:13px;color:var(--t);vertical-align:middle;}
       <div class="fcard">
         <h3 id="cat-form-ttl">➕ Add New Catalogue Item</h3>
         <input type="hidden" id="cat-edit-id"/>
+        <div class="fg">
+          <label>Item Type *</label>
+          <div style="display:flex;gap:16px;margin-top:4px">
+            <label style="display:flex;align-items:center;gap:6px;cursor:pointer;text-transform:none;letter-spacing:0;font-weight:600;font-size:13px;color:var(--t)"><input type="radio" name="cat-type" id="cat-type-preorder" value="preorder" checked style="width:16px;height:16px;cursor:pointer"/>🚢 Pre-Order (from China)</label>
+            <label style="display:flex;align-items:center;gap:6px;cursor:pointer;text-transform:none;letter-spacing:0;font-weight:600;font-size:13px;color:var(--t)"><input type="radio" name="cat-type" id="cat-type-available" value="available" style="width:16px;height:16px;cursor:pointer"/>🇬🇭 Available in Ghana Now</label>
+          </div>
+        </div>
         <div class="frow2">
           <div class="fg"><label>Item Name *</label><input type="text" id="cat-name" placeholder="e.g. Women's Red Floral Maxi Dress"/></div>
           <div class="fg"><label>Category *</label>
@@ -223,14 +230,16 @@ tbody td{padding:11px 16px;font-size:13px;color:var(--t);vertical-align:middle;}
         <button class="clrbtn" onclick="clearCatForm()">Clear</button>
       </div>
       <div class="tblw">
-        <table><thead><tr><th>Photo</th><th>Item Name</th><th>Category</th><th>Price</th><th>Colors</th><th>Sizes</th><th>Badge</th><th>Actions</th></tr></thead>
+        <table><thead><tr><th>Photo</th><th>Item Name</th><th>Type</th><th>Category</th><th>Price</th><th>Colors</th><th>Sizes</th><th>Badge</th><th>Actions</th></tr></thead>
         <tbody id="cat-tbody"></tbody></table>
       </div>
     </div>
 
     <!-- AVAILABLE IN GHANA -->
     <div class="panel" id="panel-avail">
-      <div class="ph"><div class="pttl">🇬🇭 Available in Ghana</div></div>
+      <div class="ph"><div class="pttl">🇬🇭 Available in Ghana (Legacy)</div></div>
+      <div class="info-box">This tab is being retired — new "Available in Ghana" items should now be added from <strong>Manage Catalogue</strong> using the "🇬🇭 Available in Ghana Now" type toggle (it now supports multiple photos and video too). Use the button below to move any items still listed here into the new system — nothing is deleted, they're just copied over and marked as migrated.</div>
+      <button class="savebtn" style="margin-bottom:20px" onclick="migrateAvailItems()">🔄 Migrate These Items to Manage Catalogue</button>
       <div class="fcard">
         <h3 id="av-form-ttl">➕ Add Available Item</h3>
         <input type="hidden" id="av-edit-id"/>
@@ -281,10 +290,10 @@ tbody td{padding:11px 16px;font-size:13px;color:var(--t);vertical-align:middle;}
     <!-- ORDERS -->
     <div class="panel" id="panel-orders">
       <div class="ph"><div class="pttl">🧾 Customer Orders</div></div>
-      <div class="info-box">These are orders placed by customers who are logged into an account. Update the status here to move an order forward — the customer will see the same progress reflected in "My Account" on the live site.</div>
+      <div class="info-box">Every order placed on the site appears here — including guests who checked out without an account. Tap the Payment button once you've confirmed the MoMo/Vodafone Cash payment for an order's reference number. Update the status to move an order forward — logged-in customers see the same progress in "My Account".</div>
       <div class="tblw">
-        <table><thead><tr><th>Item</th><th>Customer</th><th>Colour / Size</th><th>Price</th><th>Date</th><th>Status</th></tr></thead>
-        <tbody id="orders-tbody"><tr><td colspan="6" style="text-align:center;color:var(--mu);padding:16px">Loading orders...</td></tr></tbody></table>
+        <table><thead><tr><th>Ref</th><th>Item</th><th>Customer</th><th>Colour / Size</th><th>Price</th><th>Date</th><th>Status</th><th>Payment</th></tr></thead>
+        <tbody id="orders-tbody"><tr><td colspan="8" style="text-align:center;color:var(--mu);padding:16px">Loading orders...</td></tr></tbody></table>
       </div>
     </div>
 
@@ -428,7 +437,7 @@ onSnapshot(collection(db,'ibn_available'),s=>{window.AV_ITEMS=s.docs.map(d=>({fi
 // Load tracking
 onSnapshot(collection(db,'ibn_shipmarks'),s=>{window.SHIP_ITEMS=s.docs.map(d=>({fid:d.id,...d.data()}));renderShipTable();updateStats();});
 // Load custom catalogue
-onSnapshot(query(collection(db,'ibn_catalogue'),orderBy('ts','desc')),s=>{window.CAT_ITEMS=s.docs.map(d=>({fid:d.id,...d.data()}));renderCatTable();updateStats();});
+onSnapshot(query(collection(db,'ibn_catalogue'),orderBy('ts','desc')),s=>{window.CAT_ITEMS=s.docs.map(d=>({fid:d.id,...d.data()}));renderCatTable();updateStats();if(typeof backfillMissingCodes==='function')backfillMissingCodes();});
 // Load reviews
 onSnapshot(query(collection(db,'ibn_reviews'),orderBy('ts','desc')),s=>{window.REV_ITEMS=s.docs.map(d=>({fid:d.id,...d.data()}));renderRevTable();});
 window.dispatchEvent(new Event('firebaseReady'));
@@ -437,7 +446,6 @@ window.dispatchEvent(new Event('firebaseReady'));
 <script>
 window.AV_ITEMS=[];window.SHIP_ITEMS=[];window.CAT_ITEMS=[];
 let catMediaList=[],avPhotoData=null;
-let shipItemRows=[];
 function compressImageFile(file,maxDim,quality){
   return new Promise((resolve,reject)=>{
     const r=new FileReader();
@@ -589,8 +597,28 @@ function getVarPrices(){
   document.querySelectorAll('#cat-varprice-rows [data-sz]').forEach(inp=>{if(inp.value.trim())out[inp.dataset.sz]=inp.value.trim();});
   return out;
 }
+function genItemCode(){
+  const existing=new Set((window.CAT_ITEMS||[]).map(c=>c.code).filter(Boolean));
+  let code;
+  do{
+    code='IBN-'+Math.random().toString(36).toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,3)+Math.floor(Math.random()*10);
+  }while(existing.has(code));
+  return code;
+}
+async function backfillMissingCodes(){
+  const items=window.CAT_ITEMS||[];
+  const missing=items.filter(c=>!c.code);
+  if(!missing.length)return;
+  const{DB,FSS}=window;
+  for(const item of missing){
+    const code=genItemCode();
+    item.code=code; // reserve locally so genItemCode() doesn't reuse it mid-loop
+    try{await FSS.updateDoc(FSS.doc(DB,'ibn_catalogue',item.fid),{code});}catch(e){console.error('backfill code',e);}
+  }
+}
 async function saveCatItem(){
   const id=document.getElementById('cat-edit-id').value;
+  const type=document.getElementById('cat-type-available').checked?'available':'preorder';
   const name=document.getElementById('cat-name').value.trim();
   const cat=document.getElementById('cat-cat').value;
   const desc=document.getElementById('cat-desc').value.trim();
@@ -607,18 +635,18 @@ async function saveCatItem(){
     if(nums.length)price=`From GH₵${Math.min(...nums).toFixed(0)}`;
   }
   if(!name){toast('Please enter item name');return;}
-  const data={name,cat,desc,price,img,media:catMediaList.length?catMediaList:null,colors:colors.length?colors:['As Shown'],sizes:sizes.length?sizes:['One Size'],badge,sizePrices:(sizePrices&&Object.keys(sizePrices).length)?sizePrices:null};
+  const data={name,cat,desc,price,img,media:catMediaList.length?catMediaList:null,colors:colors.length?colors:['As Shown'],sizes:sizes.length?sizes:['One Size'],badge,sizePrices:(sizePrices&&Object.keys(sizePrices).length)?sizePrices:null,type};
   try{
     const{DB,FSS}=window;
     if(id){await FSS.updateDoc(FSS.doc(DB,'ibn_catalogue',id),data);toast('Item updated! ✅');}
-    else{await FSS.addDoc(FSS.collection(DB,'ibn_catalogue'),{...data,ts:FSS.serverTimestamp()});toast('Item added to catalogue! ✅');}
+    else{await FSS.addDoc(FSS.collection(DB,'ibn_catalogue'),{...data,code:genItemCode(),ts:FSS.serverTimestamp()});toast('Item added to catalogue! ✅');}
     clearCatForm();
   }catch(e){toast('Error: '+e.message);}
 }
-function clearCatForm(){document.getElementById('cat-edit-id').value='';['cat-name','cat-desc','cat-price','cat-cols','cat-szs','cat-img-url','cat-video-url'].forEach(id=>document.getElementById(id).value='');document.getElementById('cat-cat').value='Footwear';document.getElementById('cat-badge').value='';document.getElementById('cat-form-ttl').textContent='➕ Add New Catalogue Item';catMediaList=[];renderCatMediaStrip();document.getElementById('cat-varprice-chk').checked=false;document.getElementById('cat-varprice-wrap').style.display='none';document.getElementById('cat-varprice-rows').innerHTML='';}
+function clearCatForm(){document.getElementById('cat-edit-id').value='';['cat-name','cat-desc','cat-price','cat-cols','cat-szs','cat-img-url','cat-video-url'].forEach(id=>document.getElementById(id).value='');document.getElementById('cat-cat').value='Footwear';document.getElementById('cat-badge').value='';document.getElementById('cat-type-preorder').checked=true;document.getElementById('cat-form-ttl').textContent='➕ Add New Catalogue Item';catMediaList=[];renderCatMediaStrip();document.getElementById('cat-varprice-chk').checked=false;document.getElementById('cat-varprice-wrap').style.display='none';document.getElementById('cat-varprice-rows').innerHTML='';}
 function editCatItem(fid){
   const item=(window.CAT_ITEMS||[]).find(c=>c.fid===fid);if(!item)return;
-  document.getElementById('cat-edit-id').value=fid;document.getElementById('cat-name').value=item.name||'';document.getElementById('cat-cat').value=item.cat||'Footwear';document.getElementById('cat-desc').value=item.desc||'';document.getElementById('cat-price').value=item.price||'';document.getElementById('cat-cols').value=(item.colors||[]).join(', ');document.getElementById('cat-szs').value=(item.sizes||[]).join(', ');document.getElementById('cat-badge').value=item.badge||'';
+  document.getElementById('cat-edit-id').value=fid;document.getElementById('cat-name').value=item.name||'';document.getElementById('cat-cat').value=item.cat||'Footwear';document.getElementById('cat-desc').value=item.desc||'';document.getElementById('cat-price').value=item.price||'';document.getElementById('cat-cols').value=(item.colors||[]).join(', ');document.getElementById('cat-szs').value=(item.sizes||[]).join(', ');document.getElementById('cat-badge').value=item.badge||'';document.getElementById(item.type==='available'?'cat-type-available':'cat-type-preorder').checked=true;
   catMediaList=(item.media&&item.media.length)?item.media.slice():(item.img?[{type:'image',src:item.img}]:[]);
   renderCatMediaStrip();
   if(item.sizePrices&&Object.keys(item.sizePrices).length){
@@ -641,8 +669,8 @@ async function deleteCatItem(fid){
 function renderCatTable(){
   const tbody=document.getElementById('cat-tbody');
   const items=window.CAT_ITEMS||[];
-  if(!items.length){tbody.innerHTML='<tr><td colspan="8" style="text-align:center;padding:28px;color:var(--mu)">No custom items yet. Add your first item above!</td></tr>';return;}
-  tbody.innerHTML=items.map(p=>`<tr><td><img src="${p.img||''}" alt="" class="thumb" onerror="this.style.background='#EDE9FF'"/></td><td><div class="iname">${p.name||''}</div></td><td><span class="sbg s-pre">${p.cat||''}</span></td><td style="font-weight:700;color:var(--p)">${p.price||'—'}${p.sizePrices&&Object.keys(p.sizePrices).length?'<br/><span style="font-size:10px;font-weight:600;color:var(--gd)">💰 Per-size pricing</span>':''}</td><td style="font-size:12px;color:var(--mu)">${(p.colors||[]).slice(0,3).join(', ')}${(p.colors||[]).length>3?'...':''}</td><td style="font-size:12px;color:var(--mu)">${(p.sizes||[]).slice(0,3).join(', ')}${(p.sizes||[]).length>3?'...':''}</td><td>${p.badge?`<span class="sbg ${p.badge==='hot'?'s-sold':p.badge==='new'?'s-ok':p.badge==='sold'?'s-sold':' s-pre'}">${p.badge==='sold'?'🚫 SOLD OUT':p.badge.toUpperCase()}</span>`:'—'}</td><td><button class="abtn" onclick="editCatItem('${p.fid}')">✏️ Edit</button><button class="abtn abtn-del" onclick="deleteCatItem('${p.fid}')">🗑 Delete</button></td></tr>`).join('');
+  if(!items.length){tbody.innerHTML='<tr><td colspan="9" style="text-align:center;padding:28px;color:var(--mu)">No custom items yet. Add your first item above!</td></tr>';return;}
+  tbody.innerHTML=items.map(p=>`<tr><td><img src="${p.img||''}" alt="" class="thumb" onerror="this.style.background='#EDE9FF'"/></td><td><div class="iname">${p.name||''}</div><div style="font-size:10px;color:var(--mu);font-family:'JetBrains Mono',monospace">${p.code||'—'}</div></td><td>${p.type==='available'?'<span class="sbg s-ok">🇬🇭 In Ghana</span>':'<span class="sbg s-pre">🚢 Pre-Order</span>'}</td><td><span class="sbg s-pre">${p.cat||''}</span></td><td style="font-weight:700;color:var(--p)">${p.price||'—'}${p.sizePrices&&Object.keys(p.sizePrices).length?'<br/><span style="font-size:10px;font-weight:600;color:var(--gd)">💰 Per-size pricing</span>':''}</td><td style="font-size:12px;color:var(--mu)">${(p.colors||[]).slice(0,3).join(', ')}${(p.colors||[]).length>3?'...':''}</td><td style="font-size:12px;color:var(--mu)">${(p.sizes||[]).slice(0,3).join(', ')}${(p.sizes||[]).length>3?'...':''}</td><td>${p.badge?`<span class="sbg ${p.badge==='hot'?'s-sold':p.badge==='new'?'s-ok':p.badge==='sold'?'s-sold':' s-pre'}">${p.badge==='sold'?'🚫 SOLD OUT':p.badge.toUpperCase()}</span>`:'—'}</td><td><button class="abtn" onclick="editCatItem('${p.fid}')">✏️ Edit</button><button class="abtn abtn-del" onclick="deleteCatItem('${p.fid}')">🗑 Delete</button></td></tr>`).join('');
 }
 
 // ── AVAILABLE IN GHANA ──────────────────────────────────────────
@@ -665,6 +693,22 @@ async function saveAvItem(){
   }catch(e){toast('Error: '+e.message);}
 }
 function clearAvForm(){document.getElementById('av-edit-id').value='';['av-name','av-price','av-spec','av-img-url'].forEach(id=>document.getElementById(id).value='');document.getElementById('av-img-prev').style.display='none';document.getElementById('av-form-ttl').textContent='➕ Add Available Item';avPhotoData=null;}
+async function migrateAvailItems(){
+  const items=(window.AV_ITEMS||[]).filter(a=>!a.migrated);
+  if(!items.length){toast('Nothing left to migrate — all items are already in Manage Catalogue');return;}
+  if(!confirm(`Migrate ${items.length} item(s) into Manage Catalogue? The originals will be kept but marked as migrated.`))return;
+  const{DB,FSS}=window;
+  let done=0;
+  for(const a of items){
+    try{
+      const data={name:a.name||'',cat:'Other',desc:a.spec||'',price:a.price||'',img:a.img||'',media:a.img?[{type:'image',src:a.img}]:null,colors:['As Shown'],sizes:['One Size'],badge:a.sold?'sold':null,sizePrices:null,type:'available',code:genItemCode()};
+      await FSS.addDoc(FSS.collection(DB,'ibn_catalogue'),{...data,ts:FSS.serverTimestamp()});
+      await FSS.updateDoc(FSS.doc(DB,'ibn_available',a.fid),{migrated:true});
+      done++;
+    }catch(e){console.error('migrate',e);}
+  }
+  toast(`Migrated ${done} item(s) ✅`);
+}
 function editAvItem(fid){
   const a=(window.AV_ITEMS||[]).find(x=>x.fid===fid);if(!a)return;
   document.getElementById('av-edit-id').value=fid;document.getElementById('av-name').value=a.name||'';document.getElementById('av-price').value=a.price||'';document.getElementById('av-spec').value=a.spec||'';document.getElementById('av-img-url').value=a.img||'';
@@ -687,6 +731,7 @@ function renderAvTable(){
 }
 
 // ── SHIPPING MARKS ────────────────────────────────────────────
+let shipItemRows=[];
 function addShipItemRow(item){
   const rowId='r'+Date.now()+Math.random().toString(36).slice(2,6);
   shipItemRows.push(rowId);
@@ -967,19 +1012,27 @@ async function loadOrdersPanel(){
   try{
     const{DB,FSS}=window;
     const snap=await FSS.getDocs(FSS.query(FSS.collection(DB,'ibn_orders'),FSS.orderBy('ts','desc')));
-    if(snap.empty){tbody.innerHTML='<tr><td colspan="6" style="text-align:center;color:var(--mu);padding:16px">No orders yet</td></tr>';return;}
+    if(snap.empty){tbody.innerHTML='<tr><td colspan="8" style="text-align:center;color:var(--mu);padding:16px">No orders yet</td></tr>';return;}
     tbody.innerHTML=snap.docs.map(d=>{
       const o=d.data();
       const dt=o.ts&&o.ts.toDate?o.ts.toDate().toLocaleDateString():'—';
-      return `<tr><td><div class="iname">${o.item||''}</div></td><td style="font-size:12px">${o.name||o.email||'—'}</td><td style="font-size:12px">${o.col||''}${o.col&&o.sz?' / ':''}${o.sz||''}</td><td style="font-weight:700;color:var(--p)">${o.price||'—'}</td><td style="font-size:12px;color:var(--mu)">${dt}</td><td><select onchange="updateOrderStatus('${d.id}',this.value)" style="padding:6px 8px;border:1px solid var(--bd);border-radius:6px;font-size:12px">${ORDER_STATUSES.map(s=>`<option value="${s}" ${o.status===s?'selected':''}>${s}</option>`).join('')}</select></td></tr>`;
+      const paid=o.payment==='Confirmed';
+      return `<tr><td style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700">${o.ref||'—'}</td><td><div class="iname">${o.item||''}</div></td><td style="font-size:12px">${o.name||o.email||'—'}${o.phone?`<br/>${o.phone}`:''}</td><td style="font-size:12px">${o.col||''}${o.col&&o.sz?' / ':''}${o.sz||''}</td><td style="font-weight:700;color:var(--p)">${o.price||'—'}</td><td style="font-size:12px;color:var(--mu)">${dt}</td><td><select onchange="updateOrderStatus('${d.id}',this.value)" style="padding:6px 8px;border:1px solid var(--bd);border-radius:6px;font-size:12px">${ORDER_STATUSES.map(s=>`<option value="${s}" ${o.status===s?'selected':''}>${s}</option>`).join('')}</select></td><td><button class="abtn" style="${paid?'background:#16A34A;color:#fff':''}" onclick="togglePayment('${d.id}',${paid})">${paid?'✅ Confirmed':'⏳ Pending'}</button></td></tr>`;
     }).join('');
-  }catch(e){tbody.innerHTML=`<tr><td colspan="6" style="text-align:center;color:var(--re);padding:16px">Error loading orders: ${e.message}</td></tr>`;}
+  }catch(e){tbody.innerHTML=`<tr><td colspan="8" style="text-align:center;color:var(--re);padding:16px">Error loading orders: ${e.message}</td></tr>`;}
 }
 async function updateOrderStatus(docId,status){
   try{
     const{DB,FSS}=window;
     await FSS.updateDoc(FSS.doc(DB,'ibn_orders',docId),{status});
     toast('Order status updated ✅');
+  }catch(e){toast('Error: '+e.message);}
+}
+async function togglePayment(docId,currentlyPaid){
+  try{
+    const{DB,FSS}=window;
+    await FSS.updateDoc(FSS.doc(DB,'ibn_orders',docId),{payment:currentlyPaid?'Pending':'Confirmed'});
+    loadOrdersPanel();
   }catch(e){toast('Error: '+e.message);}
 }
 function loadDeadlinePanel(){
