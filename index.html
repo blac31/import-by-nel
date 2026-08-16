@@ -554,7 +554,7 @@ footer{background:var(--p3);padding:48px 40px 22px;}
     <div class="hi">
       <div>
         <div class="htag">🇨🇳 China → 🇬🇭 Ghana</div>
-        <h1>Shop Any Item<br/>From China.<br/><em>WE DELIVER</em></h1>
+        <h1>Shop Any Item<br/>From China.<br/><em>We Deliver It.</em></h1>
         <p class="hdesc">Browse our catalogue, upload a photo, or describe what you want — we source it from trusted China shops and deliver to you in Ghana.</p>
         <div class="hdbadge"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:5px;vertical-align:middle"><path d="M2 20h20M6 9H2v5l2 6h16l2-6V9h-4M6 9V5h12v4M9 9v11M15 9v11"/></svg> Orders arrive in 35–40 working days (Mon–Fri) including customs</div>
         <div class="hsrch"><button class="hcam" onclick="togglePhoto()" title="Search by photo" aria-label="Search by photo">📷</button><input type="text" id="hq" placeholder="e.g. Birkenstock, red dress, earbuds..."/><button class="hsb" onclick="doSearch(document.getElementById('hq').value)">Search</button></div>
@@ -690,7 +690,7 @@ footer{background:var(--p3);padding:48px 40px 22px;}
       <div class="abttag">About Us</div>
       <div class="abtttl">Who Is Import By Nel?</div>
       <p style="font-size:14px;color:var(--t2);line-height:1.7;margin-bottom:16px">Import By Nel is a trusted China-to-Ghana importation service based in Kasoa Brigade. <strong style="color:var(--p)">Tested. Trusted. &amp; Approved.</strong></p>
-      <div class="aci"><div class="acid">✓</div>Monthly pre-orders — arrives in 35–40 working days (Mon–Fri)</div>
+      <div class="aci"><div class="acid">✓</div>Monthly pre-orders — arrive in 35–40 working days (Mon–Fri)</div>
       <div class="aci"><div class="acid">✓</div>Direct sourcing from verified trusted China shops only</div>
       <div class="aci"><div class="acid">✓</div>Photo search — find any item you see anywhere online</div>
       <div class="aci"><div class="acid">✓</div>Real-time tracking for every single order</div>
@@ -890,13 +890,26 @@ const EXTRAS=[];
 window.ALL_P=[];
 
 function rebuildAll(){
-  const custom=(window.CCAT||[]).map((c,i)=>({id:'fb_'+i,n:c.name||c.n||'Item',c:c.cat||c.c||'Other',d:c.desc||c.d||'',price:c.price||'',sizePrices:c.sizePrices||null,img:c.img||'',media:c.media||null,b:c.badge||c.b||null,cols:c.colors||c.cols||['As Shown'],szs:c.sizes||c.szs||['One Size']}));
-  window.ALL_P=[...custom];
+  const all=(window.CCAT||[]).map((c,i)=>({id:c.code||('fb_'+i),fid:c.fid||'',n:c.name||c.n||'Item',c:c.cat||c.c||'Other',d:c.desc||c.d||'',price:c.price||'',sizePrices:c.sizePrices||null,img:c.img||'',media:c.media||null,b:c.badge||c.b||null,cols:c.colors||c.cols||['As Shown'],szs:c.sizes||c.szs||['One Size'],t:c.type||'preorder'}));
+  window.ALL_ITEMS=all;
+  window.ALL_P=all.filter(p=>p.t!=='available');
   renderProds();
   if(typeof renderRecentlyViewed==='function')renderRecentlyViewed();
+  if(typeof renderAvail==='function')renderAvail();
+  if(typeof tryOpenFromHash==='function')tryOpenFromHash();
 }
 window.rebuildAll=rebuildAll;
 window.renderAvail=renderAvail;
+let _hashOpened=false;
+function tryOpenFromHash(){
+  if(_hashOpened)return;
+  const h=(location.hash||'').replace('#','').trim();
+  if(!h)return;
+  const l=window.ALL_P||[];
+  const p=l.find(x=>String(x.id)===h);
+  if(p){_hashOpened=true;setTimeout(()=>openDetail(p.id),50);}
+}
+window.addEventListener('hashchange',tryOpenFromHash);
 
 function getList(){const l=window.ALL_P||ALL_BASE;return cat?l.filter(p=>p.c===cat):l;}
 function cardPriceLabel(p){
@@ -935,8 +948,14 @@ function renderProds(){
 function goPage(p){pg=p;renderProds();document.getElementById('catalogue').scrollIntoView({behavior:'smooth'});}
 function filterCat(c,btn){if(c)anTrack('cat_clicks',c);cat=c;pg=1;clearSearch();document.querySelectorAll('.cb').forEach(b=>b.classList.remove('on'));btn.classList.add('on');rebuildAll();}
 
+function getAvailItems(){
+  const fromCatalogue=(window.ALL_ITEMS||[]).filter(c=>c.t==='available').map(c=>({id:c.id,name:c.n,spec:c.d,price:c.price,img:c.img,sold:c.b==='sold'}));
+  const legacy=(window.AVAIL||[]).filter(a=>!a.migrated).map(a=>({id:a.id,name:a.name,spec:a.spec,price:a.price,img:a.img,sold:!!a.sold}));
+  return [...fromCatalogue,...legacy];
+}
 function renderAvail(){
-  const items=window.AVAIL||[],g=document.getElementById('agrid');
+  const items=getAvailItems(),g=document.getElementById('agrid');
+  if(!g)return;
   if(!items.length){g.innerHTML='<p style="color:rgba(255,255,255,.4);grid-column:1/-1;padding:20px;text-align:center">No available items right now. Check back soon!</p>';return;}
   g.innerHTML=items.map(a=>`
     <div class="ac" style="${a.sold?'opacity:.6;cursor:not-allowed;':''}" onclick="${a.sold?'':`openAvail('${a.id}')`}">
@@ -1100,7 +1119,7 @@ function closeDetail(){document.getElementById('dov').classList.remove('open');}
 function bgclk(e){if(e.target===document.getElementById('dov'))closeDetail();}
 
 function openAvail(id){
-  const a=(window.AVAIL||[]).find(x=>x.id===id);
+  const a=getAvailItems().find(x=>x.id===id);
   if(!a||a.sold)return;
   const m=`Hello Import By Nel! 👋
 
@@ -1708,6 +1727,11 @@ function openPayModal(orderFn){
   pendingOrderFn=orderFn;
   document.querySelectorAll('.pay-opt').forEach(o=>o.classList.remove('selected'));
   document.getElementById('payConfirmBtn').disabled=true;
+  const guestWrap=document.getElementById('payGuestFields');
+  if(guestWrap){
+    guestWrap.style.display=window.CURRENT_USER?'none':'block';
+    if(!window.CURRENT_USER){document.getElementById('payGuestName').value='';document.getElementById('payGuestPhone').value='';}
+  }
   document.getElementById('payOv').classList.add('open');
 }
 function closePayModal(){
@@ -1723,11 +1747,33 @@ function selectPayment(el,method){
 }
 function confirmPaymentAndOrder(){
   if(!selectedPayment||!pendingOrderFn)return;
+  let guestName='',guestPhone='';
+  if(!window.CURRENT_USER){
+    guestName=(document.getElementById('payGuestName')||{}).value?.trim()||'';
+    guestPhone=(document.getElementById('payGuestPhone')||{}).value?.trim()||'';
+    if(!guestName||!guestPhone){toast('Please enter your name and phone number');return;}
+  }
   const fn=pendingOrderFn;
   const pay=selectedPayment;
   closePayModal();
-  fn(pay);
+  fn(pay,guestName,guestPhone);
   showOrderConfirm();
+}
+// ── ORDER REFERENCE NUMBERS (date-based, e.g. IBN-0810-01) ──────────────
+async function nextOrderRef(){
+  try{
+    const now=new Date();
+    const dayKey=String(now.getMonth()+1).padStart(2,'0')+String(now.getDate()).padStart(2,'0');
+    const ref=window._fsDoc(window._db,'ibn_counters',dayKey);
+    await window._fsSetDoc(ref,{count:window._fsIncrement(1)},{merge:true});
+    const snap=await window._fsGetDoc(ref);
+    const n=snap.exists()?(snap.data().count||1):1;
+    return `IBN-${dayKey}-${String(n).padStart(2,'0')}`;
+  }catch(e){
+    const now=new Date();
+    const dayKey=String(now.getMonth()+1).padStart(2,'0')+String(now.getDate()).padStart(2,'0');
+    return `IBN-${dayKey}-${String(Math.floor(Math.random()*90)+10)}`;
+  }
 }
 function showOrderConfirm(){
   const el=document.getElementById('orderConfirm');
@@ -1738,22 +1784,35 @@ function showOrderConfirm(){
 
 // Override sendDetailWA to go through payment modal
 function sendDetailWA(){
-  openPayModal((payMethod)=>{
+  openPayModal(async(payMethod,guestName,guestPhone)=>{
     if(!curItem)return;
     const pref=(document.getElementById('dpref')||{}).value?.trim()||'';
     const resolvedPrice=getItemPrice(curItem,ss)||curItem.price||'';
-    const m=`Hello Import By Nel! 👋\n\n📦 *Item:* ${curItem.n}\n🎨 *Colour:* ${sc||'To confirm'}\n📏 *Size:* ${ss||'To confirm'}${resolvedPrice?`\n💰 *Price:* ${resolvedPrice}`:''}${pref?`\n💭 *Preference:* ${pref}`:''}\n💳 *Payment Method:* ${payMethod}\n\n⏰ I understand it takes 35–40 working days (Mon–Fri) to arrive.\n\nPlease confirm my order! (Attaching item photo below 📸)`;
+    const orderRef=await nextOrderRef();
+    const m=`Hello Import By Nel! 👋\n\n📋 *Order Ref:* ${orderRef}\n📦 *Item:* ${curItem.n}\n🎨 *Colour:* ${sc||'To confirm'}\n📏 *Size:* ${ss||'To confirm'}${resolvedPrice?`\n💰 *Price:* ${resolvedPrice}`:''}${pref?`\n💭 *Preference:* ${pref}`:''}\n💳 *Payment Method:* ${payMethod}\n\n⏰ I understand it takes 35–40 working days (Mon–Fri) to arrive.\n\nPlease confirm my order! (Attaching item photo below 📸)`;
     window.open(`https://wa.me/${WA}?text=${encodeURIComponent(m)}`,'_blank');
-    saveOrderIfLoggedIn(curItem.n,sc,ss,resolvedPrice);
+    saveOrder({ref:orderRef,items:[{item:curItem.n,col:sc,sz:ss,price:resolvedPrice}],pay:payMethod,guestName,guestPhone});
     bumpItemOrderCount(curItem.id,curItem.n);
     closeDetail();
   });
 }
-function saveOrderIfLoggedIn(item,col,sz,price){
-  if(!window.CURRENT_USER||!window._fsAdd)return;
+function saveOrder({ref,items,pay,guestName,guestPhone}){
+  if(!window._fsAdd)return;
   const u=window.CURRENT_USER;
+  const first=items[0]||{};
   window._fsAdd(window._collection(window._db,'ibn_orders'),{
-    uid:u.uid,name:u.displayName||'',email:u.email||'',item,col:col||'',sz:sz||'',price:price||'',status:'Order Placed',ts:window._fsTs()
+    ref,
+    uid:u?u.uid:null,
+    name:u?(u.displayName||''):(guestName||''),
+    email:u?(u.email||''):'',
+    phone:u?'':(guestPhone||''),
+    item:first.item||`Cart order (${items.length} items)`,
+    items:items.length>1?items:null,
+    col:first.col||'',sz:first.sz||'',
+    price:first.price||'',
+    payMethod:pay||'',
+    payment:'Pending',
+    status:'Order Placed',ts:window._fsTs()
   }).catch(e=>console.error('order save',e));
 }
 
@@ -1761,12 +1820,13 @@ function saveOrderIfLoggedIn(item,col,sz,price){
 function orderCartWA(){
   const items=cartLoad();
   if(!items.length){toast('Your cart is empty!');return;}
-  openPayModal((payMethod)=>{
-    let msg=`Hello Import By Nel! 👋\n\n🛒 *My Order (${items.length} item${items.length>1?'s':''}):\n\n`;
+  openPayModal(async(payMethod,guestName,guestPhone)=>{
+    const orderRef=await nextOrderRef();
+    let msg=`Hello Import By Nel! 👋\n\n📋 *Order Ref:* ${orderRef}\n🛒 *My Order (${items.length} item${items.length>1?'s':''}):\n\n`;
     let total=0,hasPrice=false;
     items.forEach((item,idx)=>{
       const qty=item.qty||1;
-      const link=`https://importbynel.netlify.app/#${item.fid||item.id||''}`;
+      const link=`https://importbynel.netlify.app/#${item.id||item.fid||''}`;
       msg+=`${idx+1}. *${item.n}*${qty>1?` x${qty}`:''}\n   Colour: ${item.col} · Size: ${item.sz}\n`;
       if(item.price){const n=parseFloat(item.price.toString().replace(/[^0-9.]/g,''));if(!isNaN(n)){const line=n*qty;msg+=`   Price: ${qty>1?`${item.price} x${qty} = GH₵${line.toFixed(0)}`:item.price}\n`;total+=line;hasPrice=true;}}
       msg+=`   View item: ${link}\n\n`;
@@ -1776,6 +1836,7 @@ function orderCartWA(){
     anTrack('orders','cart');
     notifyOrder(`Cart order (${items.length} items)`);
     items.forEach(item=>bumpItemOrderCount(item.id,item.n));
+    saveOrder({ref:orderRef,items:items.map(item=>({item:item.n,col:item.col,sz:item.sz,price:item.price})),pay:payMethod,guestName,guestPhone});
     window.open(`https://wa.me/${WA}?text=${encodeURIComponent(msg)}`,'_blank');
     closeCart();
   });
@@ -1869,6 +1930,10 @@ function orderCartWA(){
   <div class="pay-box">
     <div class="pay-title">💳 How would you like to pay?</div>
     <div class="pay-sub">Select your preferred payment method — this will be included in your order message so we can confirm the details with you.</div>
+    <div class="pay-guest" id="payGuestFields" style="display:none;margin-bottom:16px">
+      <div class="fg" style="margin-bottom:10px"><label style="display:block;font-size:12px;font-weight:700;color:var(--p);margin-bottom:6px">Your Name *</label><input type="text" id="payGuestName" placeholder="e.g. Ama Owusu" style="width:100%;padding:12px 14px;border:1px solid var(--bd);border-radius:var(--rs);font-size:14px;box-sizing:border-box"/></div>
+      <div class="fg"><label style="display:block;font-size:12px;font-weight:700;color:var(--p);margin-bottom:6px">Phone Number *</label><input type="tel" id="payGuestPhone" placeholder="e.g. 024 123 4567" style="width:100%;padding:12px 14px;border:1px solid var(--bd);border-radius:var(--rs);font-size:14px;box-sizing:border-box"/></div>
+    </div>
     <div class="pay-opts">
       <div class="pay-opt" onclick="selectPayment(this,'MTN MoMo')">
         <div class="pay-opt-icon" style="background:#FFF3CD">📱</div>
