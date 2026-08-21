@@ -1730,7 +1730,11 @@ function openPayModal(orderFn){
   const guestWrap=document.getElementById('payGuestFields');
   if(guestWrap){
     guestWrap.style.display=window.CURRENT_USER?'none':'block';
-    if(!window.CURRENT_USER){document.getElementById('payGuestName').value='';document.getElementById('payGuestPhone').value='';}
+    if(!window.CURRENT_USER){
+      const nameEl=document.getElementById('payGuestName'),phoneEl=document.getElementById('payGuestPhone');
+      nameEl.value='';phoneEl.value='';
+      nameEl.style.border='';phoneEl.style.border='';
+    }
   }
   document.getElementById('payOv').classList.add('open');
 }
@@ -1749,9 +1753,15 @@ function confirmPaymentAndOrder(){
   if(!selectedPayment||!pendingOrderFn)return;
   let guestName='',guestPhone='';
   if(!window.CURRENT_USER){
-    guestName=(document.getElementById('payGuestName')||{}).value?.trim()||'';
-    guestPhone=(document.getElementById('payGuestPhone')||{}).value?.trim()||'';
-    if(!guestName||!guestPhone){toast('Please enter your name and phone number');return;}
+    const nameEl=document.getElementById('payGuestName'),phoneEl=document.getElementById('payGuestPhone');
+    guestName=nameEl?nameEl.value.trim():'';
+    guestPhone=phoneEl?phoneEl.value.trim():'';
+    if(!guestName||!guestPhone){
+      toast('⚠️ Please enter your name and phone number above to continue');
+      const missing=!guestName?nameEl:phoneEl;
+      if(missing){missing.style.border='2px solid #DC2626';missing.focus();missing.scrollIntoView({behavior:'smooth',block:'center'});}
+      return;
+    }
   }
   const fn=pendingOrderFn;
   const pay=selectedPayment;
