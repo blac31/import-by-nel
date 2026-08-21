@@ -1038,11 +1038,17 @@ function toVideoEmbed(url){
   if(yt)return{embed:true,src:`https://www.youtube.com/embed/${yt[1]}`};
   return{embed:false,src:url};
 }
+function getUnifiedAvailItems(){
+  const fromCat=(window.ALL_ITEMS||[]).filter(p=>p.t==='available');
+  const legacy=(window.AVAIL||[]).filter(a=>!a.migrated).map(a=>({id:a.id,fid:a.fid||'',n:a.name||'',c:'Other',d:a.spec||'',price:a.price||'',img:a.img||'',media:a.img?[{type:'image',src:a.img}]:null,b:a.sold?'sold':null,cols:['As Shown'],szs:['One Size'],t:'available'}));
+  return[...fromCat,...legacy];
+}
 function openDetail(id){
-  const l=window.ALL_P||ALL_BASE;
+  const l=[...(window.ALL_P||ALL_BASE),...getUnifiedAvailItems()];
   const p=l.find(x=>String(x.id)===String(id));
   if(!p)return;
   curItem=p;sc='';ss='';
+  const isAvail=p.t==='available';
   const isSold=p.b==='sold';
   const media=buildMediaList(p);
   const slides=media.map(m=>{
@@ -1061,7 +1067,7 @@ function openDetail(id){
     ${dots}
     ${isSold?'<div style="position:absolute;top:14px;left:14px;background:#DC2626;color:#fff;font-size:11px;font-weight:700;padding:5px 10px;border-radius:4px;font-family:\'JetBrains Mono\',monospace;letter-spacing:1px;z-index:2">SOLD OUT</div>':p.b?`<div class="pbg ${p.b==='hot'?'bh':p.b==='new'?'bn':'bsl'}" style="position:absolute;top:14px;left:14px;z-index:2">${p.b==='hot'?'🔥 HOT':p.b==='new'?'✨ NEW':'💰 SALE'}</div>`:''}`;
   document.getElementById('din').innerHTML=`
-    <div class="dcat">${p.c} · Pre-Order from China</div>
+    <div class="dcat">${p.c} · ${isAvail?'✅ Available in Ghana Now':'Pre-Order from China'}</div>
     <div class="dname">${p.n} <button class="wish-btn" data-id="${p.id}" style="position:static;display:inline-flex;width:26px;height:26px;font-size:13px;vertical-align:middle;margin-left:4px${isWished(p.id)?';opacity:1':''}" onclick="toggleWish('${p.id}',this)">${isWished(p.id)?'❤️':'🤍'}</button></div>
     <div class="ddesc">${p.d||'Quality item sourced directly from trusted China shops.'}</div>
     <div class="dprice${p.sizePrices&&Object.keys(p.sizePrices).length?' unsel':''}" id="dpriceLine">${detailPriceText(p,'')}</div>
@@ -1070,7 +1076,7 @@ function openDetail(id){
     <div class="dopts" id="colopts">${(p.cols||['As Shown']).map(c=>`<button class="dopt" onclick="selOpt(this,'col','${c}')">${c}</button>`).join('')}</div>
     <div class="dlbl">Select Size</div>
     <div class="dopts" id="szopts">${(p.szs||['One Size']).map(s=>`<button class="dopt" onclick="selOpt(this,'sz','${s}')">${s}</button>`).join('')}</div>
-    <div class="ddel">🚢 Pre-order item — arrives in <strong>35–40 working days (Mon–Fri)</strong> including customs clearance in Ghana</div>
+    <div class="ddel">${isAvail?'✅ Already in Ghana — <strong>no wait, ready now</strong>':'🚢 Pre-order item — arrives in <strong>35–40 working days (Mon–Fri)</strong> including customs clearance in Ghana'}</div>
     ${isSold?`<div style="background:#FEE2E2;border:1px solid #FECACA;border-radius:var(--rs);padding:14px 16px;text-align:center;margin-bottom:12px"><p style="color:#DC2626;font-weight:700;font-size:15px;margin-bottom:4px">🚫 This item is Sold Out</p><p style="color:#B91C1C;font-size:13px">Contact us on WhatsApp to be notified when it's back!</p></div><button class="dwab" onclick="sendDetailWA()" style="background:#25D366">💬 Notify Me on WhatsApp</button>`:`<button class="datc" id="datcBtn" onclick="addToCart()">
       <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg>
       Add to Cart
@@ -1121,16 +1127,7 @@ function bgclk(e){if(e.target===document.getElementById('dov'))closeDetail();}
 function openAvail(id){
   const a=getAvailItems().find(x=>x.id===id);
   if(!a||a.sold)return;
-  const m=`Hello Import By Nel! 👋
-
-🛍️ *Item:* ${a.name||''}
-💰 *Price:* ${a.price||''}
-📋 *Details:* ${a.spec||'N/A'}${refLine()}
-
-This item is available in Ghana. Please confirm. Thank you!`;
-  anTrack('wa','avail_order');
-  notifyOrder(a.name||'Available Item');
-  window.open(`https://wa.me/${WA}?text=${encodeURIComponent(m)}`,'_blank');
+  openDetail(id);
 }
 
 function doSearch(q){
@@ -1796,10 +1793,12 @@ function showOrderConfirm(){
 function sendDetailWA(){
   openPayModal(async(payMethod,guestName,guestPhone)=>{
     if(!curItem)return;
+    const isAvail=curItem.t==='available';
     const pref=(document.getElementById('dpref')||{}).value?.trim()||'';
     const resolvedPrice=getItemPrice(curItem,ss)||curItem.price||'';
     const orderRef=await nextOrderRef();
-    const m=`Hello Import By Nel! 👋\n\n📋 *Order Ref:* ${orderRef}\n📦 *Item:* ${curItem.n}\n🎨 *Colour:* ${sc||'To confirm'}\n📏 *Size:* ${ss||'To confirm'}${resolvedPrice?`\n💰 *Price:* ${resolvedPrice}`:''}${pref?`\n💭 *Preference:* ${pref}`:''}\n💳 *Payment Method:* ${payMethod}\n\n⏰ I understand it takes 35–40 working days (Mon–Fri) to arrive.\n\nPlease confirm my order! (Attaching item photo below 📸)`;
+    const link=`https://importbynel.netlify.app/#${curItem.id||''}`;
+    const m=`Hello Import By Nel! 👋\n\n📋 *Order Ref:* ${orderRef}\n📦 *Item:* ${curItem.n}\n🎨 *Colour:* ${sc||'To confirm'}\n📏 *Size:* ${ss||'To confirm'}${resolvedPrice?`\n💰 *Price:* ${resolvedPrice}`:''}${pref?`\n💭 *Preference:* ${pref}`:''}\n🔗 *View item:* ${link}\n💳 *Payment Method:* ${payMethod}\n\n${isAvail?'✅ This item is already in Ghana — no wait, ready now.':'⏰ I understand it takes 35–40 working days (Mon–Fri) to arrive.'}\n\nPlease confirm my order! (Attaching item photo below 📸)`;
     window.open(`https://wa.me/${WA}?text=${encodeURIComponent(m)}`,'_blank');
     saveOrder({ref:orderRef,items:[{item:curItem.n,col:sc,sz:ss,price:resolvedPrice}],pay:payMethod,guestName,guestPhone});
     bumpItemOrderCount(curItem.id,curItem.n);
