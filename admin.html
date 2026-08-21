@@ -239,9 +239,11 @@ tbody td{padding:11px 16px;font-size:13px;color:var(--t);vertical-align:middle;}
     <div class="panel" id="panel-avail">
       <div class="ph"><div class="pttl">🇬🇭 Available in Ghana (Legacy)</div></div>
       <div class="info-box">This tab is being retired — new "Available in Ghana" items should now be added from <strong>Manage Catalogue</strong> using the "🇬🇭 Available in Ghana Now" type toggle (it now supports multiple photos and video too). Use the button below to move any items still listed here into the new system — nothing is deleted, they're just copied over and marked as migrated.</div>
-      <button class="savebtn" style="margin-bottom:20px" onclick="migrateAvailItems()">🔄 Migrate These Items to Manage Catalogue</button>
+      <button class="savebtn" style="margin-bottom:12px" onclick="migrateAvailItems()">🔄 Migrate These Items to Manage Catalogue</button>
+      <button class="abtn" style="margin-bottom:20px;width:100%;padding:14px;font-size:14px" onclick="goAddAvailable()">➕ Add a New Available-in-Ghana Item (with multiple photos/video)</button>
       <div class="fcard">
-        <h3 id="av-form-ttl">➕ Add Available Item</h3>
+        <h3 id="av-form-ttl">✏️ Edit Legacy Item</h3>
+        <div style="font-size:11px;color:var(--mu);margin-bottom:10px">This form is only for editing items still sitting in the old system below. To add a brand-new item, use the button above instead.</div>
         <input type="hidden" id="av-edit-id"/>
         <div class="frow2">
           <div class="fg"><label>Item Name *</label><input type="text" id="av-name" placeholder="e.g. Women's Birkenstock Sandals"/></div>
@@ -417,6 +419,9 @@ tbody td{padding:11px 16px;font-size:13px;color:var(--t);vertical-align:middle;}
     </div>
 
 <div class="toast" id="toast"></div>
+<div id="mediaPreviewOv" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:900;align-items:center;justify-content:center;padding:20px;cursor:zoom-out" onclick="closeMediaPreview()">
+  <div id="mediaPreviewBox" onclick="event.stopPropagation()"></div>
+</div>
 
 <!-- FIREBASE -->
 <script type="module">
@@ -495,6 +500,15 @@ function addCatVideoUrl(){
   renderCatMediaStrip();
 }
 function removeCatMedia(idx){catMediaList.splice(idx,1);renderCatMediaStrip();}
+function previewMedia(src,type){
+  const ov=document.getElementById('mediaPreviewOv');
+  const box=document.getElementById('mediaPreviewBox');
+  box.innerHTML=type==='video'
+    ?(src.includes('youtube')||src.includes('youtu.be')?`<iframe src="${src.replace('watch?v=','embed/')}" style="width:100%;max-width:480px;height:270px;border:none;border-radius:10px" allowfullscreen></iframe>`:`<video src="${src}" controls autoplay style="max-width:100%;max-height:80vh;border-radius:10px"></video>`)
+    :`<img src="${src}" style="max-width:100%;max-height:80vh;border-radius:10px;object-fit:contain"/>`;
+  ov.style.display='flex';
+}
+function closeMediaPreview(){document.getElementById('mediaPreviewOv').style.display='none';document.getElementById('mediaPreviewBox').innerHTML='';}
 if(document.getElementById('cat-media-strip'))renderCatMediaStrip();
 if(document.getElementById('sm-item-rows'))addShipItemRow();
 function renderCatMediaStrip(){
@@ -504,8 +518,8 @@ function renderCatMediaStrip(){
   wrap.innerHTML=catMediaList.map((m,i)=>`
     <div style="position:relative;width:76px;height:76px">
       ${m.type==='video'
-        ?`<div style="width:100%;height:100%;border-radius:8px;background:var(--p);display:flex;align-items:center;justify-content:center;font-size:22px;border:1px solid var(--bd)">🎥</div>`
-        :`<img src="${m.src}" style="width:100%;height:100%;object-fit:cover;border-radius:8px;border:1px solid var(--bd)" onerror="this.style.opacity='0.3'"/>`}
+        ?`<div style="width:100%;height:100%;border-radius:8px;background:var(--p);display:flex;align-items:center;justify-content:center;font-size:22px;border:1px solid var(--bd);cursor:pointer" onclick="previewMedia('${m.src.replace(/'/g,"\\'")}','video')">🎥</div>`
+        :`<img src="${m.src}" style="width:100%;height:100%;object-fit:cover;border-radius:8px;border:1px solid var(--bd);cursor:pointer" onerror="this.style.opacity='0.3'" onclick="previewMedia('${m.src.replace(/'/g,"\\'")}','image')"/>`}
       ${i===0?'<div style="position:absolute;bottom:-2px;left:0;right:0;background:var(--g);color:var(--p);font-size:9px;font-weight:800;text-align:center;border-radius:0 0 8px 8px;padding:1px 0">COVER</div>':''}
       <button type="button" onclick="removeCatMedia(${i})" style="position:absolute;top:-6px;right:-6px;width:20px;height:20px;border-radius:50%;background:var(--re);color:#fff;border:none;font-size:12px;cursor:pointer;line-height:1">✕</button>
     </div>`).join('');
@@ -577,6 +591,17 @@ function initAuthFlow(){
 }
 if(window.FAUTH){initAuthFlow();}else{window.addEventListener('firebaseReady',initAuthFlow);}
 function showPanel(id,btn){document.querySelectorAll('.panel').forEach(p=>p.classList.remove('on'));document.querySelectorAll('.atab').forEach(b=>b.classList.remove('on'));document.getElementById('panel-'+id).classList.add('on');if(btn)btn.classList.add('on');if(id==='deadline')loadDeadlinePanel();if(id==='orders')loadOrdersPanel();if(id==='an')renderAnalytics();}
+function goAddAvailable(){
+  clearCatForm();
+  document.getElementById('cat-type-available').checked=true;
+  document.getElementById('cat-form-ttl').textContent='➕ Add New "Available in Ghana" Item';
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.atab').forEach(b=>b.classList.remove('on'));
+  document.getElementById('panel-cat').classList.add('on');
+  const catTab=document.querySelector('.atab[onclick*="\'cat\'"]');
+  if(catTab)catTab.classList.add('on');
+  document.getElementById('panel-cat').scrollIntoView({behavior:'smooth',block:'start'});
+}
 function updateStats(){document.getElementById('s-cat').textContent=(window.CAT_ITEMS||[]).length;document.getElementById('s-av').textContent=(window.AV_ITEMS||[]).length;document.getElementById('s-trk').textContent=(window.SHIP_ITEMS||[]).length;}
 
 // ── CATALOGUE ──────────────────────────────────────────────────
