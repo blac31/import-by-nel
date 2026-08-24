@@ -1724,15 +1724,11 @@ function openPayModal(orderFn){
   pendingOrderFn=orderFn;
   document.querySelectorAll('.pay-opt').forEach(o=>o.classList.remove('selected'));
   document.getElementById('payConfirmBtn').disabled=true;
-  const guestWrap=document.getElementById('payGuestFields');
-  if(guestWrap){
-    guestWrap.style.display=window.CURRENT_USER?'none':'block';
-    if(!window.CURRENT_USER){
-      const nameEl=document.getElementById('payGuestName'),phoneEl=document.getElementById('payGuestPhone');
-      nameEl.value='';phoneEl.value='';
-      nameEl.style.border='';phoneEl.style.border='';
-    }
-  }
+  const nameWrap=document.getElementById('payGuestNameWrap');
+  const nameEl=document.getElementById('payGuestName'),phoneEl=document.getElementById('payGuestPhone');
+  if(nameWrap) nameWrap.style.display=window.CURRENT_USER?'none':'block';
+  if(nameEl){nameEl.value='';nameEl.style.border='';}
+  if(phoneEl){phoneEl.value='';phoneEl.style.border='';}
   document.getElementById('payOv').classList.add('open');
 }
 function closePayModal(){
@@ -1748,22 +1744,26 @@ function selectPayment(el,method){
 }
 function confirmPaymentAndOrder(){
   if(!selectedPayment||!pendingOrderFn)return;
-  let guestName='',guestPhone='';
-  if(!window.CURRENT_USER){
-    const nameEl=document.getElementById('payGuestName'),phoneEl=document.getElementById('payGuestPhone');
-    guestName=nameEl?nameEl.value.trim():'';
-    guestPhone=phoneEl?phoneEl.value.trim():'';
-    if(!guestName||!guestPhone){
-      toast('⚠️ Please enter your name and phone number above to continue');
-      const missing=!guestName?nameEl:phoneEl;
-      if(missing){missing.style.border='2px solid #DC2626';missing.focus();missing.scrollIntoView({behavior:'smooth',block:'center'});}
-      return;
-    }
+  const nameEl=document.getElementById('payGuestName'),phoneEl=document.getElementById('payGuestPhone');
+  const guestName=(!window.CURRENT_USER&&nameEl)?nameEl.value.trim():'';
+  const guestPhone=phoneEl?phoneEl.value.trim():'';
+  if(!window.CURRENT_USER&&!guestName){
+    toast('⚠️ Please enter your name above to continue');
+    if(nameEl){nameEl.style.border='2px solid #DC2626';nameEl.focus();nameEl.scrollIntoView({behavior:'smooth',block:'center'});}
+    return;
+  }
+  if(!guestPhone){
+    toast('⚠️ Please enter your WhatsApp number above to continue');
+    if(phoneEl){phoneEl.style.border='2px solid #DC2626';phoneEl.focus();phoneEl.scrollIntoView({behavior:'smooth',block:'center'});}
+    return;
   }
   const fn=pendingOrderFn;
   const pay=selectedPayment;
+  // Open the WhatsApp tab immediately, as a direct result of this tap — before any
+  // database/async work happens — otherwise phone browsers block it as a popup.
+  const waWin=window.open('','_blank');
   closePayModal();
-  fn(pay,guestName,guestPhone);
+  fn(pay,guestName,guestPhone,waWin);
   showOrderConfirm();
 }
 // ── ORDER REFERENCE NUMBERS (date-based, e.g. IBN-0810-01) ──────────────
@@ -1791,19 +1791,31 @@ function showOrderConfirm(){
 
 // Override sendDetailWA to go through payment modal
 function sendDetailWA(){
-  openPayModal(async(payMethod,guestName,guestPhone)=>{
+  openPayModal(async(payMethod,guestName,guestPhone,waWin)=>{
     if(!curItem)return;
     const isAvail=curItem.t==='available';
     const pref=(document.getElementById('dpref')||{}).value?.trim()||'';
     const resolvedPrice=getItemPrice(curItem,ss)||curItem.price||'';
     const orderRef=await nextOrderRef();
     const link=`https://importbynel.netlify.app/#${curItem.id||''}`;
-    const m=`Hello Import By Nel! 👋\n\n📋 *Order Ref:* ${orderRef}\n📦 *Item:* ${curItem.n}\n🎨 *Colour:* ${sc||'To confirm'}\n📏 *Size:* ${ss||'To confirm'}${resolvedPrice?`\n💰 *Price:* ${resolvedPrice}`:''}${pref?`\n💭 *Preference:* ${pref}`:''}\n🔗 *View item:* ${link}\n💳 *Payment Method:* ${payMethod}\n\n${isAvail?'✅ This item is already in Ghana — no wait, ready now.':'⏰ I understand it takes 35–40 working days (Mon–Fri) to arrive.'}\n\nPlease confirm my order! (Attaching item photo below 📸)`;
-    window.open(`https://wa.me/${WA}?text=${encodeURIComponent(m)}`,'_blank');
+    const m=`Hello Import By Nel! 👋\n\n📋 *Order Ref:* ${orderRef}\n📦 *Item:* ${curItem.n}\n🎨 *Colour:* ${sc||'To confirm'}\n📏 *Size:* ${ss||'To confirm'}${resolvedPrice?`\n💰 *Price:* ${resolvedPrice}`:''}${pref?`\n💭 *Preference:* ${pref}`:''}\n🔗 *View item:* ${link}\n💳 *Payment Method:* ${payMethod}\n📱 *My WhatsApp:* ${guestPhone||'—'}\n\n${isAvail?'✅ This item is already in Ghana — no wait, ready now.':'⏰ I understand it takes 35–40 working days (Mon–Fri) to arrive.'}\n\nPlease confirm my order! (Attaching item photo below 📸)`;
+    openWhatsApp(waWin,m);
     saveOrder({ref:orderRef,items:[{item:curItem.n,col:sc,sz:ss,price:resolvedPrice}],pay:payMethod,guestName,guestPhone});
     bumpItemOrderCount(curItem.id,curItem.n);
     closeDetail();
   });
+}
+// Fills in a WhatsApp tab that was opened synchronously on the user's tap (avoids
+// mobile popup blockers, which kill window.open() once any await has happened first).
+// Falls back to a fresh window.open() attempt if the tab wasn't available.
+function openWhatsApp(waWin,message){
+  const url=`https://wa.me/${WA}?text=${encodeURIComponent(message)}`;
+  if(waWin&&!waWin.closed){
+    waWin.location.href=url;
+  }else{
+    const w=window.open(url,'_blank');
+    if(!w)toast('⚠️ Your browser blocked the WhatsApp popup — please allow popups for this site and try again.');
+  }
 }
 function saveOrder({ref,items,pay,guestName,guestPhone}){
   if(!window._fsAdd)return;
@@ -1812,9 +1824,9 @@ function saveOrder({ref,items,pay,guestName,guestPhone}){
   window._fsAdd(window._collection(window._db,'ibn_orders'),{
     ref,
     uid:u?u.uid:null,
-    name:u?(u.displayName||''):(guestName||''),
+    name:guestName||(u?(u.displayName||''):''),
     email:u?(u.email||''):'',
-    phone:u?'':(guestPhone||''),
+    phone:guestPhone||'',
     item:first.item||`Cart order (${items.length} items)`,
     items:items.length>1?items:null,
     col:first.col||'',sz:first.sz||'',
@@ -1829,7 +1841,7 @@ function saveOrder({ref,items,pay,guestName,guestPhone}){
 function orderCartWA(){
   const items=cartLoad();
   if(!items.length){toast('Your cart is empty!');return;}
-  openPayModal(async(payMethod,guestName,guestPhone)=>{
+  openPayModal(async(payMethod,guestName,guestPhone,waWin)=>{
     const orderRef=await nextOrderRef();
     let msg=`Hello Import By Nel! 👋\n\n📋 *Order Ref:* ${orderRef}\n🛒 *My Order (${items.length} item${items.length>1?'s':''}):\n\n`;
     let total=0,hasPrice=false;
@@ -1841,12 +1853,12 @@ function orderCartWA(){
       msg+=`   View item: ${link}\n\n`;
     });
     if(hasPrice)msg+=`💰 *Estimated Total: GH₵${total.toFixed(0)}*\n`;
-    msg+=`💳 *Payment Method:* ${payMethod}${refLine()}\n\nPlease confirm my order. Thank you!`;
+    msg+=`💳 *Payment Method:* ${payMethod}\n📱 *My WhatsApp:* ${guestPhone||'—'}${refLine()}\n\nPlease confirm my order. Thank you!`;
     anTrack('orders','cart');
     notifyOrder(`Cart order (${items.length} items)`);
     items.forEach(item=>bumpItemOrderCount(item.id,item.n));
     saveOrder({ref:orderRef,items:items.map(item=>({item:item.n,col:item.col,sz:item.sz,price:item.price})),pay:payMethod,guestName,guestPhone});
-    window.open(`https://wa.me/${WA}?text=${encodeURIComponent(msg)}`,'_blank');
+    openWhatsApp(waWin,msg);
     closeCart();
   });
 }
@@ -1939,9 +1951,9 @@ function orderCartWA(){
   <div class="pay-box">
     <div class="pay-title">💳 How would you like to pay?</div>
     <div class="pay-sub">Select your preferred payment method — this will be included in your order message so we can confirm the details with you.</div>
-    <div class="pay-guest" id="payGuestFields" style="display:none;margin-bottom:16px">
-      <div class="fg" style="margin-bottom:10px"><label style="display:block;font-size:12px;font-weight:700;color:var(--p);margin-bottom:6px">Your Name *</label><input type="text" id="payGuestName" placeholder="e.g. Ama Owusu" style="width:100%;padding:12px 14px;border:1px solid var(--bd);border-radius:var(--rs);font-size:14px;box-sizing:border-box"/></div>
-      <div class="fg"><label style="display:block;font-size:12px;font-weight:700;color:var(--p);margin-bottom:6px">Phone Number *</label><input type="tel" id="payGuestPhone" placeholder="e.g. 024 123 4567" style="width:100%;padding:12px 14px;border:1px solid var(--bd);border-radius:var(--rs);font-size:14px;box-sizing:border-box"/></div>
+    <div class="pay-guest" id="payGuestFields" style="margin-bottom:16px">
+      <div class="fg" id="payGuestNameWrap" style="margin-bottom:10px"><label style="display:block;font-size:12px;font-weight:700;color:var(--p);margin-bottom:6px">Your Name *</label><input type="text" id="payGuestName" placeholder="e.g. Ama Owusu" style="width:100%;padding:12px 14px;border:1px solid var(--bd);border-radius:var(--rs);font-size:14px;box-sizing:border-box"/></div>
+      <div class="fg"><label style="display:block;font-size:12px;font-weight:700;color:var(--p);margin-bottom:6px">WhatsApp Number *</label><input type="tel" id="payGuestPhone" placeholder="e.g. 024 123 4567" style="width:100%;padding:12px 14px;border:1px solid var(--bd);border-radius:var(--rs);font-size:14px;box-sizing:border-box"/><div style="font-size:11px;color:var(--mu);margin-top:5px">We'll send this along with your order so we can reach you on WhatsApp.</div></div>
     </div>
     <div class="pay-opts">
       <div class="pay-opt" onclick="selectPayment(this,'MTN MoMo')">
