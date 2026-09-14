@@ -20,7 +20,11 @@
 <meta name="twitter:description" content="Trusted China-to-Ghana importation — photo search, verified pricing, live order tracking."/>
 <title>Import By Nel | China to Ghana</title>
 <link rel="manifest" href="manifest.json"/>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,ital,wght@9..144,0,500;9..144,0,600;9..144,1,400&family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,ital,wght@9..144,0,500;9..144,0,600;9..144,1,400&family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@500&display=swap"/>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,ital,wght@9..144,0,500;9..144,0,600;9..144,1,400&family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet" media="print" onload="this.media='all'"/>
+<noscript><link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,ital,wght@9..144,0,500;9..144,0,600;9..144,1,400&family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet"/></noscript>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
 html{scroll-behavior:smooth;}
@@ -490,7 +494,7 @@ footer{background:var(--p3);padding:48px 40px 22px;}
 </div>
 <nav>
   <div class="nlogo">
-    <img src="logo.png" alt="Import By Nel" style="height:50px;width:auto;object-fit:contain;"/>
+    <img src="logo.png" alt="Import By Nel" width="96" height="50" style="height:50px;width:auto;object-fit:contain;"/>
     <div><div class="nname">Import By Nel</div><div class="nsub">China · Ghana</div></div>
   </div>
   <div class="nmid"><div class="nsrch"><input type="text" id="nq" placeholder="Search shoes, bags, dresses, electronics..." onkeydown="if(event.key==='Enter')doSearch(this.value)"/><button class="nsb" onclick="doSearch(document.getElementById('nq').value)">🔍 Search</button></div></div>
@@ -511,7 +515,7 @@ footer{background:var(--p3);padding:48px 40px 22px;}
   <div class="hbg" onclick="toggleMenu()"><span></span><span></span><span></span></div>
 </nav>
 <div class="mnav" id="mnav">
-  <div class="mnh"><div class="nlogo"><img src="logo.png" alt="Import By Nel" style="height:42px;width:auto;object-fit:contain;"/><div class="nname">Import By Nel</div></div><button class="mnx" onclick="toggleMenu()">✕</button></div>
+  <div class="mnh"><div class="nlogo"><img src="logo.png" alt="Import By Nel" width="81" height="42" style="height:42px;width:auto;object-fit:contain;"/><div class="nname">Import By Nel</div></div><button class="mnx" onclick="toggleMenu()">✕</button></div>
   <div class="mns"><input type="text" id="mq" placeholder="Search any item..."/><button class="mnsb" onclick="doSearch(document.getElementById('mq').value);toggleMenu()">🔍</button></div>
   <a href="#home" onclick="toggleMenu()">Home</a><a href="#catalogue" onclick="toggleMenu()">Pre-Order Catalogue</a><a href="#available" onclick="toggleMenu()">Available in Ghana</a><a href="#tracking" onclick="toggleMenu()">Track Order</a><a href="#services" onclick="toggleMenu()">Services</a><a href="#about" onclick="toggleMenu()">About</a><a href="#reviews" onclick="toggleMenu()">Reviews</a><a href="#contact" onclick="toggleMenu()">Contact</a>
   <a href="javascript:void(0)" onclick="toggleMenu();openAccountModal()">👤 My Account</a>
