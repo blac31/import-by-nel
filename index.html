@@ -140,6 +140,17 @@ nav{background:rgba(248,244,238,0.75);backdrop-filter:blur(20px);-webkit-backdro
 .stt{font-family:'Fraunces',serif;font-size:20px;font-weight:700;color:var(--p);}
 .stt em{color:var(--gd);font-style:normal;}
 .pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(185px,1fr));gap:14px;}
+.cat-section{margin-bottom:28px;}
+.cat-section-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px;}
+.cat-section-head h3{font-family:'Fraunces',serif;font-size:19px;font-weight:600;color:var(--p);}
+.cat-section-head span{font-size:12px;color:var(--mu);}
+.cat-section-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(185px,1fr));gap:14px;}
+.cat-viewall{display:block;margin-top:12px;background:none;border:1px solid var(--bd);color:var(--p);padding:9px 18px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;}
+.cat-viewall:hover{background:var(--gl);border-color:var(--g);}
+@media (max-width:900px){.cat-section-grid{grid-template-columns:repeat(2,1fr);gap:10px;}}
+.rec-head{margin:22px 0 12px;font-family:'Fraunces',serif;font-size:16px;font-weight:600;color:var(--p);}
+.rec-row{display:flex;gap:12px;overflow-x:auto;padding-bottom:6px;margin:0 -4px;}
+.rec-row .pc{min-width:140px;flex-shrink:0;}
 .pc{background:var(--w);border-radius:var(--r);overflow:hidden;cursor:pointer;border:1px solid var(--bd);transition:all .25s;}
 .pc:hover{box-shadow:var(--s2);transform:translateY(-3px);border-color:var(--pm);}
 .pc-img{height:200px;overflow:hidden;position:relative;background:var(--bg);}
@@ -923,12 +934,8 @@ function cardPriceLabel(p){
   }
   return p.price?` · <strong style="color:var(--p)">${p.price}</strong>`:'';
 }
-function renderProds(){
-  const l=getList();
-  const tot=l.length,pages=Math.ceil(tot/PER),start=(pg-1)*PER,page=l.slice(start,start+PER);
-  document.getElementById('pcount').textContent=`${start+1}–${Math.min(start+PER,tot)} of ${tot} items`;
-  if(!page.length){document.getElementById('pgrid').innerHTML=`<div style="grid-column:1/-1;text-align:center;padding:60px 20px;color:var(--mu)"><div style="font-size:48px;margin-bottom:16px">🛍️</div><div style="font-family:'Fraunces',serif;font-size:18px;font-weight:700;color:var(--p);margin-bottom:8px">Catalogue is empty</div><p style="font-size:14px">Nel is adding items soon! Check back or search for what you need.</p></div>`;document.getElementById('pag').innerHTML='';return;}
-  document.getElementById('pgrid').innerHTML=page.map((p,i)=>`
+function cardHTML(p){
+  return `
     <div class="pc" onclick="openDetail('${p.id}')">
       <div class="pc-img">
         <img src="${p.img}" alt="${p.n}" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1483985988355-763728e1935b?w=400&q=80'"/>
@@ -940,7 +947,47 @@ function renderProds(){
         <div class="pc-cat">${p.c} · Pre-Order${cardPriceLabel(p)}</div>
         <div class="pc-ft"><span class="pc-av">Pre-Order</span><button class="obtn" onclick="event.stopPropagation();openDetail('${p.id}')">View</button></div>
       </div>
-    </div>`).join('');
+    </div>`;
+}
+function renderProds(){
+  if(!cat){renderProdsGrouped();return;}
+  renderProdsFlat();
+}
+const CAT_ORDER=['Footwear','Bags','Clothing','Beauty','Electronics','Home','Kids','Accessories','Sports'];
+const GROUP_PREVIEW_COUNT=6;
+function renderProdsGrouped(){
+  const l=window.ALL_P||ALL_BASE;
+  document.getElementById('pcount').textContent=`${l.length} items`;
+  document.getElementById('pag').innerHTML='';
+  if(!l.length){
+    document.getElementById('pgrid').innerHTML=`<div style="grid-column:1/-1;text-align:center;padding:60px 20px;color:var(--mu)"><div style="font-size:48px;margin-bottom:16px">🛍️</div><div style="font-family:'Fraunces',serif;font-size:18px;font-weight:700;color:var(--p);margin-bottom:8px">Catalogue is empty</div><p style="font-size:14px">Nel is adding items soon! Check back or search for what you need.</p></div>`;
+    return;
+  }
+  const groups={};
+  l.forEach(p=>{(groups[p.c]=groups[p.c]||[]).push(p);});
+  const orderedCats=[...CAT_ORDER.filter(c=>groups[c]),...Object.keys(groups).filter(c=>!CAT_ORDER.includes(c))];
+  document.getElementById('pgrid').innerHTML=orderedCats.map(catName=>{
+    const items=groups[catName];
+    const shown=items.slice(0,GROUP_PREVIEW_COUNT);
+    const cards=shown.map(p=>cardHTML(p)).join('');
+    const viewAll=items.length>GROUP_PREVIEW_COUNT?`<button class="cat-viewall" onclick="jumpToCat('${catName}')">View all ${items.length} in ${catName} →</button>`:'';
+    return `<div class="cat-section" style="grid-column:1/-1">
+      <div class="cat-section-head"><h3>${catName}</h3><span>${items.length} item${items.length>1?'s':''}</span></div>
+      <div class="cat-section-grid">${cards}</div>
+      ${viewAll}
+    </div>`;
+  }).join('');
+}
+function jumpToCat(catName){
+  const btn=[...document.querySelectorAll('.cb')].find(b=>b.textContent.trim()===catName);
+  if(btn)filterCat(catName,btn);
+}
+function renderProdsFlat(){
+  const l=getList();
+  const tot=l.length,pages=Math.ceil(tot/PER),start=(pg-1)*PER,page=l.slice(start,start+PER);
+  document.getElementById('pcount').textContent=`${start+1}–${Math.min(start+PER,tot)} of ${tot} items`;
+  if(!page.length){document.getElementById('pgrid').innerHTML=`<div style="grid-column:1/-1;text-align:center;padding:60px 20px;color:var(--mu)"><div style="font-size:48px;margin-bottom:16px">🛍️</div><div style="font-family:'Fraunces',serif;font-size:18px;font-weight:700;color:var(--p);margin-bottom:8px">Catalogue is empty</div><p style="font-size:14px">Nel is adding items soon! Check back or search for what you need.</p></div>`;document.getElementById('pag').innerHTML='';return;}
+  document.getElementById('pgrid').innerHTML=page.map(p=>cardHTML(p)).join('');
   const pa=document.getElementById('pag');
   if(pages<=1){pa.innerHTML='';return;}
   let h='';
@@ -1086,10 +1133,20 @@ function openDetail(id){
       Add to Cart
     </button>
     <button class="dwab" onclick="sendDetailWA()">💬 Order This Item Only</button>
-    <div class="dnote">Nel will confirm the exact price on WhatsApp</div>`}`;
+    <div class="dnote">Nel will confirm the exact price on WhatsApp</div>`}
+    <div id="dRecs"></div>`;
   document.getElementById('dov').classList.add('open');
   trackRecentlyViewed(p.id);
   showItemOrderCount(p.id);
+  renderDetailRecs(p);
+}
+function renderDetailRecs(p){
+  const wrap=document.getElementById('dRecs');
+  if(!wrap)return;
+  const l=window.ALL_P||ALL_BASE;
+  const recs=l.filter(x=>x.c===p.c&&String(x.id)!==String(p.id)).slice(0,8);
+  if(!recs.length){wrap.innerHTML='';return;}
+  wrap.innerHTML=`<div class="rec-head">You may also like</div><div class="rec-row">${recs.map(r=>cardHTML(r)).join('')}</div>`;
 }
 function onGalScroll(el){
   const dotsWrap=document.getElementById('dgalDots');
